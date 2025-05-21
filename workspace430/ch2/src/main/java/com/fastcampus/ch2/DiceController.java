@@ -14,19 +14,12 @@ import org.springframework.web.bind.annotation.RequestMethod;
 @Controller
 public class DiceController {
 	public static final int DICE_SIDES = 6;
-	public static final int MAX_NUM_OF_DICE = 4;
-	public static final int MIN_NUM_OF_DICE = 2;
+	public static final int NUM_OF_DICE = 2;
 
 	@RequestMapping(value = "/dice", method = RequestMethod.GET)
 	public void dice(HttpServletRequest request, HttpServletResponse response) throws IOException {
 
-		int diceCount = MIN_NUM_OF_DICE;
-		if (request.getParameter("dc") != null) {
-			diceCount = Integer.parseInt(request.getParameter("dc"));
-			if (diceCount < MIN_NUM_OF_DICE || diceCount > MAX_NUM_OF_DICE) {
-				diceCount = MIN_NUM_OF_DICE;
-			}
-		}
+		int diceCount = NUM_OF_DICE;
 		System.out.println("diceCount=" + diceCount);
 
 		response.setContentType("text/html; charset=UTF-8");

@@ -15,20 +15,21 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-
 @Controller
 public class Dice2Controller {
-	
+	public static final int DICE_SIDES = 6;
+	public static final int NUM_OF_DICE = 2;
+
 	@RequestMapping(value = "/dice2", method = RequestMethod.GET)
 	public String dice2(Model model) throws IOException {
-		
-		int idx1 = (int)(Math.random() * 6) + 1;
-		int idx2 = (int)(Math.random() * 6) + 1;
-		
-		model.addAttribute("idx1", idx1);
-		model.addAttribute("idx2", idx2);
-		
+
+		int dice1 = (int) (Math.random() * DICE_SIDES) + 1;
+		int dice2 = (int) (Math.random() * DICE_SIDES) + 1;
+
+		model.addAttribute("idx1", dice1);
+		model.addAttribute("idx2", dice2);
+
 		return "dice2";
 	}
-	
+
 }
