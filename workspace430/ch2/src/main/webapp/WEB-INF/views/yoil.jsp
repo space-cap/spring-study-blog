@@ -10,9 +10,11 @@
 	yoil  
 </h1>
 
-year : ${year} <br>
-month : ${month} <br>
-day : ${day} <br>
+year : ${mydate.year} <br>
+month : ${mydate.month} <br>
+day : ${mydate.day} <br>
+
+
 
 
 </body>
