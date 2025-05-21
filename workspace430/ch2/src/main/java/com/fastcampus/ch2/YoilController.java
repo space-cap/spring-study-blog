@@ -23,10 +23,14 @@ public class YoilController {
 		String appVer = (String) model.getAttribute("appVer");
 		System.out.println("appVer = " + appVer);
 
-		List<String> list = (ArrayList) model.getAttribute("categories");
-		for (String s : list) {
-			System.out.println("s = " + s);
+		Object categoriesObj = model.getAttribute("categories");
+		if (categoriesObj instanceof List) {
+			List<String> list = (List<String>) categoriesObj;
+		    for (String s : list) {
+		        System.out.println("s = " + s);
+		    }
 		}
+
 
 		Date date = cal.getTime();
 		DateFormat dateFormat = DateFormat.getDateTimeInstance(DateFormat.LONG, DateFormat.LONG, locale);
