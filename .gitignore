@@ -1,8 +1,77 @@
 # Compiled class file
+# Java & Spring
 *.class
+*.jar
+*.war
+*.ear
+
+# Build output
+/build/
+/target/
+/out/
+
+# Gradle
+.gradle
+build/
+
+# Maven
+.mvn/
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+pom.xml.next
+release.properties
+
+# IntelliJ IDEA
+.idea/
+*.iml
+*.ipr
+*.iws
+
+# VS Code
+.vscode/
+
+# Eclipse
+.project
+.classpath
+.settings/
+bin/
+
+# OS files
+.DS_Store
+Thumbs.db
 
 # Log file
 *.log
+
+# Environment files
+.env
+
+# Spring Boot specific
+spring.log
+
+# Sensitive configuration
+application-*.yml
+application-*.yaml
+application-*.properties
+
+# QueryDSL generated
+**/generated/
+
+# Test reports
+/test-output/
+test-output/
+
+# 기타
+*.swp
+*.swo
+
+# Node (프론트엔드 포함시)
+node_modules/
+npm-debug.log
+
+# 기타 IDE
+*.sw?
 
 # BlueJ files
 *.ctxt
@@ -22,3 +91,6 @@
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
 replay_pid*
+/workspace430/.metadata
+/workspace430/Servers/.settings
+workspace430/ch2/.springBeans

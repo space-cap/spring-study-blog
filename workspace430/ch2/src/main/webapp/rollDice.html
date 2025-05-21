@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>주사위 게임</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin-top: 50px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+        }
+        .dice-container {
+            display: flex;
+            justify-content: center;
+            margin: 30px 0;
+            gap: 40px;
+        }
+        .dice {
+            width: 100px;
+            height: 100px;
+            background-color: white;
+            border: 2px solid #333;
+            border-radius: 10px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 40px;
+            font-weight: bold;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            font-size: 18px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        .result {
+            margin-top: 20px;
+            font-size: 24px;
+            font-weight: bold;
+        }
+        .history {
+            margin-top: 30px;
+            text-align: left;
+            max-height: 200px;
+            overflow-y: auto;
+            border: 1px solid #ddd;
+            padding: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>주사위 게임</h1>
+        <div class="dice-container">
+            <div class="dice" id="dice1">?</div>
+            <div class="dice" id="dice2">?</div>
+        </div>
+        <button id="rollBtn">주사위 굴리기</button>
+        <div class="result" id="result"></div>
+        <div class="history" id="history">
+            <h3>기록:</h3>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('rollBtn').addEventListener('click', rollDice);
+
+        function rollDice() {
+            // 버튼 비활성화 (중복 클릭 방지)
+            document.getElementById('rollBtn').disabled = true;
+            
+            // AJAX로 서버에 주사위 굴리기 요청
+            fetch('rollDice.jsp')
+                .then(response => response.json())
+                .then(data => {
+                    // 서버에서 받은 주사위 값 표시
+                    document.getElementById('dice1').innerText = data.dice1;
+                    document.getElementById('dice2').innerText = data.dice2;
+                    
+                    // 합계 계산 및 표시
+                    const sum = data.dice1 + data.dice2;
+                    document.getElementById('result').innerText = `합계: ${sum}`;
+                    
+                    // 히스토리에 추가
+                    const historyEntry = document.createElement('p');
+                    const time = new Date().toLocaleTimeString();
+                    historyEntry.innerText = `${time} - 주사위1: ${data.dice1}, 주사위2: ${data.dice2}, 합계: ${sum}`;
+                    document.getElementById('history').appendChild(historyEntry);
+                    
+                    // 버튼 다시 활성화
+                    document.getElementById('rollBtn').disabled = false;
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    document.getElementById('result').innerText = '오류가 발생했습니다.';
+                    document.getElementById('rollBtn').disabled = false;
+                });
+        }
+    </script>
+</body>
+</html>
