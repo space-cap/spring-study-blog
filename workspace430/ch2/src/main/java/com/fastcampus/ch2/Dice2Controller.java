@@ -3,6 +3,7 @@ package com.fastcampus.ch2;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.text.DateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
 
@@ -23,11 +24,15 @@ public class Dice2Controller {
 	@RequestMapping(value = "/dice2", method = RequestMethod.GET)
 	public String dice2(Model model) throws IOException {
 
-		int dice1 = (int) (Math.random() * DICE_SIDES) + 1;
-		int dice2 = (int) (Math.random() * DICE_SIDES) + 1;
+		int diceCount = NUM_OF_DICE;
 
-		model.addAttribute("idx1", dice1);
-		model.addAttribute("idx2", dice2);
+		ArrayList<Integer> diceResults = new ArrayList<>();
+		for (int i = 0; i < diceCount; i++) {
+			int dice = (int) (Math.random() * DICE_SIDES) + 1;
+			diceResults.add(dice);
+		}
+
+		model.addAttribute("diceResults", diceResults);
 
 		return "dice2";
 	}
