@@ -16,55 +16,25 @@ public class YoilController {
 	@RequestMapping(value = "/yoil", method = RequestMethod.GET)
 	public String home(Locale locale, Model model) {
 		Calendar cal = (Calendar) model.getAttribute("inputTime");
-		
+
 		Date date = cal.getTime();
 		DateFormat dateFormat = DateFormat.getDateTimeInstance(DateFormat.LONG, DateFormat.LONG, locale);
 		String formattedDate = dateFormat.format(date);
-		
+
 		int idx = cal.get(Calendar.DAY_OF_WEEK);
 		char yoil = "일월화수목금토일".charAt(idx - 1);
-		
-		model.addAttribute("lee1", formattedDate);
-		model.addAttribute("lee2", yoil);
-		
+
+		model.addAttribute("inputDate", formattedDate);
+		model.addAttribute("yoil", yoil);
+
 		return "yoil";
 	}
 
-	// 메서드에 @ModelAttribute를 붙이면
-	// 1. 자동으로 메서드를 호출
-	// 2. 호출 결과를 Model에 자동 저장
-	@ModelAttribute("yoil")
-	private char getYoil(MyYoil myDate) {
-		Calendar cal = Calendar.getInstance();
-		cal.set(myDate.getYear(), myDate.getMonth() - 1, myDate.getDay());
-		int idx = cal.get(Calendar.DAY_OF_WEEK);
-
-		return "일월화수목금토일".charAt(idx - 1);
-	}
-
-	@ModelAttribute("inputDate")
-	private String getDate(Locale locale, MyYoil myDate) {
-		Calendar cal = Calendar.getInstance();
-		cal.set(myDate.getYear(), myDate.getMonth() - 1, myDate.getDay());
-		// 시간 정보를 0으로 초기화
-		cal.set(Calendar.HOUR_OF_DAY, 0);
-		cal.set(Calendar.MINUTE, 0);
-		cal.set(Calendar.SECOND, 0);
-		cal.set(Calendar.MILLISECOND, 0);
-
-		Date date = cal.getTime();
-		DateFormat dateFormat = DateFormat.getDateTimeInstance(DateFormat.LONG, DateFormat.LONG, locale);
-		String formattedDate = dateFormat.format(date);
-
-		return formattedDate;
-	}
-	
 	@ModelAttribute("inputTime")
 	public void getTime(MyYoil myDate, Model model) {
-	    Calendar cal = Calendar.getInstance();
-	    cal.set(myDate.getYear(), myDate.getMonth() - 1, myDate.getDay());
-	    model.addAttribute("inputTime", cal);
+		Calendar cal = Calendar.getInstance();
+		cal.set(myDate.getYear(), myDate.getMonth() - 1, myDate.getDay());
+		model.addAttribute("inputTime", cal);
 	}
-
 
 }
