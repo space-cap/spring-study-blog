@@ -1,8 +1,10 @@
 package com.fastcampus.ch2;
 
 import java.text.DateFormat;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 
 import org.springframework.stereotype.Controller;
@@ -17,6 +19,10 @@ public class YoilController {
 	public String home(Locale locale, Model model) {
 		Calendar cal = (Calendar) model.getAttribute("inputTime");
 
+		String appVer = (String) model.getAttribute("appVer");
+		System.out.println("appVer = " + appVer);
+		
+		
 		Date date = cal.getTime();
 		DateFormat dateFormat = DateFormat.getDateTimeInstance(DateFormat.LONG, DateFormat.LONG, locale);
 		String formattedDate = dateFormat.format(date);
@@ -36,5 +42,21 @@ public class YoilController {
 		cal.set(myDate.getYear(), myDate.getMonth() - 1, myDate.getDay());
 		model.addAttribute("inputTime", cal);
 	}
+	
+	@Controller
+	public class SomeController {
+
+	    @ModelAttribute
+	    public void addCommonAttributes(Model model) {
+	        model.addAttribute("siteName", "My Site");
+	    }
+	}
+	
+	@ModelAttribute("categories")
+	public List<String> categories() {
+	    return Arrays.asList("Book", "Music", "Movie");
+	}
+
+
 
 }
