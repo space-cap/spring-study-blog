@@ -9,13 +9,7 @@
 <h1>
 	yoil  
 </h1>
-
-year : ${mydate.year} <br>
-month : ${mydate.month} <br>
-day : ${mydate.day} <br>
-
-
-
+<h1> ${inputDate} ${yoil} </h1>
 
 </body>
 </html>
