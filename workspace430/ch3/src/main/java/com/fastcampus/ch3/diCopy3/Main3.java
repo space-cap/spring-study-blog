@@ -1,5 +1,7 @@
 package com.fastcampus.ch3.diCopy3;
 
+import com.fastcampus.ch3.diCopy4.Car;
+import com.fastcampus.ch3.diCopy4.Engine;
 import com.google.common.reflect.ClassPath;
 
 import java.util.HashMap;
@@ -59,6 +61,15 @@ class AppContext {
 	public Object getBean(String key) {
 		return map.get(key);
 	}
+	
+	public Object getBean(Class clazz) {
+		for(Object obj : map.values()) {
+			if(clazz.isInstance(obj)) {
+				return obj;
+			}
+		}
+		return null;
+	}
 }
 
 public class Main3 {
@@ -67,9 +78,16 @@ public class Main3 {
 		
 		AppContext ac = new AppContext();
 		
-		Car car = (Car) ac.getBean("car");
+		Car car = (Car) ac.getBean("car"); // by Name으로 객체를 검색
+        Car car2 = (Car) ac.getBean(Car.class); // by Type으로 객체를 검색
+
         Engine engine = (Engine) ac.getBean("engine");
+        Engine engine2 = (Engine) ac.getBean(Engine.class);
+
         System.out.println("car = " + car);
         System.out.println("engine = " + engine);
+
+        System.out.println("car2 = " + car2);
+        System.out.println("engine2 = " + engine2);
 	}
 }
