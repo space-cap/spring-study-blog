@@ -30,6 +30,8 @@ BEGIN
 	safe_drop('professor_status');
     safe_drop('professor');
 	
+	safe_drop('major');
+	
 END;
 /
 
@@ -124,7 +126,22 @@ INSERT INTO professor_status (status_code, status_name) VALUES (2, '정직');
 
 
 
+CREATE TABLE major (
+    major_code      NUMBER(5)       PRIMARY KEY,
+    major_name      NVARCHAR2(40)    NOT NULL
+);
 
+COMMENT ON TABLE  major 			IS '전공 정보';
+COMMENT ON COLUMN major.major_code 	IS '전공 코드';
+COMMENT ON COLUMN major.major_name 	IS '전공 이름';
+
+-- 샘플 데이터 삽입
+INSERT ALL
+    INTO major (major_code, major_name) VALUES (10100, '국어국문학')
+    INTO major (major_code, major_name) VALUES (10200, '행정학')
+    INTO major (major_code, major_name) VALUES (10300, '심리학')
+    INTO major (major_code, major_name) VALUES (10400, '소프트웨어공학')
+SELECT 1 FROM DUAL;
 
 
 
