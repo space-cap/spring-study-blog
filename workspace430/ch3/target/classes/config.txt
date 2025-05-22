@@ -1,2 +1,1 @@
-car=com.fastcampus.ch3.diCopy1.SportsCar
-engine=com.fastcampus.ch3.diCopy1.Engine
+
