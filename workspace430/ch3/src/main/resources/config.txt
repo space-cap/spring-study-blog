@@ -1,0 +1,1 @@
+car=com.fastcampus.ch3.diCopy1.Truck
