@@ -93,7 +93,7 @@ CREATE TABLE professor (
     email               	VARCHAR2(100),
     address             	VARCHAR2(150),
     photo	            	RAW(2000),
-    professor_status_code 	NUMBER(5)    	NOT NULL,
+    professor_status_code 	NUMBER(5)    	NOT NULL
 );
 
 COMMENT ON TABLE  professor 				IS '교수 정보';
@@ -110,7 +110,7 @@ COMMENT ON COLUMN professor.status_code 	IS '재직 상태 코드';
 
 CREATE TABLE professor_status (
     status_code  	NUMBER(5)       PRIMARY KEY,
-    status_name             VARCHAR2(20)    NOT NULL
+    status_name     VARCHAR2(20)    NOT NULL
 );
 
 COMMENT ON TABLE  professor_status IS '교수 재직 상태';
