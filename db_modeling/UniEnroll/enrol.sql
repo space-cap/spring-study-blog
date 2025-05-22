@@ -26,6 +26,10 @@ BEGIN
     
     safe_drop('student_status');
     safe_drop('student');
+	
+	safe_drop('professor_status');
+    safe_drop('professor');
+	
 END;
 /
 
@@ -73,28 +77,63 @@ COMMENT ON TABLE  	student_status 				IS '재학상태코드';
 COMMENT ON COLUMN 	student_status.status_code 	IS '재학상태코드';
 COMMENT ON COLUMN 	student_status.status_name 	IS '상태내용';
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 INSERT INTO student_status (status_code, status_name) VALUES (0, '재학');
 INSERT INTO student_status (status_code, status_name) VALUES (1, '휴학');
 INSERT INTO student_status (status_code, status_name) VALUES (2, '정학');
 INSERT INTO student_status (status_code, status_name) VALUES (3, '졸업');
 INSERT INTO student_status (status_code, status_name) VALUES (4, '입대');
+
+CREATE TABLE professor (
+    professor_no        	NUMBER(5)       PRIMARY KEY,
+    professor_name      	VARCHAR2(20)    NOT NULL,
+    dept_code           	NUMBER(5)       NOT NULL,
+    course_code         	NUMBER(10)      NOT NULL,
+    resource_code       	NUMBER(5),
+    phone_number        	VARCHAR2(20),
+    email               	VARCHAR2(100),
+    address             	VARCHAR2(150),
+    photo	            	RAW(2000),
+    professor_status_code 	NUMBER(5)    	NOT NULL,
+);
+
+COMMENT ON TABLE  professor 				IS '교수 정보';
+COMMENT ON COLUMN professor.professor_no 	IS '교번';
+COMMENT ON COLUMN professor.professor_name 	IS '이름';
+COMMENT ON COLUMN professor.dept_code 		IS '학부 코드';
+COMMENT ON COLUMN professor.course_code 	IS '과목 코드';
+COMMENT ON COLUMN professor.resource_code 	IS '자원 코드';
+COMMENT ON COLUMN professor.phone_number 	IS '연락처';
+COMMENT ON COLUMN professor.email 			IS '이메일 주소';
+COMMENT ON COLUMN professor.address 		IS '주소';
+COMMENT ON COLUMN professor.photo			IS '사진';
+COMMENT ON COLUMN professor.status_code 	IS '재직 상태 코드';
+
+CREATE TABLE professor_status (
+    status_code  	NUMBER(5)       PRIMARY KEY,
+    status_name             VARCHAR2(20)    NOT NULL
+);
+
+COMMENT ON TABLE  professor_status IS '교수 재직 상태';
+COMMENT ON COLUMN professor_status.status_code IS '재직 상태 코드';
+COMMENT ON COLUMN professor_status.status_name IS '상태 내용';
+
+-- 샘플 데이터 삽입
+INSERT INTO professor_status (status_code, status_name) VALUES (0, '재직');
+INSERT INTO professor_status (status_code, status_name) VALUES (1, '휴직');
+INSERT INTO professor_status (status_code, status_name) VALUES (2, '정직');
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
