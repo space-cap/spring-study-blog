@@ -36,6 +36,13 @@ BEGIN
 	safe_drop('course_category');
 	safe_drop('staff_category');
 	
+	
+	safe_drop('employees');
+	safe_drop('courses');
+	safe_drop('lecture_rooms');
+	safe_drop('subjects');
+	
+	
 END;
 /
 
@@ -295,4 +302,49 @@ INSERT ALL
         VALUES (12956820, 320170, '영어회화',   '실생활 영어회화 중심 과정', TO_DATE('2018-03-05', 'YYYY-MM-DD'), TO_DATE('2018-07-05', 'YYYY-MM-DD'), 6805, 80, 77)
     INTO courses (course_id, subject_id, course_name, course_desc, start_date, end_date, manager_id, recruit_count, enroll_count)
         VALUES (12956821, 320171, '프로그래밍기초', '프로그래밍의 기초를 배우는 과정', TO_DATE('2018-03-06', 'YYYY-MM-DD'), TO_DATE('2018-07-06', 'YYYY-MM-DD'), 6806, 120, 110)
+SELECT 1 FROM DUAL;
+
+CREATE TABLE lecture_rooms (
+    room_id         NUMBER(5)      PRIMARY KEY,         -- 강의실코드
+    room_number     NUMBER(5)      NOT NULL,            -- 호수
+    building_code   NUMBER(5)      NOT NULL             -- 강의관 코드
+);
+
+COMMENT ON TABLE  lecture_rooms                  IS '강의실 정보';
+COMMENT ON COLUMN lecture_rooms.room_id          IS '강의실코드';
+COMMENT ON COLUMN lecture_rooms.room_number      IS '호수';
+COMMENT ON COLUMN lecture_rooms.building_code    IS '강의관 코드';
+
+-- 샘플 데이터 삽입
+INSERT ALL
+    INTO lecture_rooms (room_id, room_number, building_code) VALUES (0, 504, 1)
+    INTO lecture_rooms (room_id, room_number, building_code) VALUES (1, 202, 1)
+    INTO lecture_rooms (room_id, room_number, building_code) VALUES (2, 303, 2)
+    INTO lecture_rooms (room_id, room_number, building_code) VALUES (3, 101, 0)
+SELECT 1 FROM DUAL;
+
+
+CREATE TABLE subjects (
+    subject_id        NUMBER(10)     PRIMARY KEY,         -- 과목ID
+    subject_name      VARCHAR2(40)   NOT NULL,            -- 과목명
+    subject_type_code NUMBER(5)      NOT NULL,            -- 교과구분코드
+    credit            NUMBER(5)      NOT NULL,            -- 학점
+    room_id           NUMBER(5)      NOT NULL,            -- 강의실 코드
+    professor_id      NUMBER(5)      NOT NULL             -- 담당교수 교번
+);
+
+COMMENT ON TABLE  subjects                      IS '과목 정보';
+COMMENT ON COLUMN subjects.subject_id           IS '과목ID';
+COMMENT ON COLUMN subjects.subject_name         IS '과목명';
+COMMENT ON COLUMN subjects.subject_type_code    IS '교과구분코드';
+COMMENT ON COLUMN subjects.credit               IS '학점';
+COMMENT ON COLUMN subjects.room_id              IS '강의실 코드';
+COMMENT ON COLUMN subjects.professor_id         IS '담당교수 교번';
+
+-- 샘플 데이터 삽입
+INSERT ALL
+    INTO subjects (subject_id, subject_name, subject_type_code, credit, room_id, professor_id) VALUES (231546, '고전읽기', 0, 2, 2, 82)
+    INTO subjects (subject_id, subject_name, subject_type_code, credit, room_id, professor_id) VALUES (695745, '도시이해', 1, 2, 8, 135)
+    INTO subjects (subject_id, subject_name, subject_type_code, credit, room_id, professor_id) VALUES (569846, '다문화사회', 2, 3, 2, 201)
+    INTO subjects (subject_id, subject_name, subject_type_code, credit, room_id, professor_id) VALUES (320165, '연극치료', 3, 3, 4, 214)
 SELECT 1 FROM DUAL;
