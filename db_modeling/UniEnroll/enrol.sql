@@ -24,8 +24,8 @@ DECLARE
     END;
 BEGIN
     
-    safe_drop('COURSE');
-    safe_drop('STUDENT');
+    safe_drop('student_status');
+    safe_drop('student');
 END;
 /
 
@@ -46,7 +46,7 @@ CREATE TABLE student (
     phone2          VARCHAR2(20) 	UNIQUE,            
     email           VARCHAR2(100),                     
     address         VARCHAR2(150),                     
-    photo           RAW,                               
+    photo           RAW(2000),                               
     status_code     NUMBER(5)                          
 );
 
@@ -60,7 +60,7 @@ COMMENT ON COLUMN 	student.phone1 			IS '연락처1';
 COMMENT ON COLUMN 	student.phone2 			IS '연락처2';
 COMMENT ON COLUMN 	student.email 			IS '이메일';
 COMMENT ON COLUMN 	student.address 		IS '주소';
-COMMENT ON COLUMN 	student.photo 			IS '사진';
+COMMENT ON COLUMN 	student.photo 			IS '사진 2KB, BLOB 추천';
 COMMENT ON COLUMN 	student.status_code 	IS '재학상태코드';
 
 
