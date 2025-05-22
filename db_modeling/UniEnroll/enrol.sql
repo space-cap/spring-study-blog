@@ -44,14 +44,14 @@ END;
 -- Create tables
 CREATE TABLE student (
     no        		NUMBER(10)    	PRIMARY KEY,         
-    name            VARCHAR2(20),                      
+    name            NVARCHAR2(20),                      
     grade           NUMBER(5),                         
     department_code NUMBER(5),                         
     major_code      NUMBER(5),                         
     phone1          VARCHAR2(20),            
     phone2          VARCHAR2(20),            
     email           VARCHAR2(100),                     
-    address         VARCHAR2(150),                     
+    address         NVARCHAR2(150),                     
     photo           RAW(2000),                               
     status_code     NUMBER(5)                          
 );
@@ -72,7 +72,7 @@ COMMENT ON COLUMN 	student.status_code 	IS '재학상태코드';
 
 CREATE TABLE student_status (
     status_code   NUMBER(5) 	PRIMARY KEY,  
-    status_name   VARCHAR2(20) 	NOT NULL   
+    status_name   NVARCHAR2(20) 	NOT NULL   
 );
 
 COMMENT ON TABLE  	student_status 				IS '재학상태코드';
@@ -87,13 +87,13 @@ INSERT INTO student_status (status_code, status_name) VALUES (4, '입대');
 
 CREATE TABLE professor (
     professor_no        	NUMBER(5)       PRIMARY KEY,
-    professor_name      	VARCHAR2(20)    NOT NULL,
+    professor_name      	NVARCHAR2(20)    NOT NULL,
     dept_code           	NUMBER(5)       NOT NULL,
     course_code         	NUMBER(10)      NOT NULL,
     resource_code       	NUMBER(5),
     phone_number        	VARCHAR2(20),
     email               	VARCHAR2(100),
-    address             	VARCHAR2(150),
+    address             	NVARCHAR2(150),
     photo	            	RAW(2000),
     status_code 			NUMBER(5)    	NOT NULL
 );
@@ -112,7 +112,7 @@ COMMENT ON COLUMN professor.status_code 	IS 'professor_status 재직 상태 코�
 
 CREATE TABLE professor_status (
     status_code  	NUMBER(5)       PRIMARY KEY,
-    status_name     VARCHAR2(20)    NOT NULL
+    status_name     NVARCHAR2(20)    NOT NULL
 );
 
 COMMENT ON TABLE  professor_status IS '교수 재직 상태';
