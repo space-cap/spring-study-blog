@@ -15,15 +15,15 @@ INSERT ALL
 SELECT 1 FROM DUAL;
 
 INSERT ALL
-    INTO student (no, name, grade, department_code, major_code, phone1, phone2, email, address, photo, status_code) VALUES (20180213, '김금글', 2, 101, 231546, '010-8954-7892', '02-0256-9654', 's01@uni.com', '서울시 금천동', NULL, 0)
-    INTO student (no, name, grade, department_code, major_code, phone1, phone2, email, address, photo, status_code) VALUES (20180214, '낸아버', 4, 102, 695745, '010-5648-3456', NULL, NULL, '성남시 수서동', NULL, 0)
-    INTO student (no, name, grade, department_code, major_code, phone1, phone2, email, address, photo, status_code) VALUES (20180215, '장다움', 1, 103, 569846, '010-2145-8957', NULL, NULL, '대구시', NULL, 1)
-    INTO student (no, name, grade, department_code, major_code, phone1, phone2, email, address, photo, status_code) VALUES (20180216, '이아후', 1, 104, 320165, '010-8958-5261', '032-866-9512', 's04@uni.com', '인천시 연수동', NULL, 4)
-    INTO student (no, name, grade, department_code, major_code, phone1, phone2, email, address, photo, status_code) VALUES (20190101, '박학생', 3, 101, 231546, '010-1111-2222', NULL, 'park@uni.com', '서울시 강남구', NULL, 0)
-    INTO student (no, name, grade, department_code, major_code, phone1, phone2, email, address, photo, status_code) VALUES (20190102, '최수강', 2, 102, 695745, '010-3333-4444', '02-7777-8888', NULL, '부산시 동래구', NULL, 0)
-    INTO student (no, name, grade, department_code, major_code, phone1, phone2, email, address, photo, status_code) VALUES (20200301, '정신찬', 1, 103, 569846, '010-5555-6666', NULL, 'jung@uni.com', '광주시 북구', NULL, 1)
-    INTO student (no, name, grade, department_code, major_code, phone1, phone2, email, address, photo, status_code) VALUES (20200302, '윤미래', 4, 104, 320165, '010-7777-8888', '031-1234-5678', NULL, '경기도 수원시', NULL, 4)
-    INTO student (no, name, grade, department_code, major_code, phone1, phone2, email, address, photo, status_code) VALUES (20210501, '임지현', 3, 101, 231546, '010-9999-0000', NULL, 'lim@uni.com', '대구시 수성구', NULL, 0)
-    INTO student (no, name, grade, department_code, major_code, phone1, phone2, email, address, photo, status_code) VALUES (20210502, '한지수', 2, 102, 695745, '010-1234-9876', NULL, NULL, '울산시 남구', NULL, 0)
+    INTO student (no, name, grade, department_code, major_code, phone1, phone2, email, address, photo, status_code) VALUES (20180213, '김금글', 2, 101, 31546, '010-8954-7892', '02-0256-9654', 's01@uni.com', '서울시 금천동', NULL, 0)
+    INTO student (no, name, grade, department_code, major_code, phone1, phone2, email, address, photo, status_code) VALUES (20180214, '낸아버', 4, 102, 95745, '010-5648-3456', NULL, NULL, '성남시 수서동', NULL, 0)
+    INTO student (no, name, grade, department_code, major_code, phone1, phone2, email, address, photo, status_code) VALUES (20180215, '장다움', 1, 103, 69846, '010-2145-8957', NULL, NULL, '대구시', NULL, 1)
+    INTO student (no, name, grade, department_code, major_code, phone1, phone2, email, address, photo, status_code) VALUES (20180216, '이아후', 1, 104, 20165, '010-8958-5261', '032-866-9512', 's04@uni.com', '인천시 연수동', NULL, 4)
+    INTO student (no, name, grade, department_code, major_code, phone1, phone2, email, address, photo, status_code) VALUES (20190101, '박학생', 3, 101, 31546, '010-1111-2222', NULL, 'park@uni.com', '서울시 강남구', NULL, 0)
+    INTO student (no, name, grade, department_code, major_code, phone1, phone2, email, address, photo, status_code) VALUES (20190102, '최수강', 2, 102, 95745, '010-3333-4444', '02-7777-8888', NULL, '부산시 동래구', NULL, 0)
+    INTO student (no, name, grade, department_code, major_code, phone1, phone2, email, address, photo, status_code) VALUES (20200301, '정신찬', 1, 103, 69846, '010-5555-6666', NULL, 'jung@uni.com', '광주시 북구', NULL, 1)
+    INTO student (no, name, grade, department_code, major_code, phone1, phone2, email, address, photo, status_code) VALUES (20200302, '윤미래', 4, 104, 20165, '010-7777-8888', '031-1234-5678', NULL, '경기도 수원시', NULL, 4)
+    INTO student (no, name, grade, department_code, major_code, phone1, phone2, email, address, photo, status_code) VALUES (20210501, '임지현', 3, 101, 31546, '010-9999-0000', NULL, 'lim@uni.com', '대구시 수성구', NULL, 0)
+    INTO student (no, name, grade, department_code, major_code, phone1, phone2, email, address, photo, status_code) VALUES (20210502, '한지수', 2, 102, 95745, '010-1234-9876', NULL, NULL, '울산시 남구', NULL, 0)
 SELECT 1 FROM DUAL;
 

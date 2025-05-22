@@ -31,6 +31,8 @@ BEGIN
     safe_drop('professor');
 	
 	safe_drop('major');
+	safe_drop('department');
+	safe_drop('lecture_hall');
 	
 END;
 /
@@ -144,18 +146,40 @@ INSERT ALL
 SELECT 1 FROM DUAL;
 
 
+CREATE TABLE department (
+    dept_code       NUMBER(5)       PRIMARY KEY,
+    dept_name       NVARCHAR2(50)   NOT NULL
+);
+
+COMMENT ON TABLE  department 			IS '학부 정보';
+COMMENT ON COLUMN department.dept_code 	IS '학부 코드';
+COMMENT ON COLUMN department.dept_name 	IS '학부 이름';
+
+-- 샘플 데이터 삽입 (교수 및 학생 테이블의 학부 코드를 기반으로)
+INSERT ALL
+    INTO department (dept_code, dept_name) VALUES (101, '인문대학')
+    INTO department (dept_code, dept_name) VALUES (102, '사회과학대학')
+    INTO department (dept_code, dept_name) VALUES (103, '자연과학대학')
+    INTO department (dept_code, dept_name) VALUES (104, '공과대학')
+SELECT 1 FROM DUAL;
 
 
+CREATE TABLE lecture_hall (
+    hall_code       NUMBER(5)       PRIMARY KEY,
+    hall_name       NVARCHAR2(20)   NOT NULL
+);
 
+COMMENT ON TABLE  lecture_hall 				IS '강의관 정보';
+COMMENT ON COLUMN lecture_hall.hall_code 	IS '강의관 코드';
+COMMENT ON COLUMN lecture_hall.hall_name 	IS '강의관 이름';
 
-
-
-
-
-
-
-
-
+-- 샘플 데이터 삽입
+INSERT ALL
+    INTO lecture_hall (hall_code, hall_name) VALUES (0, '윤주관')
+    INTO lecture_hall (hall_code, hall_name) VALUES (1, '아이스관')
+    INTO lecture_hall (hall_code, hall_name) VALUES (2, '비트캠프관')
+    INTO lecture_hall (hall_code, hall_name) VALUES (3, '영광의 레이서관')
+SELECT 1 FROM DUAL;
 
 
 
