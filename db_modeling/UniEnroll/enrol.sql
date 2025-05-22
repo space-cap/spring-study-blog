@@ -12,25 +12,23 @@ SET DEFINE OFF;
 --------------------------------------------------------------------------------------
 -- Part 1. drop existing tables
 --------------------------------------------------------------------------------------
-create or replace PROCEDURE drop_table_if_exists (p_table_name VARCHAR2) 
-IS
+DECLARE
+    PROCEDURE safe_drop(p_table_name IN VARCHAR2) IS
+    BEGIN
+        EXECUTE IMMEDIATE 'DROP TABLE ' || p_table_name || ' CASCADE CONSTRAINTS';
+    EXCEPTION
+        WHEN OTHERS THEN
+            IF SQLCODE != -942 THEN -- ORA-00942: table or view does not exist
+                RAISE;
+            END IF;
+    END;
 BEGIN
-  EXECUTE IMMEDIATE 'DROP TABLE ' || p_table_name || ' cascade constraints';
-EXCEPTION
-  WHEN OTHERS THEN
-    IF SQLCODE != -942 THEN
-      RAISE;
-    END IF;
+    
+    safe_drop('COURSE');
+    safe_drop('STUDENT');
 END;
 /
 
-BEGIN
-  drop_table_if_exists('student');
-  drop_table_if_exists('student_status');
-  
-  
-END;
-/
 
 --------------------------------------------------------------------------------------
 -- Part 2. schema
@@ -75,10 +73,7 @@ COMMENT ON TABLE  	student_status 				IS '재학상태코드';
 COMMENT ON COLUMN 	student_status.status_code 	IS '재학상태코드';
 COMMENT ON COLUMN 	student_status.status_name 	IS '상태내용';
 
-ALTER TABLE student
-ADD CONSTRAINT fk_student_status
-FOREIGN KEY (status_code)
-REFERENCES student_status(status_code);
+
 
 
 

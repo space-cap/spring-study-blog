@@ -1,0 +1,5 @@
+ALTER TABLE student
+ADD CONSTRAINT fk_student_status
+FOREIGN KEY (status_code)
+REFERENCES student_status(status_code);
+
