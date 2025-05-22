@@ -33,6 +33,8 @@ BEGIN
 	safe_drop('major');
 	safe_drop('department');
 	safe_drop('lecture_hall');
+	safe_drop('course_category');
+	safe_drop('staff_category');
 	
 END;
 /
@@ -183,3 +185,114 @@ SELECT 1 FROM DUAL;
 
 
 
+CREATE TABLE course_category (
+    category_code   NUMBER(5)      PRIMARY KEY,
+    category_name   NVARCHAR2(20)  NOT NULL
+);
+
+COMMENT ON TABLE  course_category 				IS '교과 구분 정보';
+COMMENT ON COLUMN course_category.category_code IS '교과 구분 코드';
+COMMENT ON COLUMN course_category.category_name IS '교과 구분 이름';
+
+-- 샘플 데이터 삽입
+INSERT ALL
+    INTO course_category (category_code, category_name) VALUES (0, '전공필수')
+    INTO course_category (category_code, category_name) VALUES (1, '전공선택')
+    INTO course_category (category_code, category_name) VALUES (2, '교양필수')
+    INTO course_category (category_code, category_name) VALUES (3, '교양선택')
+SELECT 1 FROM DUAL;
+
+
+CREATE TABLE staff_category (
+    staff_code      NUMBER(5)       PRIMARY KEY,
+    staff_type      NVARCHAR2(20)   NOT NULL
+);
+
+COMMENT ON TABLE  staff_category 			IS '임직원 분류 정보';
+COMMENT ON COLUMN staff_category.staff_code IS '직원 코드';
+COMMENT ON COLUMN staff_category.staff_type IS '직원 분류';
+
+-- 샘플 데이터 삽입
+INSERT ALL
+    INTO staff_category (staff_code, staff_type) VALUES (0, '교수')
+    INTO staff_category (staff_code, staff_type) VALUES (1, '부교수')
+    INTO staff_category (staff_code, staff_type) VALUES (2, '강사')
+    INTO staff_category (staff_code, staff_type) VALUES (3, '행정직원')
+SELECT 1 FROM DUAL;
+
+
+
+CREATE TABLE employees (
+    employee_id     NUMBER(10)      PRIMARY KEY,        -- 임직원 ID
+    employee_name   NVARCHAR2(50)   NOT NULL,           -- 이름
+    contact         VARCHAR2(40),                       -- 연락처
+    email           VARCHAR2(50)                        -- 이메일
+);
+
+COMMENT ON TABLE  employees                  IS '임직원 정보';
+COMMENT ON COLUMN employees.employee_id      IS '임직원 ID';
+COMMENT ON COLUMN employees.employee_name    IS '이름';
+COMMENT ON COLUMN employees.contact          IS '연락처';
+COMMENT ON COLUMN employees.email            IS '이메일';
+
+-- 샘플 데이터 10개 삽입
+INSERT ALL
+    INTO employees (employee_id, employee_name, contact, email) VALUES (6547, '김소영', '010-6598-5467', 'fkgj@abc.com')
+    INTO employees (employee_id, employee_name, contact, email) VALUES (6586, '오윤주', '010-6598-5468', 'asd@abc.com')
+    INTO employees (employee_id, employee_name, contact, email) VALUES (6590, '최한성', '010-6598-5469', 'fk45@abc.com')
+    INTO employees (employee_id, employee_name, contact, email) VALUES (6798, '김성은', '010-6598-5470', 'sgkf@abc.com')
+    INTO employees (employee_id, employee_name, contact, email) VALUES (6801, '박지훈', '010-6598-5471', 'jhpark@abc.com')
+    INTO employees (employee_id, employee_name, contact, email) VALUES (6802, '이민정', '010-6598-5472', 'mjlee@abc.com')
+    INTO employees (employee_id, employee_name, contact, email) VALUES (6803, '정유진', '010-6598-5473', 'yjjeong@abc.com')
+    INTO employees (employee_id, employee_name, contact, email) VALUES (6804, '한지수', '010-6598-5474', 'jshan@abc.com')
+    INTO employees (employee_id, employee_name, contact, email) VALUES (6805, '최재원', '010-6598-5475', 'jwchoi@abc.com')
+    INTO employees (employee_id, employee_name, contact, email) VALUES (6806, '윤하늘', '010-6598-5476', 'hnyoon@abc.com')
+SELECT 1 FROM DUAL;
+
+
+CREATE TABLE courses (
+    course_id        NUMBER(10)      PRIMARY KEY,          -- 과정코드
+    subject_id       NUMBER(10)      NOT NULL,             -- 과목코드
+    course_name      NVARCHAR2(50)   NOT NULL,             -- 과정이름
+    course_desc      NVARCHAR2(200),                       -- 과정 설명
+    start_date       DATE,                                 -- 시작일
+    end_date         DATE,                                 -- 종료일
+    manager_id       NUMBER(10),                           -- 담당자 코드 (직원 ID)
+    recruit_count    NUMBER(5),                            -- 모집정원
+    enroll_count     NUMBER(5)                             -- 수강인원
+);
+
+COMMENT ON TABLE  courses                   IS '과정 정보';
+COMMENT ON COLUMN courses.course_id         IS '과정코드';
+COMMENT ON COLUMN courses.subject_id        IS '과목코드';
+COMMENT ON COLUMN courses.course_name       IS '과정이름';
+COMMENT ON COLUMN courses.course_desc       IS '과정 설명';
+COMMENT ON COLUMN courses.start_date        IS '시작일';
+COMMENT ON COLUMN courses.end_date          IS '종료일';
+COMMENT ON COLUMN courses.manager_id        IS '담당자 코드';
+COMMENT ON COLUMN courses.recruit_count     IS '모집정원';
+COMMENT ON COLUMN courses.enroll_count      IS '수강인원';
+
+-- 샘플 데이터 10개 삽입
+INSERT ALL
+    INTO courses (course_id, subject_id, course_name, course_desc, start_date, end_date, manager_id, recruit_count, enroll_count)
+        VALUES (12956812, 231546, '고전읽기',   '고전을 읽고 토론하는 과정', TO_DATE('2018-02-05', 'YYYY-MM-DD'), TO_DATE('2018-06-05', 'YYYY-MM-DD'), 6547, 40, 38)
+    INTO courses (course_id, subject_id, course_name, course_desc, start_date, end_date, manager_id, recruit_count, enroll_count)
+        VALUES (12956813, 695745, '도시이해',   '도시의 구조와 문화를 이해하는 과정', TO_DATE('2018-02-06', 'YYYY-MM-DD'), TO_DATE('2018-06-06', 'YYYY-MM-DD'), 6586, 200, 50)
+    INTO courses (course_id, subject_id, course_name, course_desc, start_date, end_date, manager_id, recruit_count, enroll_count)
+        VALUES (12956814, 569846, '다문화사회', '다문화 사회의 특징을 배우는 과정', TO_DATE('2018-02-07', 'YYYY-MM-DD'), TO_DATE('2018-06-07', 'YYYY-MM-DD'), 6590, 50, 29)
+    INTO courses (course_id, subject_id, course_name, course_desc, start_date, end_date, manager_id, recruit_count, enroll_count)
+        VALUES (12956815, 320165, '연극치료',   '연극을 통한 심리치유 과정', TO_DATE('2018-02-08', 'YYYY-MM-DD'), TO_DATE('2018-06-08', 'YYYY-MM-DD'), 6798, 40, 30)
+    INTO courses (course_id, subject_id, course_name, course_desc, start_date, end_date, manager_id, recruit_count, enroll_count)
+        VALUES (12956816, 320166, '현대미술',   '현대미술의 흐름과 작가를 배우는 과정', TO_DATE('2018-03-01', 'YYYY-MM-DD'), TO_DATE('2018-07-01', 'YYYY-MM-DD'), 6801, 35, 32)
+    INTO courses (course_id, subject_id, course_name, course_desc, start_date, end_date, manager_id, recruit_count, enroll_count)
+        VALUES (12956817, 320167, '음악치료',   '음악을 활용한 치유 프로그램', TO_DATE('2018-03-02', 'YYYY-MM-DD'), TO_DATE('2018-07-02', 'YYYY-MM-DD'), 6802, 30, 27)
+    INTO courses (course_id, subject_id, course_name, course_desc, start_date, end_date, manager_id, recruit_count, enroll_count)
+        VALUES (12956818, 320168, '심리학개론', '심리학의 기초 이론을 배우는 과정', TO_DATE('2018-03-03', 'YYYY-MM-DD'), TO_DATE('2018-07-03', 'YYYY-MM-DD'), 6803, 60, 58)
+    INTO courses (course_id, subject_id, course_name, course_desc, start_date, end_date, manager_id, recruit_count, enroll_count)
+        VALUES (12956819, 320169, '컴퓨터입문', '컴퓨터의 기초를 배우는 과정', TO_DATE('2018-03-04', 'YYYY-MM-DD'), TO_DATE('2018-07-04', 'YYYY-MM-DD'), 6804, 100, 95)
+    INTO courses (course_id, subject_id, course_name, course_desc, start_date, end_date, manager_id, recruit_count, enroll_count)
+        VALUES (12956820, 320170, '영어회화',   '실생활 영어회화 중심 과정', TO_DATE('2018-03-05', 'YYYY-MM-DD'), TO_DATE('2018-07-05', 'YYYY-MM-DD'), 6805, 80, 77)
+    INTO courses (course_id, subject_id, course_name, course_desc, start_date, end_date, manager_id, recruit_count, enroll_count)
+        VALUES (12956821, 320171, '프로그래밍기초', '프로그래밍의 기초를 배우는 과정', TO_DATE('2018-03-06', 'YYYY-MM-DD'), TO_DATE('2018-07-06', 'YYYY-MM-DD'), 6806, 120, 110)
+SELECT 1 FROM DUAL;
