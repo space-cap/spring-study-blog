@@ -26,7 +26,7 @@ public class MiniSpringContext {
 	public static Car getCar() throws Exception {
 		// config.txt를 읽어서 Properties에 저장
 		Properties p = new Properties();
-	    p.load(new FileReader("config.txt"));
+		p.load(new FileReader("src/main/resources/config.txt"));
 
 	    // 클래스 객체(설계도)를 얻어서
 	    Class<?> clazz = Class.forName(p.getProperty("car"));
