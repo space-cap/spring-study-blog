@@ -42,7 +42,7 @@ class AppContext {
             ClassLoader classLoader = AppContext.class.getClassLoader();
             ClassPath classPath = ClassPath.from(classLoader);
 
-            Set<ClassPath.ClassInfo> set = classPath.getTopLevelClasses("com.fastcampus.ch3.diCopy3");
+            Set<ClassPath.ClassInfo> set = classPath.getTopLevelClasses("com.fastcampus.ch3.diCopy4");
 
             // 2. 반복문으로 클래스를 하나씩 읽어와서 @Component 애너테이션이 붙어있는지 확인
             for (ClassPath.ClassInfo classInfo : set) {
