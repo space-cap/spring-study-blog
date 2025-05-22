@@ -18,6 +18,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 public class YoilController {
 	@RequestMapping(value = "/yoil", method = RequestMethod.GET)
 	public String home(Locale locale, Model model) {
+		System.out.println("home() called");
+		
 		Calendar cal = (Calendar) model.getAttribute("inputTime");
 
 		String appVer = (String) model.getAttribute("appVer");
@@ -47,6 +49,8 @@ public class YoilController {
 
 	@ModelAttribute("inputTime")
 	public void getTime(MyYoil myDate, Model model) {
+		System.out.println("getTime() called");
+		
 		Calendar cal = Calendar.getInstance();
 		cal.set(myDate.getYear(), myDate.getMonth() - 1, myDate.getDay());
 		model.addAttribute("inputTime", cal);
