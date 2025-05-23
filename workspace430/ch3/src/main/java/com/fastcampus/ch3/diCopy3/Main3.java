@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
@@ -70,6 +71,7 @@ class AppContext {
 	}
 }
 
+@ComponentScan(basePackages = "com.fastcampus.ch3.diCopy3")
 public class Main3 {
 	public static void main(String[] args) {
 		System.out.println("Hello, Main3!");
