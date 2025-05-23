@@ -11,15 +11,15 @@ import org.springframework.util.StringUtils;
 import com.google.common.reflect.ClassPath;
 
 @Component
-class Car {
+class Car3 {
 }
 
 @Component
-class SportsCar extends Car {
+class SportsCar extends Car3 {
 }
 
 @Component
-class Truck extends Car {
+class Truck extends Car3 {
 }
 
 
@@ -71,15 +71,15 @@ class AppContext {
 	}
 }
 
-@ComponentScan(basePackages = "com.fastcampus.ch3.diCopy3")
+
 public class Main3 {
 	public static void main(String[] args) {
 		System.out.println("Hello, Main3!");
 		
 		AppContext ac = new AppContext();
 		
-		Car car = (Car) ac.getBean("car"); // by Name으로 객체를 검색
-        Car car2 = (Car) ac.getBean(Car.class); // by Type으로 객체를 검색
+		Car3 car = (Car3) ac.getBean("car"); // by Name으로 객체를 검색
+        Car3 car2 = (Car3) ac.getBean(Car3.class); // by Type으로 객체를 검색
 
         Engine engine = (Engine) ac.getBean("engine");
         Engine engine2 = (Engine) ac.getBean(Engine.class);

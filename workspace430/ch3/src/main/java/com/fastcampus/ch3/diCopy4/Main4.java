@@ -13,15 +13,15 @@ import com.google.common.reflect.ClassPath;
 
 
 @Component
-class Car {
+class Car4 {
 }
 
 @Component
-class SportsCar extends Car {
+class SportsCar extends Car4 {
 }
 
 @Component
-class Truck extends Car {
+class Truck extends Car4 {
 }
 
 @Component
@@ -76,15 +76,15 @@ class AppContext {
 }
 
 
-@ComponentScan(basePackages = "com.fastcampus.ch3.diCopy4")
+
 public class Main4 {
 	public static void main(String[] args) {
 		System.out.println("Hello, Main4!");
 		
 		AppContext ac = new AppContext();
 		
-		Car car = (Car) ac.getBean("car"); // by Name으로 객체를 검색
-        Car car2 = (Car) ac.getBean(Car.class); // by Type으로 객체를 검색
+		Car4 car = (Car4) ac.getBean("car"); // by Name으로 객체를 검색
+        Car4 car2 = (Car4) ac.getBean(Car4.class); // by Type으로 객체를 검색
 
         Engine engine = (Engine) ac.getBean("engine");
         Engine engine2 = (Engine) ac.getBean(Engine.class);
