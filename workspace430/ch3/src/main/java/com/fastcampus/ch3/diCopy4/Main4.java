@@ -12,19 +12,19 @@ import com.fastcampus.ch3.diCopy4.AppContext;
 import com.google.common.reflect.ClassPath;
 
 
-@Component
-class Car4 {
+@Component("car4")
+class Car {
 }
 
-@Component
-class SportsCar extends Car4 {
+@Component("sportsCar4")
+class SportsCar extends Car {
 }
 
-@Component
-class Truck extends Car4 {
+@Component("truck4")
+class Truck extends Car {
 }
 
-@Component
+@Component("engine4")
 class Engine {
 }
 
@@ -83,8 +83,8 @@ public class Main4 {
 		
 		AppContext ac = new AppContext();
 		
-		Car4 car = (Car4) ac.getBean("car"); // by Name으로 객체를 검색
-        Car4 car2 = (Car4) ac.getBean(Car4.class); // by Type으로 객체를 검색
+		Car car = (Car) ac.getBean("car"); // by Name으로 객체를 검색
+        Car car2 = (Car) ac.getBean(Car.class); // by Type으로 객체를 검색
 
         Engine engine = (Engine) ac.getBean("engine");
         Engine engine2 = (Engine) ac.getBean(Engine.class);
