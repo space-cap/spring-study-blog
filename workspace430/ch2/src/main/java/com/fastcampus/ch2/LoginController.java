@@ -37,15 +37,26 @@ public class LoginController {
 		model.addAttribute("id", id);
 		model.addAttribute("password", password);
 		
+		if(rememberId != null) {
+			// 쿠키를 생성
+			Cookie cookie = new Cookie("id", id);
+			cookie.setPath("/"); // 쿠키가 모든 경로에서 유효
+			cookie.setMaxAge(30 * 60); // 30분
+			response.addCookie(cookie);
+			
+			//checked
+			cookie = new Cookie("isChecked", "checked");
+			cookie.setPath("/"); // 쿠키가 모든 경로에서 유효
+			cookie.setMaxAge(30 * 60); // 30분
+			response.addCookie(cookie);
+		} else {
+			Cookie cookie = new Cookie("id", id);
+			cookie.setPath("/"); // 쿠키가 모든 경로에서 유효
+			cookie.setMaxAge(0); // 쿠키 삭제
+			response.addCookie(cookie);
+		}
 		
-		
-		Cookie cookie = new Cookie("name", "king");
-		cookie.setPath("/"); // 쿠키가 모든 경로에서 유효
-		cookie.setMaxAge(30 * 60); // 30분
-		//response.addCookie(cookie);
-
-		
-		
+		// 로그인 처리		
 		if (id.equals("steve") && password.equals("1234")) {
 			return "forward:/userInfo.jsp";
 		} else {
