@@ -78,7 +78,7 @@ COMMENT ON COLUMN 	student.phone2 			IS '연락처2';
 COMMENT ON COLUMN 	student.email 			IS '이메일';
 COMMENT ON COLUMN 	student.address 		IS '주소';
 COMMENT ON COLUMN 	student.photo 			IS '사진 2KB, BLOB 추천';
-COMMENT ON COLUMN 	student.status_code 	IS '재학상태코드';
+COMMENT ON COLUMN 	student.status_code 	IS '상태코드';
 
 
 CREATE TABLE student_status (
@@ -86,9 +86,9 @@ CREATE TABLE student_status (
     status_name   NVARCHAR2(20) 	NOT NULL   
 );
 
-COMMENT ON TABLE  	student_status 				IS '재학상태코드';
-COMMENT ON COLUMN 	student_status.status_code 	IS '재학상태코드';
-COMMENT ON COLUMN 	student_status.status_name 	IS '상태내용';
+COMMENT ON TABLE  	student_status 				IS '학생 상태코드';
+COMMENT ON COLUMN 	student_status.status_code 	IS '상태코드';
+COMMENT ON COLUMN 	student_status.status_name 	IS '상태이름';
 
 INSERT INTO student_status (status_code, status_name) VALUES (0, '재학');
 INSERT INTO student_status (status_code, status_name) VALUES (1, '휴학');
@@ -119,16 +119,16 @@ COMMENT ON COLUMN professor.phone_number 	IS '연락처';
 COMMENT ON COLUMN professor.email 			IS '이메일 주소';
 COMMENT ON COLUMN professor.address 		IS '주소';
 COMMENT ON COLUMN professor.photo			IS '사진';
-COMMENT ON COLUMN professor.status_code 	IS 'professor_status 재직 상태 코드';
+COMMENT ON COLUMN professor.status_code 	IS 'professor_status 상태 코드';
 
 CREATE TABLE professor_status (
     status_code  	NUMBER(5)       PRIMARY KEY,
     status_name     NVARCHAR2(20)    NOT NULL
 );
 
-COMMENT ON TABLE  professor_status IS '교수 재직 상태';
-COMMENT ON COLUMN professor_status.status_code IS '재직 상태 코드';
-COMMENT ON COLUMN professor_status.status_name IS '상태 내용';
+COMMENT ON TABLE  professor_status IS '교수 상태';
+COMMENT ON COLUMN professor_status.status_code IS '상태 코드';
+COMMENT ON COLUMN professor_status.status_name IS '상태 이름';
 
 -- 샘플 데이터 삽입
 INSERT INTO professor_status (status_code, status_name) VALUES (0, '재직');
