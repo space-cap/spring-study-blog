@@ -27,23 +27,14 @@ public class LoginController {
 		String id = request.getParameter("id");
 		String password = request.getParameter("password");
 		
-		if (id == null || id.equals("")) {
-			model.addAttribute("errorMessage", "아이디를 입력하세요.");
-			return "login";
-		}
+		System.out.println("id : " + id);
+		System.out.println("password : " + password);
 		
 		model.addAttribute("id", id);
 		model.addAttribute("password", password);
 		
-		String tid = "lee";
-		String tpassword = "1234";
-		
-		if (id.equals(tid) && password.equals(tpassword)) {
-			return "userinfo";
-		} else {
-			model.addAttribute("errorMessage", "아이디 또는 비밀번호가 틀립니다.");
-			return "redirect:/login";
-		}
+		//return "forward:/userInfo.jsp";
+		return "redirect:/userInfo.jsp";
 
 	}
 	

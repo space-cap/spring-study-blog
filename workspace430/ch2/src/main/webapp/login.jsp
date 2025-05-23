@@ -9,7 +9,7 @@
 <h1>
 	Login JSP
 </h1>
-<form action="./userInfo.jsp" method="post">
+<form action="./login" method="post">
     <label for="username">ID:</label>
     <input type="text" id="id" name="id" required>
     <br>
