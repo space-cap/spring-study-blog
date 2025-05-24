@@ -217,7 +217,6 @@ request.setAttribute("isChecked", isChecked != null ? "checked" : "");
 				<h1> errorMessage: ${errorMessage} </h1>
 				<h1> cookie id: ${id} </h1>
 				<div style="border: 1px solid #ccc; padding: 10px; margin: 10px 0; background-color: #f9f9f9;">
-	                <h3>쿠키 디버그 정보:</h3>
 	                ${cookieDebugInfo}
 	            </div>
 				<div style="border: 1px solid #ff9999; padding: 10px; margin: 10px 0; background-color: #ffe6e6;">
