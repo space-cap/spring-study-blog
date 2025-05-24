@@ -2,6 +2,7 @@
 <%@ page session="false" %>
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ page import="java.util.Map, java.util.HashMap" %>
+<%@ page import="javax.servlet.http.Cookie" %>
 
 <%
 String errorMessage = (String) request.getAttribute("errorMessage");
@@ -11,6 +12,7 @@ Map<String, String> map = new HashMap<>();
 Cookie[] cookies = request.getCookies();
 if (cookies != null) {
     for (Cookie cookie : cookies) {
+		out.println(cookie.getName() + " : " + cookie.getValue() + "<br>");
         String key = cookie.getName();
 		String value = cookie.getValue();
 		map.put(key, value);
@@ -23,27 +25,172 @@ isChecked = map.get("isChecked");
 
 %>
 
-<html>
+<!DOCTYPE html>
+<html lang="ko">
 <head>
-	<title>Login JSP</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login JSP</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f5f5f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .login-container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            padding: 40px;
+            width: 100%;
+            max-width: 400px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 14px;
+            color: #888;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s ease;
+            outline: none;
+        }
+
+        .form-input:focus {
+            border-color: #00c851;
+        }
+
+        .form-input.username {
+            background-color: #f8f9fa;
+        }
+
+        .password-input {
+            font-family: 'Courier New', monospace;
+            letter-spacing: 2px;
+        }
+
+        .remember-section {
+            display: flex;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .remember-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .checkbox {
+            width: 18px;
+            height: 18px;
+            accent-color: #00c851;
+        }
+
+        .remember-label {
+            font-size: 14px;
+            color: #666;
+        }
+
+        .login-button {
+            width: 100%;
+            padding: 15px;
+            background-color: #00c851;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .login-button:hover {
+            background-color: #00a844;
+        }
+
+        .login-button:active {
+            transform: translateY(1px);
+        }
+
+        @media (max-width: 480px) {
+            .login-container {
+                padding: 30px 20px;
+            }
+        }
+    </style>
 </head>
 <body>
-<h1>
-	Login JSP
-</h1>
-<form action="./login" method="post">
-    <label for="username">ID:</label>
-    <input type="text" id="id" name="id" value="${id}" required>
-    <br>
-    <label for="password">Password:</label>
-    <input type="password" id="password" name="password" required>
-    <br>
-	<input type="checkbox" id="rememberId" name="rememberId" ${isChecked}>
-	<label for="rememberId">아이디 저장</label>
-	<br>
-    <input type="submit">
-</form>
-<h1> errorMessage: ${errorMessage} </h1>
-<h1> cookie id: ${id} </h1>
+	
+    <div class="login-container">
+		<div>
+		        <h1>Login JSP</h1>
+			</div>
+        <form action="/ch2/login" method="post">
+            <div class="form-group">
+                <label for="username" class="form-label">아이디</label>
+                <input type="text" id="id" name="kid" class="form-input username" value="${id}" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="password" class="form-label">비밀번호</label>
+                <input type="password" id="password" name="kpassword" value="" class="form-input password-input" placeholder="••••••••••" required>
+            </div>
+            
+            <div class="remember-section">
+                <div class="remember-group">
+                    <input type="checkbox" id="remember" name="rememberId" class="checkbox" ${isChecked}>
+                    <label for="remember" class="remember-label">아이디 저장</label>
+                </div>
+            </div>
+            
+            <button type="submit" class="login-button">로그인</button>
+        </form>
+		<div>
+				<h1> errorMessage: ${errorMessage} </h1>
+				<h1> cookie id: ${id} </h1>
+			</div>
+    </div>
+	
+    <script>
+        // 폼 제출 이벤트
+        document.querySelector('form').addEventListener('submit', function(e) {
+            const id = document.getElementById('id').value;
+            const password = document.getElementById('password').value;
+            
+            if (!id || !password) {
+                e.preventDefault();
+                alert('아이디와 비밀번호를 모두 입력해주세요.');
+                return;
+            }
+            
+            // 입력값이 모두 있으면 폼을 정상적으로 제출 (loginProcess.jsp로 이동)
+        });
+    </script>
 </body>
 </html>
+
+

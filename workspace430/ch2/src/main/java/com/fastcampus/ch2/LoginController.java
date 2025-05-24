@@ -26,16 +26,15 @@ public class LoginController {
 	@RequestMapping(value = "/login", method = RequestMethod.POST)
 	public String login(HttpServletRequest request, HttpServletResponse response, Model model) {
 		
-		String id = request.getParameter("id");
-		String password = request.getParameter("password");
+		String id = request.getParameter("kid");
+		String password = request.getParameter("kpassword");
 		String rememberId = request.getParameter("rememberId");
 		
 		System.out.println("id : " + id);
 		System.out.println("password : " + password);
 		System.out.println("rememberId : " + rememberId);
 		
-		model.addAttribute("id", id);
-		model.addAttribute("password", password);
+		
 		
 		if(rememberId != null) {
 			// 쿠키를 생성
@@ -50,19 +49,24 @@ public class LoginController {
 			cookie.setMaxAge(30 * 60); // 30분
 			response.addCookie(cookie);
 		} else {
-			Cookie cookie = new Cookie("id", id);
+			System.out.println("rememberId : null 이다.");
+			
+			Cookie cookie = new Cookie("id", "");
 			cookie.setPath("/"); // 쿠키가 모든 경로에서 유효
 			cookie.setMaxAge(0); // 쿠키 삭제
 			response.addCookie(cookie);
 			
-			cookie = new Cookie("isChecked", "checked");
-			cookie.setPath("/"); // 쿠키가 모든 경로에서 유효
-			cookie.setMaxAge(0); // 30분
+			cookie = new Cookie("isChecked", "");
+			cookie.setPath("/");
+			cookie.setMaxAge(0);
 			response.addCookie(cookie);
 		}
 		
 		// 로그인 처리		
 		if (id.equals("steve") && password.equals("1234")) {
+			model.addAttribute("id", id);
+			model.addAttribute("password", password);
+			
 			return "forward:/userInfo.jsp";
 		} else {
 			model.addAttribute("errorMessage", "로그인 실패");
