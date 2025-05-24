@@ -44,10 +44,10 @@ public class LoginController {
 			response.addCookie(cookie);
 			
 			//checked
-			cookie = new Cookie("isChecked", "checked");
-			cookie.setPath("/"); // 쿠키가 모든 경로에서 유효
-			cookie.setMaxAge(30 * 60); // 30분
-			response.addCookie(cookie);
+			Cookie cookie2 = new Cookie("isChecked", "checked");
+			cookie2.setPath("/"); // 쿠키가 모든 경로에서 유효
+			cookie2.setMaxAge(30 * 60); // 30분
+			response.addCookie(cookie2);
 		} else {
 			System.out.println("rememberId : null 이다.");
 			
@@ -56,21 +56,21 @@ public class LoginController {
 			cookie.setMaxAge(0); // 쿠키 삭제
 			response.addCookie(cookie);
 			
-			cookie = new Cookie("isChecked", "");
-			cookie.setPath("/");
-			cookie.setMaxAge(0);
-			response.addCookie(cookie);
+			Cookie cookie2 = new Cookie("isChecked", "");
+			cookie2.setPath("/");
+			cookie2.setMaxAge(0);
+			response.addCookie(cookie2);
 		}
+		
+		model.addAttribute("id", id);
+		model.addAttribute("password", password);
 		
 		// 로그인 처리		
 		if (id.equals("steve") && password.equals("1234")) {
-			model.addAttribute("id", id);
-			model.addAttribute("password", password);
-			
 			return "forward:/userInfo.jsp";
 		} else {
 			model.addAttribute("errorMessage", "로그인 실패");
-			return "forward:/login.jsp";
+			return "redirect:/login.jsp";
 		}
 		
 		//return "redirect:/userInfo.jsp?key=val";

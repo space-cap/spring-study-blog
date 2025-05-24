@@ -1,5 +1,4 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<%@ page session="false" %>
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ page import="java.util.Map, java.util.HashMap" %>
 <%@ page import="javax.servlet.http.Cookie" %>
@@ -7,22 +6,28 @@
 <%
 String errorMessage = (String) request.getAttribute("errorMessage");
 String id = null;
+String isChecked = null;
 Map<String, String> map = new HashMap<>();
+StringBuilder cookieDebugInfo = new StringBuilder();
 
 Cookie[] cookies = request.getCookies();
 if (cookies != null) {
     for (Cookie cookie : cookies) {
-		out.println(cookie.getName() + " : " + cookie.getValue() + "<br>");
+        // out.println() 대신 StringBuilder로 디버그 정보 저장
+        cookieDebugInfo.append(cookie.getName()).append(" : ").append(cookie.getValue()).append("<br>");
         String key = cookie.getName();
-		String value = cookie.getValue();
-		map.put(key, value);
+        String value = cookie.getValue();
+        map.put(key, value);
     }
 }
 
-String isChecked = null;
 id = map.get("id");
 isChecked = map.get("isChecked");
 
+// EL 표현식에서 사용할 수 있도록 request attribute로 설정
+request.setAttribute("id", id);
+request.setAttribute("isChecked", isChecked != null ? "checked" : "");
+request.setAttribute("cookieDebugInfo", cookieDebugInfo.toString());
 %>
 
 <!DOCTYPE html>
@@ -172,6 +177,10 @@ isChecked = map.get("isChecked");
 		<div>
 				<h1> errorMessage: ${errorMessage} </h1>
 				<h1> cookie id: ${id} </h1>
+				<div style="border: 1px solid #ccc; padding: 10px; margin: 10px 0; background-color: #f9f9f9;">
+	                <h3>쿠키 디버그 정보:</h3>
+	                ${cookieDebugInfo}
+	            </div>
 			</div>
     </div>
 	
