@@ -12,8 +12,16 @@ String errorMessage = request.getParameter("errorMessage");
 if (errorMessage == null) {
 	System.out.println("errorMessage is null");
     errorMessage = (String) request.getAttribute("errorMessage");
+	System.out.println("errorMessage from request attribute: " + errorMessage);
 } else {
     System.out.println("errorMessage is not null: " + errorMessage);
+	try {
+        errorMessage = URLDecoder.decode(errorMessage, "UTF-8");
+    } catch (Exception e) {
+        // 디코딩 실패시 원본 값 유지
+        System.out.println("URL 디코딩 실패: " + e.getMessage());
+    }
+	System.out.println("errorMessage: " + errorMessage);
 	request.setAttribute("errorMessage", errorMessage);
 }
 

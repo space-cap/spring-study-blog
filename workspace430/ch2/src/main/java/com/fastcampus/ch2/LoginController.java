@@ -77,7 +77,11 @@ public class LoginController {
 			//return "redirect:/login.jsp";
 			try {
 	            String encodedMessage = URLEncoder.encode("로그인에 실패했습니다", "UTF-8");
-	            return "redirect:/login.jsp?errorMessage=" + encodedMessage + "&id=" + id;
+	            //return "redirect:/login.jsp?errorMessage=" + encodedMessage + "&id=" + id;
+	            //redirectAttributes.addFlashAttribute("errorMessage", encodedMessage);
+	            //return "redirect:/login.jsp";
+	            redirectAttributes.addAttribute("errorMessage", "로그인에 실패했습니다");
+	            return "redirect:/login.jsp";
 	        } catch (UnsupportedEncodingException e) {
 	            return "redirect:/login.jsp?errorMessage=Login Failed&id=" + id;
 	        }
