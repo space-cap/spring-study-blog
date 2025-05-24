@@ -1,5 +1,7 @@
 package com.fastcampus.ch2;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.text.DateFormat;
 import java.util.Date;
 import java.util.Locale;
@@ -71,8 +73,14 @@ public class LoginController {
 		if (id.equals("steve") && password.equals("1234")) {
 			return "forward:/userInfo.jsp";
 		} else {
-			redirectAttributes.addAttribute("errorMessage", "로그인 실패");
-			return "redirect:/login.jsp";
+			//redirectAttributes.addAttribute("errorMessage", "로그인 실패");
+			//return "redirect:/login.jsp";
+			try {
+	            String encodedMessage = URLEncoder.encode("로그인에 실패했습니다", "UTF-8");
+	            return "redirect:/login.jsp?errorMessage=" + encodedMessage + "&id=" + id;
+	        } catch (UnsupportedEncodingException e) {
+	            return "redirect:/login.jsp?errorMessage=Login Failed&id=" + id;
+	        }
 		}
 		
 		//return "redirect:/userInfo.jsp?key=val";

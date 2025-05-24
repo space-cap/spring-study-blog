@@ -6,9 +6,15 @@
 
 
 <%
-String errorMessage = (String) request.getAttribute("errorMessage");
+// URL 파라미터로 전달된 errorMessage 받기
+String errorMessage = request.getParameter("errorMessage");
+// request attribute로 전달된 errorMessage도 확인 (포워드된 경우)
 if (errorMessage == null) {
-    errorMessage = "null";
+	System.out.println("errorMessage is null");
+    errorMessage = (String) request.getAttribute("errorMessage");
+} else {
+    System.out.println("errorMessage is not null: " + errorMessage);
+	request.setAttribute("errorMessage", errorMessage);
 }
 
 String id = null;
