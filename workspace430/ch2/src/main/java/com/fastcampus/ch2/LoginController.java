@@ -70,20 +70,20 @@ public class LoginController {
 		model.addAttribute("password", password);
 		
 		// 로그인 처리		
-		if (id.equals("steve") && password.equals("1234")) {
+		if (checkLogin(id, password)) {
 			return "forward:/userInfo.jsp";
 		} else {
 			//redirectAttributes.addAttribute("errorMessage", "로그인 실패");
 			//return "redirect:/login.jsp";
 			try {
 	            String encodedMessage = URLEncoder.encode("로그인에 실패했습니다", "UTF-8");
-	            //return "redirect:/login.jsp?errorMessage=" + encodedMessage + "&id=" + id;
+	            return "redirect:/login.jsp?errorMessage=" + encodedMessage;
 	            //redirectAttributes.addFlashAttribute("errorMessage", encodedMessage);
 	            //return "redirect:/login.jsp";
 	            
 	            //redirectAttributes.addAttribute("errorMessage", encodedMessage);
-	            redirectAttributes.addFlashAttribute("errorMessage", "로그인에 실패했습니다");
-	            return "redirect:/login.jsp";
+	            //redirectAttributes.addFlashAttribute("errorMessage", "로그인에 실패했습니다");
+	            //return "redirect:/login.jsp";
 	        } catch (UnsupportedEncodingException e) {
 	            return "redirect:/login.jsp?errorMessage=Login Failed&id=" + id;
 	        }
@@ -92,4 +92,7 @@ public class LoginController {
 		//return "redirect:/userInfo.jsp?key=val";
 	}
 	
+	private boolean checkLogin(String id, String pw) {
+		return id.equals("steve") && pw.equals("1234");
+	}
 }

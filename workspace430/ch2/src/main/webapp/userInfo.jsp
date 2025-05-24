@@ -22,5 +22,6 @@
 	<h1>
     	Password: ${password}
 	</h1>
+	<h1><a href="login.jsp">로그인 페이지로 이동</a></h1>
 </body>
 </html>

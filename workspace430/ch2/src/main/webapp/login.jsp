@@ -22,7 +22,24 @@ while (attrNames.hasMoreElements()) {
     debugInfo.append(attrName).append(" = ").append(request.getAttribute(attrName)).append("<br>");
 }
 
-
+// URL 파라미터로 전달된 errorMessage 받기
+String errorMessage = request.getParameter("errorMessage");
+// request attribute로 전달된 errorMessage도 확인 (포워드된 경우)
+if (errorMessage == null) {
+	System.out.println("errorMessage is null");
+    errorMessage = (String) request.getAttribute("errorMessage");
+	System.out.println("errorMessage from request attribute: " + errorMessage);
+} else {
+    System.out.println("errorMessage is not null: " + errorMessage);
+	//try {
+    //    errorMessage = URLDecoder.decode(errorMessage, "UTF-8");
+    //} catch (Exception e) {
+    //    // 디코딩 실패시 원본 값 유지
+    //    System.out.println("URL 디코딩 실패: " + e.getMessage());
+    //}
+	//System.out.println("errorMessage: " + errorMessage);
+	request.setAttribute("errorMessage", errorMessage);
+}
 
 
 
@@ -48,8 +65,8 @@ isChecked = map.get("isChecked");
 // EL 표현식에서 사용할 수 있도록 request attribute로 설정
 request.setAttribute("id", id);
 request.setAttribute("isChecked", isChecked != null ? "checked" : "");
-request.setAttribute("cookieDebugInfo", cookieDebugInfo.toString());
-request.setAttribute("debugInfo", debugInfo.toString());
+//request.setAttribute("cookieDebugInfo", cookieDebugInfo.toString());
+//request.setAttribute("debugInfo", debugInfo.toString());
 %>
 
 <!DOCTYPE html>
