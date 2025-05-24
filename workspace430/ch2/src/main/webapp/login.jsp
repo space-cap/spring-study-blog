@@ -6,20 +6,9 @@
 
 
 <%
-// URL 파라미터로 전달된 errorMessage 받기
-String errorMessage = request.getParameter("errorMessage");
-// request attribute로 전달된 errorMessage도 확인 (포워드된 경우)
+String errorMessage = (String) request.getAttribute("errorMessage");
 if (errorMessage == null) {
-	System.out.println("errorMessage is null, checking request attributes");
-    errorMessage = (String) request.getAttribute("errorMessage");
-} else {
-    try {
-        errorMessage = URLDecoder.decode(errorMessage, "UTF-8");
-		request.setAttribute("errorMessage", errorMessage);
-    } catch (Exception e) {
-        // 디코딩 실패시 원본 값 유지
-        System.out.println("URL 디코딩 실패: " + e.getMessage());
-    }
+    errorMessage = "null";
 }
 
 String id = null;
