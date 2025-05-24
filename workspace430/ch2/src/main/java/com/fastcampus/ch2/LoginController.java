@@ -27,12 +27,16 @@ public class LoginController {
 	}
 	
 	@RequestMapping(value = "/login", method = RequestMethod.POST)
-	public String login(HttpServletRequest request, HttpServletResponse response, Model model, 
+	public String login(LoginInfo loginInfo, HttpServletResponse response, Model model, 
 			RedirectAttributes redirectAttributes) {
 		
-		String id = request.getParameter("id");
-		String password = request.getParameter("password");
-		String rememberId = request.getParameter("rememberId");
+		//String id = request.getParameter("id");
+		//String password = request.getParameter("password");
+		//String rememberId = request.getParameter("rememberId");
+		
+		String id = loginInfo.getId();
+		String password = loginInfo.getPassword();
+		boolean rememberId = loginInfo.isRememberId();
 		
 		System.out.println("id : " + id);
 		System.out.println("password : " + password);
@@ -40,7 +44,7 @@ public class LoginController {
 		
 		
 		
-		if(rememberId != null) {
+		if(rememberId) {
 			// 쿠키를 생성
 			Cookie cookie = new Cookie("id", id);
 			cookie.setPath("/"); // 쿠키가 모든 경로에서 유효
