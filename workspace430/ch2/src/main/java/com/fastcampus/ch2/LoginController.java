@@ -54,6 +54,11 @@ public class LoginController {
 			cookie.setPath("/"); // 쿠키가 모든 경로에서 유효
 			cookie.setMaxAge(0); // 쿠키 삭제
 			response.addCookie(cookie);
+			
+			cookie = new Cookie("isChecked", "checked");
+			cookie.setPath("/"); // 쿠키가 모든 경로에서 유효
+			cookie.setMaxAge(0); // 30분
+			response.addCookie(cookie);
 		}
 		
 		// 로그인 처리		

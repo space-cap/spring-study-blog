@@ -94,3 +94,5 @@ replay_pid*
 /workspace430/.metadata
 /workspace430/Servers/.settings
 workspace430/ch2/.springBeans
+/workspace430/ch2/target
+/workspace430/ch3/target

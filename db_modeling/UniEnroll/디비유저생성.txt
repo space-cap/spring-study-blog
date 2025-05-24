@@ -1,0 +1,30 @@
+
+
+=======================================================================================
+
+C:\Users\steve>sqlplus
+
+SQL*Plus: Release 21.0.0.0.0 - Production on 토 5월 24 00:18:28 2025
+Version 21.3.0.0.0
+
+Copyright (c) 1982, 2021, Oracle.  All rights reserved.
+
+사용자명 입력: system
+비밀번호 입력:
+마지막 성공한 로그인 시간: 화 5월  13 2025 12:55:13 +09:00
+
+다음에 접속됨:
+Oracle Database 21c Express Edition Release 21.0.0.0.0 - Production
+Version 21.3.0.0.0
+
+SQL> create user c##enrol identified by enrol1234;
+
+사용자가 생성되었습니다.
+
+SQL> grant connect, resource, dba to c##enrol;
+
+권한이 부여되었습니다.
+
+SQL>
+
+=======================================================================================
