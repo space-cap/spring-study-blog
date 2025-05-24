@@ -30,8 +30,8 @@ public class LoginController {
 	public String login(HttpServletRequest request, HttpServletResponse response, Model model, 
 			RedirectAttributes redirectAttributes) {
 		
-		String id = request.getParameter("kid");
-		String password = request.getParameter("kpassword");
+		String id = request.getParameter("id");
+		String password = request.getParameter("password");
 		String rememberId = request.getParameter("rememberId");
 		
 		System.out.println("id : " + id);
@@ -80,7 +80,9 @@ public class LoginController {
 	            //return "redirect:/login.jsp?errorMessage=" + encodedMessage + "&id=" + id;
 	            //redirectAttributes.addFlashAttribute("errorMessage", encodedMessage);
 	            //return "redirect:/login.jsp";
-	            redirectAttributes.addAttribute("errorMessage", "로그인에 실패했습니다");
+	            
+	            //redirectAttributes.addAttribute("errorMessage", encodedMessage);
+	            redirectAttributes.addFlashAttribute("errorMessage", "로그인에 실패했습니다");
 	            return "redirect:/login.jsp";
 	        } catch (UnsupportedEncodingException e) {
 	            return "redirect:/login.jsp?errorMessage=Login Failed&id=" + id;

@@ -6,24 +6,25 @@
 
 
 <%
-// URL 파라미터로 전달된 errorMessage 받기
-String errorMessage = request.getParameter("errorMessage");
-// request attribute로 전달된 errorMessage도 확인 (포워드된 경우)
-if (errorMessage == null) {
-	System.out.println("errorMessage is null");
-    errorMessage = (String) request.getAttribute("errorMessage");
-	System.out.println("errorMessage from request attribute: " + errorMessage);
-} else {
-    System.out.println("errorMessage is not null: " + errorMessage);
-	try {
-        errorMessage = URLDecoder.decode(errorMessage, "UTF-8");
-    } catch (Exception e) {
-        // 디코딩 실패시 원본 값 유지
-        System.out.println("URL 디코딩 실패: " + e.getMessage());
-    }
-	System.out.println("errorMessage: " + errorMessage);
-	request.setAttribute("errorMessage", errorMessage);
+// 디버그 정보 수집
+StringBuilder debugInfo = new StringBuilder();
+debugInfo.append("=== 디버그 정보 ===<br>");
+debugInfo.append("URL Parameter errorMessage: ").append(request.getParameter("errorMessage")).append("<br>");
+debugInfo.append("Request Attribute errorMessage: ").append(request.getAttribute("errorMessage")).append("<br>");
+debugInfo.append("Session ID: ").append(request.getSession(false) != null ? request.getSession(false).getId() : "세션 없음").append("<br>");
+debugInfo.append("Session 활성화: ").append(request.getSession(false) != null ? "true" : "false").append("<br>");
+
+// 모든 request attributes 확인
+debugInfo.append("=== 모든 Request Attributes ===<br>");
+java.util.Enumeration<String> attrNames = request.getAttributeNames();
+while (attrNames.hasMoreElements()) {
+    String attrName = attrNames.nextElement();
+    debugInfo.append(attrName).append(" = ").append(request.getAttribute(attrName)).append("<br>");
 }
+
+
+
+
 
 String id = null;
 String isChecked = null;
@@ -48,6 +49,7 @@ isChecked = map.get("isChecked");
 request.setAttribute("id", id);
 request.setAttribute("isChecked", isChecked != null ? "checked" : "");
 request.setAttribute("cookieDebugInfo", cookieDebugInfo.toString());
+request.setAttribute("debugInfo", debugInfo.toString());
 %>
 
 <!DOCTYPE html>
@@ -177,12 +179,12 @@ request.setAttribute("cookieDebugInfo", cookieDebugInfo.toString());
         <form action="/ch2/login" method="post">
             <div class="form-group">
                 <label for="username" class="form-label">아이디</label>
-                <input type="text" id="id" name="kid" class="form-input username" value="${id}" required>
+                <input type="text" id="id" name="id" class="form-input username" value="${id}" required>
             </div>
             
             <div class="form-group">
                 <label for="password" class="form-label">비밀번호</label>
-                <input type="password" id="password" name="kpassword" value="" class="form-input password-input" placeholder="••••••••••" required>
+                <input type="password" id="password" name="password" value="" class="form-input password-input" placeholder="••••••••••" required>
             </div>
             
             <div class="remember-section">
@@ -200,6 +202,9 @@ request.setAttribute("cookieDebugInfo", cookieDebugInfo.toString());
 				<div style="border: 1px solid #ccc; padding: 10px; margin: 10px 0; background-color: #f9f9f9;">
 	                <h3>쿠키 디버그 정보:</h3>
 	                ${cookieDebugInfo}
+	            </div>
+				<div style="border: 1px solid #ff9999; padding: 10px; margin: 10px 0; background-color: #ffe6e6;">
+	                ${debugInfo}
 	            </div>
 			</div>
     </div>
