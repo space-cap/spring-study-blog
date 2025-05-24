@@ -14,6 +14,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 public class LoginController {
@@ -24,7 +25,8 @@ public class LoginController {
 	}
 	
 	@RequestMapping(value = "/login", method = RequestMethod.POST)
-	public String login(HttpServletRequest request, HttpServletResponse response, Model model) {
+	public String login(HttpServletRequest request, HttpServletResponse response, Model model, 
+			RedirectAttributes redirectAttributes) {
 		
 		String id = request.getParameter("kid");
 		String password = request.getParameter("kpassword");
@@ -69,7 +71,7 @@ public class LoginController {
 		if (id.equals("steve") && password.equals("1234")) {
 			return "forward:/userInfo.jsp";
 		} else {
-			model.addAttribute("errorMessage", "로그인 실패");
+			redirectAttributes.addAttribute("errorMessage", "로그인 실패");
 			return "redirect:/login.jsp";
 		}
 		
