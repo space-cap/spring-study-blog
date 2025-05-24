@@ -4,7 +4,11 @@
 <%@ page import="javax.servlet.http.Cookie" %>
 
 <%
-String errorMessage = (String) request.getAttribute("errorMessage");
+String errorMessage = request.getParameter("errorMessage");
+if (errorMessage == null) {
+    errorMessage = (String) request.getAttribute("errorMessage");
+}
+
 String id = null;
 String isChecked = null;
 Map<String, String> map = new HashMap<>();
