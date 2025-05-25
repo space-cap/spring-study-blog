@@ -11,17 +11,17 @@ import org.springframework.validation.support.BindingAwareModelMap;
 
 public class MethodCall4 {
 	public static void main(String[] args) throws Exception{
-		Map map = new HashMap();
+		Map<String, String> map = new HashMap();
 		map.put("year", "2021");
 		map.put("month", "10");
 		map.put("day", "1");
 
 		Model model = null;
-		MyYoil myYoil = null;
-		Class clazz = Class.forName("com.fastcampus.ch2.YoilTellerMVC");
-		Object obj  = clazz.newInstance();
 		
-		Method main = clazz.getDeclaredMethod("main", MyYoil.class, Model.class);
+		Class clazz = Class.forName("com.fastcampus.ch2.YoilTellerMVC");
+		Object obj = clazz.getDeclaredConstructor().newInstance();
+		
+		Method main = clazz.getDeclaredMethod("main2", MyYoil.class, Model.class);
 				
 		Parameter[] paramArr = main.getParameters();
 		Object[] argArr = new Object[main.getParameterCount()];
@@ -31,8 +31,23 @@ public class MethodCall4 {
 			Class  paramType = paramArr[i].getType();
 			Object value = map.get(paramName);
 			
-			// paramType중에 Model이 있으면, 생성 & 저장 
-			if(paramType==Model.class) {
+			// paramType중에 Model이 있으면, 생성 & 저장
+			if(paramType == MyYoil.class) {
+				Class<?> myYoilClass = MyYoil.class;
+			    MyYoil myYoil = (MyYoil) myYoilClass.getDeclaredConstructor().newInstance();
+			    
+			    for(String key : map.keySet()) {
+			        String methodName = "set" + Character.toUpperCase(key.charAt(0)) + key.substring(1);
+			        System.out.println("methodName="+methodName);
+			        try {
+			            Method setter = myYoilClass.getMethod(methodName, String.class);
+			            setter.invoke(myYoil, map.get(key));
+			        } catch (NoSuchMethodException e) {
+			            System.out.println("Setter method not found for: " + key);
+			        }
+			    }
+			 
+			} else if(paramType==Model.class) {
 				argArr[i] = model = new BindingAwareModelMap(); 
 			} else if(value != null) {  // map에 paramName이 있으면,
 				// value와 parameter의 타입을 비교해서, 다르면 변환해서 저장  

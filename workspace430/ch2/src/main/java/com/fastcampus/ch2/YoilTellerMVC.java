@@ -29,6 +29,11 @@ public class YoilTellerMVC {
         return "yoil"; // /WEB-INF/views/yoil.jsp
     }
     
+    @RequestMapping("/getYoilMVC2")
+    public String main2(MyYoil yoil, Model model) {
+        return "yoil"; // /WEB-INF/views/yoil.jsp
+    }
+    
     private char getYoil(int year, int month, int day) {
         Calendar cal = Calendar.getInstance();
         cal.set(year, month - 1, day);
