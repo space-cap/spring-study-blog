@@ -25,7 +25,7 @@ public class GlobalCatcher {
 	
 	@ExceptionHandler(FileNotFoundException.class)
     public ModelAndView handleFileNotFoundException(FileNotFoundException ex) {
-        ModelAndView mav = new ModelAndView("error");
+        ModelAndView mav = new ModelAndView("error2");
         mav.addObject("message", ex.getMessage());
         return mav;
     }
