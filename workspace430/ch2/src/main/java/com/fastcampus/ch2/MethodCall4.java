@@ -1,10 +1,14 @@
 package com.fastcampus.ch2;
 
+import java.io.File;
+import java.io.IOException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
+import java.util.Scanner;
 
 import org.springframework.ui.Model;
 import org.springframework.validation.support.BindingAwareModelMap;
@@ -36,16 +40,23 @@ public class MethodCall4 {
 				Class<?> myYoilClass = MyYoil.class;
 			    MyYoil myYoil = (MyYoil) myYoilClass.getDeclaredConstructor().newInstance();
 			    
-			    for(String key : map.keySet()) {
-			        String methodName = "set" + Character.toUpperCase(key.charAt(0)) + key.substring(1);
-			        System.out.println("methodName="+methodName);
+			    // 각 필드에 대해 setter 메서드 호출
+			    for(var entry : map.entrySet()) {
+			        String kname = entry.getKey();
+			        String kvalue = entry.getValue();
+			        
+			        // setter 메서드 이름 생성 (예: year -> setYear)
+			        String setterName = "set" + kname.substring(0, 1).toUpperCase() + kname.substring(1);
+			        
 			        try {
-			            Method setter = myYoilClass.getMethod(methodName, String.class);
-			            setter.invoke(myYoil, map.get(key));
+			            Method setter = myYoilClass.getMethod(setterName, int.class);
+			            setter.invoke(myYoil, Integer.parseInt(kvalue));
 			        } catch (NoSuchMethodException e) {
-			            System.out.println("Setter method not found for: " + key);
+			            System.out.println("Setter not found: " + setterName);
 			        }
 			    }
+			    
+			    argArr[i] = myYoil; // MyYoil 객체를 argArr에 저장
 			 
 			} else if(paramType==Model.class) {
 				argArr[i] = model = new BindingAwareModelMap(); 
@@ -58,6 +69,15 @@ public class MethodCall4 {
 		System.out.println("paramArr="+Arrays.toString(paramArr));
 		System.out.println("argArr="+Arrays.toString(argArr));
 		
+		// Controller의 main()을 호출 - YoilTellerMVC.main(int year, int month, int day, Model model)
+		String viewName = (String)main.invoke(obj, argArr); 	
+		System.out.println("viewName="+viewName);	
+		
+		// Model의 내용을 출력 
+		System.out.println("[after] model="+model);
+		
+		// 텍스트 파일을 이용한 rendering
+		render(model, viewName);
 	} // main
 	
 	private static Object convertTo(Object value, Class type) {
@@ -72,6 +92,33 @@ public class MethodCall4 {
 		}
 			
 		return value;
+	}
+	
+	
+	private static void render(Model model, String viewName) throws IOException {
+		String result = "";
+		
+		// 1. 뷰의 내용을 한줄씩 읽어서 하나의 문자열로 만든다.
+		Scanner sc = new Scanner(new File("src/main/webapp/WEB-INF/views/"+viewName+".jsp"), "utf-8");
+		
+		while(sc.hasNextLine())
+			result += sc.nextLine()+ System.lineSeparator();
+		
+		// 2. model을 map으로 변환 
+		Map map = model.asMap();
+		
+		// 3.key를 하나씩 읽어서 template의 ${key}를 value바꾼다.
+		Iterator it = map.keySet().iterator();
+		
+		while(it.hasNext()) {
+			String key = (String)it.next();
+
+			// 4. replace()로 key를 value 치환한다.
+			result = result.replace("${"+key+"}", ""+map.get(key));
+		}
+		
+		// 5.렌더링 결과를 출력한다.
+		System.out.println(result);
 	}
 	
 }
