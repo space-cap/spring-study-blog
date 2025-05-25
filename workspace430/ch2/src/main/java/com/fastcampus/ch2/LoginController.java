@@ -43,31 +43,12 @@ public class LoginController {
 		System.out.println("rememberId : " + rememberId);
 		
 		
-		
 		if(rememberId) {
-			// 쿠키를 생성
-			Cookie cookie = new Cookie("id", id);
-			cookie.setPath("/"); // 쿠키가 모든 경로에서 유효
-			cookie.setMaxAge(30 * 60); // 30분
-			response.addCookie(cookie);
-			
-			//checked
-			Cookie cookie2 = new Cookie("isChecked", "checked");
-			cookie2.setPath("/"); // 쿠키가 모든 경로에서 유효
-			cookie2.setMaxAge(30 * 60); // 30분
-			response.addCookie(cookie2);
+			setCookie(response, "id", id, 30 * 60); // 30분 동안 유효
+			setCookie(response, "isChecked", "checked", 30 * 60); // 30분 동안 유효
 		} else {
-			System.out.println("rememberId : null 이다.");
-			
-			Cookie cookie = new Cookie("id", "");
-			cookie.setPath("/"); // 쿠키가 모든 경로에서 유효
-			cookie.setMaxAge(0); // 쿠키 삭제
-			response.addCookie(cookie);
-			
-			Cookie cookie2 = new Cookie("isChecked", "");
-			cookie2.setPath("/");
-			cookie2.setMaxAge(0);
-			response.addCookie(cookie2);
+			setCookie(response, "id", id, 0);
+			setCookie(response, "isChecked", "checked", 0);
 		}
 		
 		model.addAttribute("id", id);
@@ -98,5 +79,12 @@ public class LoginController {
 	
 	private boolean checkLogin(String id, String pw) {
 		return id.equals("steve") && pw.equals("1234");
+	}
+	
+	private void setCookie(HttpServletResponse response, String name, String value, int maxAge) {
+		Cookie cookie = new Cookie(name, value);
+		cookie.setPath("/"); // 쿠키가 모든 경로에서 유효
+		cookie.setMaxAge(maxAge); // 쿠키의 유효 기간 설정
+		response.addCookie(cookie);
 	}
 }
