@@ -42,20 +42,19 @@ public class LoginController {
 		System.out.println("password : " + password);
 		System.out.println("rememberId : " + rememberId);
 		
-		
-		if(rememberId) {
-			setCookie(response, "id", id, 30 * 60); // 30분 동안 유효
-			setCookie(response, "isChecked", "checked", 30 * 60); // 30분 동안 유효
-		} else {
-			setCookie(response, "id", id, 0);
-			setCookie(response, "isChecked", "checked", 0);
-		}
-		
 		model.addAttribute("id", id);
 		model.addAttribute("password", password);
 		
 		// 로그인 처리		
 		if (checkLogin(id, password)) {
+			if(rememberId) {
+				setCookie(response, "id", id, 30 * 60); // 30분 동안 유효
+				setCookie(response, "isChecked", "checked", 30 * 60); // 30분 동안 유효
+			} else {
+				setCookie(response, "id", id, 0);
+				setCookie(response, "isChecked", "checked", 0);
+			}
+			
 			return "forward:/userInfo.jsp";
 		} else {
 			//redirectAttributes.addAttribute("errorMessage", "로그인 실패");
