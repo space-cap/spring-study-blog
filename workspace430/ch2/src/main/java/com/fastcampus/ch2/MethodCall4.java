@@ -112,7 +112,8 @@ public class MethodCall4 {
 		
 		while(it.hasNext()) {
 			String key = (String)it.next();
-
+			System.out.println("key="+key+", value="+map.get(key));
+			
 			// 4. replace()로 key를 value 치환한다.
 			result = result.replace("${"+key+"}", ""+map.get(key));
 		}

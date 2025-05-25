@@ -8,6 +8,8 @@
 <body>
 	<h1>${year}년 ${month}월 ${day}일은 ${yoil}요일입니다.</h1>
 	<br/>
+	<h1>${myYoil.year}년 ${myYoil.month}월 ${myYoil.day}일은 ${yoil}요일입니다.</h1>
+	<br/>
 	<h1>입력한 날짜는</h1>
 	<h1>${inputDate} ${yoil}</h1>
 	
