@@ -7,6 +7,15 @@ import java.util.Iterator;
 import java.util.Scanner;
 import java.util.Set;
 
+class ModelController {
+	public String main(HashMap map) {
+		map.put("id", "asdf");
+		map.put("pwd", "1111");
+		
+		return "txtView2";
+	}
+}
+
 public class MethodCall {
 	public static void main(String[] args) throws Exception{
 		HashMap map = new HashMap();
@@ -44,14 +53,6 @@ public class MethodCall {
 	}
 }
 
-class ModelController {
-	public String main(HashMap map) {
-		map.put("id", "asdf");
-		map.put("pwd", "1111");
-		
-		return "txtView2";
-	}
-}
 
 /*
 [txtView1.txt]
