@@ -275,7 +275,7 @@ INSERT ALL
 SELECT 1 FROM DUAL;
 
 
-CREATE TABLE courses (
+CREATE TABLE subjects (
     subject_id        NUMBER(10)     PRIMARY KEY,         -- 과목ID
     subject_name      VARCHAR2(40)   NOT NULL,            -- 과목명
     subject_type_code NUMBER(5)      NOT NULL,            -- 교과구분코드
@@ -284,20 +284,20 @@ CREATE TABLE courses (
     professor_id      NUMBER(5)      NOT NULL             -- 담당교수 교번
 );
 
-COMMENT ON TABLE  courses                      IS '과목 정보';
-COMMENT ON COLUMN courses.subject_id           IS '과목ID';
-COMMENT ON COLUMN courses.subject_name         IS '과목명';
-COMMENT ON COLUMN courses.subject_type_code    IS '교과구분코드';
-COMMENT ON COLUMN courses.credit               IS '학점';
-COMMENT ON COLUMN courses.room_id              IS '강의실 코드';
-COMMENT ON COLUMN courses.professor_id         IS '담당교수 교번';
+COMMENT ON TABLE  subjects                      IS '과목 정보';
+COMMENT ON COLUMN subjects.subject_id           IS '과목ID';
+COMMENT ON COLUMN subjects.subject_name         IS '과목명';
+COMMENT ON COLUMN subjects.subject_type_code    IS '교과구분코드';
+COMMENT ON COLUMN subjects.credit               IS '학점';
+COMMENT ON COLUMN subjects.room_id              IS '강의실 코드';
+COMMENT ON COLUMN subjects.professor_id         IS '담당교수 교번';
 
 -- 샘플 데이터 삽입
 INSERT ALL
-    INTO courses (subject_id, subject_name, subject_type_code, credit, room_id, professor_id) VALUES (231546, '고전읽기', 0, 2, 2, 82)
-    INTO courses (subject_id, subject_name, subject_type_code, credit, room_id, professor_id) VALUES (695745, '도시이해', 1, 2, 8, 135)
-    INTO courses (subject_id, subject_name, subject_type_code, credit, room_id, professor_id) VALUES (569846, '다문화사회', 2, 3, 2, 201)
-    INTO courses (subject_id, subject_name, subject_type_code, credit, room_id, professor_id) VALUES (320165, '연극치료', 3, 3, 4, 214)
+    INTO subjects (subject_id, subject_name, subject_type_code, credit, room_id, professor_id) VALUES (231546, '고전읽기', 0, 2, 2, 82)
+    INTO subjects (subject_id, subject_name, subject_type_code, credit, room_id, professor_id) VALUES (695745, '도시이해', 1, 2, 8, 135)
+    INTO subjects (subject_id, subject_name, subject_type_code, credit, room_id, professor_id) VALUES (569846, '다문화사회', 2, 3, 2, 201)
+    INTO subjects (subject_id, subject_name, subject_type_code, credit, room_id, professor_id) VALUES (320165, '연극치료', 3, 3, 4, 214)
 SELECT 1 FROM DUAL;
 
 
@@ -345,7 +345,7 @@ CREATE TABLE professor (
     professor_no        	NUMBER(5)       PRIMARY KEY,
     professor_name      	NVARCHAR2(20)   NOT NULL,
     dept_code           	NUMBER(5)       NOT NULL,
-    course_code         	NUMBER(10)      NOT NULL,
+    subject_id         		NUMBER(10)      NOT NULL,
     resource_code       	NUMBER(5),
     phone_number        	VARCHAR2(20),
     email               	VARCHAR2(100),
@@ -358,6 +358,9 @@ CREATE TABLE professor (
 	CONSTRAINT fk_pr_department
         FOREIGN KEY (dept_code)
         REFERENCES department(dept_code),
+	CONSTRAINT fk_subjects
+        FOREIGN KEY (subject_id)
+        REFERENCES subjects(subject_id)
 		
 );
 
@@ -365,7 +368,7 @@ COMMENT ON TABLE  professor 				IS '교수 정보';
 COMMENT ON COLUMN professor.professor_no 	IS '교번';
 COMMENT ON COLUMN professor.professor_name 	IS '이름';
 COMMENT ON COLUMN professor.dept_code 		IS '학부 코드';
-COMMENT ON COLUMN professor.course_code 	IS '과목 코드';
+COMMENT ON COLUMN professor.subject_id 		IS '과목ID';
 COMMENT ON COLUMN professor.resource_code 	IS '자원 코드';
 COMMENT ON COLUMN professor.phone_number 	IS '연락처';
 COMMENT ON COLUMN professor.email 			IS '이메일 주소';
