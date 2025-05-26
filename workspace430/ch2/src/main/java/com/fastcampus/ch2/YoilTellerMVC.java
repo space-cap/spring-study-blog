@@ -31,7 +31,11 @@ public class YoilTellerMVC {
     
     @RequestMapping("/getYoilMVC2")
     public String main2(MyDate myDate, Model model) {
+    	
+    	char yoil = getYoil(myDate.getYear(), myDate.getMonth(), myDate.getDay());
+    	
     	model.addAttribute("myDate", myDate);
+    	model.addAttribute("yoil", yoil);
         return "yoil"; // /WEB-INF/views/yoil.jsp
     }
     
