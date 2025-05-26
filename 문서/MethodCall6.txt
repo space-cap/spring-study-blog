@@ -1,0 +1,357 @@
+package com.fastcampus.ch2;
+
+import java.io.File;
+import java.io.IOException;
+import java.lang.reflect.Method;
+import java.lang.reflect.Parameter;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Scanner;
+
+import org.springframework.ui.Model;
+import org.springframework.validation.support.BindingAwareModelMap;
+
+public class MethodCall4 {
+    public static void main(String[] args) throws Exception {
+        Map<String, String> map = new HashMap();
+        map.put("year", "2021");
+        map.put("month", "10");
+        map.put("day", "1");
+
+        Model model = null;
+
+        Class clazz = Class.forName("com.fastcampus.ch2.YoilTellerMVC");
+        Object obj = clazz.getDeclaredConstructor().newInstance();
+
+        // main2 메서드를 동적으로 찾기 (매개변수 타입 자동 감지)
+        Method main = findTargetMethod(clazz, "main2");
+        if (main == null) {
+            throw new RuntimeException("Target method 'main2' not found");
+        }
+
+        Parameter[] paramArr = main.getParameters();
+        Object[] argArr = new Object[main.getParameterCount()];
+
+        for (int i = 0; i < paramArr.length; i++) {
+            String paramName = paramArr[i].getName();
+            Class paramType = paramArr[i].getType();
+            Object value = map.get(paramName);
+
+            if (paramType == Model.class) {
+                // Model 타입 처리
+                argArr[i] = model = new BindingAwareModelMap();
+            } else if (isCustomObjectType(paramType)) {
+                // 커스텀 객체 타입 동적 처리 (MyDate, MyDate2, Person 등 모든 클래스)
+                argArr[i] = createObjectFromMap(paramType, map);
+            } else if (value != null) {
+                // 기본 타입 처리
+                argArr[i] = convertTo(value, paramType);
+            }
+        }
+
+        System.out.println("Found method: " + main.getName());
+        System.out.println("Parameter types: " + Arrays.toString(main.getParameterTypes()));
+        System.out.println("paramArr=" + Arrays.toString(paramArr));
+        System.out.println("argArr=" + Arrays.toString(argArr));
+
+        // Controller의 main()을 호출
+        String viewName = (String) main.invoke(obj, argArr);
+        System.out.println("viewName=" + viewName);
+
+        // Model의 내용을 출력
+        System.out.println("[after] model=" + model);
+
+        // 텍스트 파일을 이용한 rendering
+        render(model, viewName);
+    }
+
+    // 대상 메서드를 동적으로 찾는 메서드
+    private static Method findTargetMethod(Class<?> clazz, String methodName) {
+        Method[] methods = clazz.getDeclaredMethods();
+        
+        for (Method method : methods) {
+            if (method.getName().equals(methodName)) {
+                // 매개변수가 2개이고, 하나는 커스텀 객체, 하나는 Model인 메서드 찾기
+                Parameter[] params = method.getParameters();
+                if (params.length == 2) {
+                    boolean hasCustomObject = false;
+                    boolean hasModel = false;
+                    
+                    for (Parameter param : params) {
+                        Class<?> paramType = param.getType();
+                        if (paramType == Model.class) {
+                            hasModel = true;
+                        } else if (isCustomObjectType(paramType)) {
+                            hasCustomObject = true;
+                        }
+                    }
+                    
+                    if (hasCustomObject && hasModel) {
+                        System.out.println("Found target method: " + method.getName() + 
+                                         " with parameters: " + Arrays.toString(method.getParameterTypes()));
+                        return method;
+                    }
+                }
+            }
+        }
+        
+        // 위의 조건에 맞는 메서드가 없으면 단순히 이름만 일치하는 첫 번째 메서드 반환
+        for (Method method : methods) {
+            if (method.getName().equals(methodName)) {
+                System.out.println("Fallback: Found method with name: " + method.getName());
+                return method;
+            }
+        }
+        
+        return null;
+    }
+
+    // 모든 main2 메서드를 찾아서 표시하는 디버깅 메서드 (선택사항)
+    private static void listAllMethods(Class<?> clazz, String methodName) {
+        Method[] methods = clazz.getDeclaredMethods();
+        System.out.println("=== Available methods with name '" + methodName + "' ===");
+        
+        for (Method method : methods) {
+            if (method.getName().equals(methodName)) {
+                System.out.println("Method: " + method.getName() + 
+                                 " | Parameters: " + Arrays.toString(method.getParameterTypes()) +
+                                 " | Return: " + method.getReturnType().getSimpleName());
+            }
+        }
+        System.out.println("=== End of method list ===");
+    }
+
+    // 커스텀 객체 타입인지 판단 (Spring처럼)
+    private static boolean isCustomObjectType(Class<?> type) {
+        // 기본 타입들과 Spring의 기본 클래스들은 제외
+        return type != String.class && 
+               type != Integer.class && type != int.class &&
+               type != Double.class && type != double.class &&
+               type != Boolean.class && type != boolean.class &&
+               type != Long.class && type != long.class &&
+               !type.isPrimitive() &&
+               !type.getName().startsWith("java.") &&
+               !type.getName().startsWith("org.springframework.") &&
+               type != Model.class;
+    }
+
+    // Spring처럼 Map에서 객체를 동적으로 생성
+    private static Object createObjectFromMap(Class<?> targetType, Map<String, String> map) throws Exception {
+        // 1. 객체 생성
+        Object obj = targetType.getDeclaredConstructor().newInstance();
+        
+        // 2. 객체의 모든 setter 메서드 찾기
+        Method[] methods = targetType.getDeclaredMethods();
+        
+        for (Method method : methods) {
+            String methodName = method.getName();
+            
+            // setter 메서드인지 확인 (set으로 시작하고 매개변수 1개)
+            if (methodName.startsWith("set") && method.getParameterCount() == 1) {
+                // 속성명 추출 (setYear -> year)
+                String propertyName = methodName.substring(3, 4).toLowerCase() + methodName.substring(4);
+                
+                // Map에서 해당 속성값 찾기
+                String mapValue = map.get(propertyName);
+                if (mapValue != null) {
+                    // 매개변수 타입에 맞게 변환해서 setter 호출
+                    Class<?> paramType = method.getParameterTypes()[0];
+                    Object convertedValue = convertTo(mapValue, paramType);
+                    
+                    try {
+                        method.invoke(obj, convertedValue);
+                        System.out.println("Set property: " + propertyName + " = " + convertedValue);
+                    } catch (Exception e) {
+                        System.out.println("Failed to set property: " + propertyName + " - " + e.getMessage());
+                    }
+                }
+            }
+        }
+        
+        return obj;
+    }
+
+    private static Object convertTo(Object value, Class type) {
+        if (type == null || value == null || type.isInstance(value))
+            return value;
+
+        // String -> 다른 타입 변환
+        if (value instanceof String) {
+            String strValue = (String) value;
+            
+            if (type == int.class || type == Integer.class) {
+                return Integer.valueOf(strValue);
+            } else if (type == double.class || type == Double.class) {
+                return Double.valueOf(strValue);
+            } else if (type == long.class || type == Long.class) {
+                return Long.valueOf(strValue);
+            } else if (type == boolean.class || type == Boolean.class) {
+                return Boolean.valueOf(strValue);
+            }
+        }
+
+        return value;
+    }
+
+    // Spring처럼 동적으로 객체 속성 렌더링
+    private static void render(Model model, String viewName) throws IOException {
+        String result = "";
+
+        // 1. 뷰의 내용을 한줄씩 읽어서 하나의 문자열로 만든다.
+        Scanner sc = new Scanner(new File("src/main/webapp/WEB-INF/views/" + viewName + ".jsp"), "utf-8");
+
+        while (sc.hasNextLine())
+            result += sc.nextLine() + System.lineSeparator();
+        
+        sc.close();
+
+        // 2. model을 map으로 변환
+        Map map = model.asMap();
+
+        // 3. 정규식으로 ${...} 패턴을 모두 찾아서 처리
+        result = processElExpressions(result, map);
+
+        // 4. 렌더링 결과를 출력한다.
+        System.out.println("=== Rendered Result ===");
+        System.out.println(result);
+    }
+    
+    // EL 표현식을 동적으로 처리 (Spring처럼)
+    private static String processElExpressions(String template, Map<String, Object> map) {
+        String result = template;
+        
+        // ${...} 패턴을 찾는 정규식
+        java.util.regex.Pattern pattern = java.util.regex.Pattern.compile("\\$\\{([^}]+)\\}");
+        java.util.regex.Matcher matcher = pattern.matcher(template);
+        
+        StringBuffer sb = new StringBuffer();
+        
+        while (matcher.find()) {
+            String expression = matcher.group(1); // ${} 안의 내용
+            String replacement = evaluateExpression(expression, map);
+            matcher.appendReplacement(sb, replacement);
+        }
+        matcher.appendTail(sb);
+        
+        return sb.toString();
+    }
+    
+    // EL 표현식 동적 평가 (객체.속성 형태 처리)
+    private static String evaluateExpression(String expression, Map<String, Object> map) {
+        try {
+            if (expression.contains(".")) {
+                // 객체.속성 형태 (예: myDate.year, person.name)
+                String[] parts = expression.split("\\.", 2); // 첫 번째 점만으로 분리
+                String objectName = parts[0];
+                String propertyPath = parts[1];
+                
+                Object obj = map.get(objectName);
+                if (obj != null) {
+                    return getPropertyValue(obj, propertyPath);
+                }
+            } else {
+                // 단순한 key 조회 (예: year, name)
+                Object value = map.get(expression);
+                if (value != null) {
+                    return value.toString();
+                }
+            }
+        } catch (Exception e) {
+            System.out.println("Error evaluating expression: " + expression + " - " + e.getMessage());
+        }
+        
+        return ""; // 평가 실패시 빈 문자열 반환
+    }
+    
+    // 객체의 속성값을 동적으로 가져오기 (중첩 속성도 지원)
+    private static String getPropertyValue(Object obj, String propertyPath) throws Exception {
+        Object currentObj = obj;
+        String[] properties = propertyPath.split("\\.");
+        
+        for (String property : properties) {
+            if (currentObj == null) {
+                return "";
+            }
+            
+            // getter 메서드 이름 생성
+            String getterName = "get" + property.substring(0, 1).toUpperCase() + property.substring(1);
+            
+            try {
+                Method getter = currentObj.getClass().getMethod(getterName);
+                currentObj = getter.invoke(currentObj);
+            } catch (NoSuchMethodException e) {
+                // boolean 타입의 경우 is로 시작하는 getter도 시도
+                String booleanGetterName = "is" + property.substring(0, 1).toUpperCase() + property.substring(1);
+                try {
+                    Method getter = currentObj.getClass().getMethod(booleanGetterName);
+                    currentObj = getter.invoke(currentObj);
+                } catch (NoSuchMethodException e2) {
+                    System.out.println("Getter not found: " + getterName + " or " + booleanGetterName);
+                    return "";
+                }
+            }
+        }
+        
+        return currentObj != null ? currentObj.toString() : "";
+    }
+}
+
+// 테스트용 다양한 클래스들 (어떤 클래스든 동작함)
+class MyDate {
+    private int year;
+    private int month;
+    private int day;
+    
+    public int getYear() { return year; }
+    public void setYear(int year) { this.year = year; }
+    public int getMonth() { return month; }
+    public void setMonth(int month) { this.month = month; }
+    public int getDay() { return day; }
+    public void setDay(int day) { this.day = day; }
+    
+    @Override
+    public String toString() {
+        return year + "-" + month + "-" + day;
+    }
+}
+
+class MyDate2 {
+    private int year;
+    private int month;
+    private int day;
+    private String description;
+    
+    public int getYear() { return year; }
+    public void setYear(int year) { this.year = year; }
+    public int getMonth() { return month; }
+    public void setMonth(int month) { this.month = month; }
+    public int getDay() { return day; }
+    public void setDay(int day) { this.day = day; }
+    public String getDescription() { return description; }
+    public void setDescription(String description) { this.description = description; }
+    
+    @Override
+    public String toString() {
+        return year + "-" + month + "-" + day + " (" + description + ")";
+    }
+}
+
+class Person {
+    private String name;
+    private int age;
+    private String email;
+    
+    public String getName() { return name; }
+    public void setName(String name) { this.name = name; }
+    public int getAge() { return age; }
+    public void setAge(int age) { this.age = age; }
+    public String getEmail() { return email; }
+    public void setEmail(String email) { this.email = email; }
+    
+    @Override
+    public String toString() {
+        return name + " (" + age + ", " + email + ")";
+    }
+}
