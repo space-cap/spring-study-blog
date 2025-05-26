@@ -1,9 +1,5 @@
 package com.fastcampus.ch2;
 
-import java.io.IOException;
-import java.io.PrintWriter;
-
-import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -11,7 +7,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 //@WebServlet(urlPatterns={"/hello"}, loadOnStartup=1)
-@WebServlet("/hello")
+@WebServlet("/helloServlet") // 서블릿을 매핑하는 어노테이션
 public class HelloServlet extends HttpServlet {
 	@Override
 	public void init() throws ServletException {
