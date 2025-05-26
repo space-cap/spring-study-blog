@@ -114,7 +114,7 @@ INSERT INTO professor_status (status_code, status_name) VALUES (2, '정직');
 
 CREATE TABLE major (
     major_code      NUMBER(5)       PRIMARY KEY,
-    major_name      NVARCHAR2(40)    NOT NULL
+    major_name      NVARCHAR2(40)   NOT NULL
 );
 
 COMMENT ON TABLE  major 			IS '전공 정보';
@@ -345,7 +345,7 @@ CREATE TABLE student (
         REFERENCES department(dept_code),
 	CONSTRAINT fk_major
         FOREIGN KEY (major_code)
-        REFERENCES department(major_code)
+        REFERENCES major(major_code)
 );
 
 
