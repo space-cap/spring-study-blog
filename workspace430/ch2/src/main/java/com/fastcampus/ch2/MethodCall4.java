@@ -35,7 +35,7 @@ public class MethodCall4 {
 			Class paramType = paramArr[i].getType();
 			Object value = map.get(paramName);
 
-			// paramType중에 Model이 있으면, 생성 & 저장
+			// paramType중에 MyDate이 있으면, 생성 & 저장
 			if (paramType == MyDate.class) {
 				Class<?> myDateClass = MyDate.class;
 				MyDate myDate = (MyDate) myDateClass.getDeclaredConstructor().newInstance();
@@ -56,9 +56,9 @@ public class MethodCall4 {
 					}
 				}
 
-				argArr[i] = myDate; // MyYoil 객체를 argArr에 저장
+				argArr[i] = myDate; // MyDate 객체를 argArr에 저장
 
-			} else if (paramType == Model.class) {
+			} else if (paramType == Model.class) { // paramType중에 Model이 있으면, 생성 & 저장
 				argArr[i] = model = new BindingAwareModelMap();
 			} else if (value != null) { // map에 paramName이 있으면,
 				// value와 parameter의 타입을 비교해서, 다르면 변환해서 저장
