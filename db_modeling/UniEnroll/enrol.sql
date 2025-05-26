@@ -326,19 +326,28 @@ SELECT 1 FROM DUAL;
 
 
 CREATE TABLE student (
-    no        		NUMBER(10)    	PRIMARY KEY,         
-    name            NVARCHAR2(20),                      
-    grade           NUMBER(5),                         
-    department_code NUMBER(5),                         
-    major_code      NUMBER(5),                         
-    phone1          VARCHAR2(20),            
-    phone2          VARCHAR2(20),            
-    email           VARCHAR2(100),                     
-    address         NVARCHAR2(150),                     
-    photo           RAW(2000),                               
-    status_code     NUMBER(5)
-	FOREIGN KEY (status_code) REFERENCES student_status(status_code)	
+    no              NUMBER(10)      PRIMARY KEY,
+    name            NVARCHAR2(20),
+    grade           NUMBER(5),
+    dept_code 		NUMBER(5),
+    major_code      NUMBER(5),
+    phone1          VARCHAR2(20),
+    phone2          VARCHAR2(20),
+    email           VARCHAR2(100),
+    address         NVARCHAR2(150),
+    photo           RAW(2000),
+    status_code     NUMBER(5),
+    CONSTRAINT fk_student_status
+        FOREIGN KEY (status_code)
+        REFERENCES student_status(status_code),
+	CONSTRAINT fk_department
+        FOREIGN KEY (dept_code)
+        REFERENCES department(dept_code),
+	CONSTRAINT fk_major
+        FOREIGN KEY (major_code)
+        REFERENCES department(major_code)
 );
+
 
 COMMENT ON TABLE 	student 				IS '학생 정보';
 COMMENT ON COLUMN 	student.no 				IS '학번';
