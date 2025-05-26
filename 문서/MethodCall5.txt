@@ -13,7 +13,7 @@ import java.util.Scanner;
 import org.springframework.ui.Model;
 import org.springframework.validation.support.BindingAwareModelMap;
 
-public class MethodCall5 {
+public class MethodCall4 {
     public static void main(String[] args) throws Exception {
         Map<String, String> map = new HashMap();
         map.put("year", "2021");
@@ -26,7 +26,7 @@ public class MethodCall5 {
         Object obj = clazz.getDeclaredConstructor().newInstance();
 
         // 여기서 MyDate2.class로 바꿔도 동작함
-        Method main = clazz.getDeclaredMethod("main2", MyDate2.class, Model.class);
+        Method main = clazz.getDeclaredMethod("main2", MyDate.class, Model.class);
 
         Parameter[] paramArr = main.getParameters();
         Object[] argArr = new Object[main.getParameterCount()];
@@ -234,5 +234,63 @@ public class MethodCall5 {
         }
         
         return currentObj != null ? currentObj.toString() : "";
+    }
+}
+
+// 테스트용 다양한 클래스들 (어떤 클래스든 동작함)
+class MyDate {
+    private int year;
+    private int month;
+    private int day;
+    
+    public int getYear() { return year; }
+    public void setYear(int year) { this.year = year; }
+    public int getMonth() { return month; }
+    public void setMonth(int month) { this.month = month; }
+    public int getDay() { return day; }
+    public void setDay(int day) { this.day = day; }
+    
+    @Override
+    public String toString() {
+        return year + "-" + month + "-" + day;
+    }
+}
+
+class MyDate2 {
+    private int year;
+    private int month;
+    private int day;
+    private String description;
+    
+    public int getYear() { return year; }
+    public void setYear(int year) { this.year = year; }
+    public int getMonth() { return month; }
+    public void setMonth(int month) { this.month = month; }
+    public int getDay() { return day; }
+    public void setDay(int day) { this.day = day; }
+    public String getDescription() { return description; }
+    public void setDescription(String description) { this.description = description; }
+    
+    @Override
+    public String toString() {
+        return year + "-" + month + "-" + day + " (" + description + ")";
+    }
+}
+
+class Person {
+    private String name;
+    private int age;
+    private String email;
+    
+    public String getName() { return name; }
+    public void setName(String name) { this.name = name; }
+    public int getAge() { return age; }
+    public void setAge(int age) { this.age = age; }
+    public String getEmail() { return email; }
+    public void setEmail(String email) { this.email = email; }
+    
+    @Override
+    public String toString() {
+        return name + " (" + age + ", " + email + ")";
     }
 }

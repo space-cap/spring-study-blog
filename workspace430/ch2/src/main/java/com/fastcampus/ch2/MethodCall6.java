@@ -13,7 +13,7 @@ import java.util.Scanner;
 import org.springframework.ui.Model;
 import org.springframework.validation.support.BindingAwareModelMap;
 
-public class MethodCall5 {
+public class MethodCall6 {
     public static void main(String[] args) throws Exception {
         Map<String, String> map = new HashMap();
         map.put("year", "2021");
@@ -25,8 +25,11 @@ public class MethodCall5 {
         Class clazz = Class.forName("com.fastcampus.ch2.YoilTellerMVC");
         Object obj = clazz.getDeclaredConstructor().newInstance();
 
-        // 여기서 MyDate2.class로 바꿔도 동작함
-        Method main = clazz.getDeclaredMethod("main2", MyDate2.class, Model.class);
+        // main2 메서드를 동적으로 찾기 (매개변수 타입 자동 감지)
+        Method main = findTargetMethod(clazz, "main2");
+        if (main == null) {
+            throw new RuntimeException("Target method 'main2' not found");
+        }
 
         Parameter[] paramArr = main.getParameters();
         Object[] argArr = new Object[main.getParameterCount()];
@@ -48,6 +51,8 @@ public class MethodCall5 {
             }
         }
 
+        System.out.println("Found method: " + main.getName());
+        System.out.println("Parameter types: " + Arrays.toString(main.getParameterTypes()));
         System.out.println("paramArr=" + Arrays.toString(paramArr));
         System.out.println("argArr=" + Arrays.toString(argArr));
 
@@ -60,6 +65,62 @@ public class MethodCall5 {
 
         // 텍스트 파일을 이용한 rendering
         render(model, viewName);
+    }
+
+    // 대상 메서드를 동적으로 찾는 메서드
+    private static Method findTargetMethod(Class<?> clazz, String methodName) {
+        Method[] methods = clazz.getDeclaredMethods();
+        
+        for (Method method : methods) {
+            if (method.getName().equals(methodName)) {
+                // 매개변수가 2개이고, 하나는 커스텀 객체, 하나는 Model인 메서드 찾기
+                Parameter[] params = method.getParameters();
+                if (params.length == 2) {
+                    boolean hasCustomObject = false;
+                    boolean hasModel = false;
+                    
+                    for (Parameter param : params) {
+                        Class<?> paramType = param.getType();
+                        if (paramType == Model.class) {
+                            hasModel = true;
+                        } else if (isCustomObjectType(paramType)) {
+                            hasCustomObject = true;
+                        }
+                    }
+                    
+                    if (hasCustomObject && hasModel) {
+                        System.out.println("Found target method: " + method.getName() + 
+                                         " with parameters: " + Arrays.toString(method.getParameterTypes()));
+                        return method;
+                    }
+                }
+            }
+        }
+        
+        // 위의 조건에 맞는 메서드가 없으면 단순히 이름만 일치하는 첫 번째 메서드 반환
+        for (Method method : methods) {
+            if (method.getName().equals(methodName)) {
+                System.out.println("Fallback: Found method with name: " + method.getName());
+                return method;
+            }
+        }
+        
+        return null;
+    }
+
+    // 모든 main2 메서드를 찾아서 표시하는 디버깅 메서드 (선택사항)
+    private static void listAllMethods(Class<?> clazz, String methodName) {
+        Method[] methods = clazz.getDeclaredMethods();
+        System.out.println("=== Available methods with name '" + methodName + "' ===");
+        
+        for (Method method : methods) {
+            if (method.getName().equals(methodName)) {
+                System.out.println("Method: " + method.getName() + 
+                                 " | Parameters: " + Arrays.toString(method.getParameterTypes()) +
+                                 " | Return: " + method.getReturnType().getSimpleName());
+            }
+        }
+        System.out.println("=== End of method list ===");
     }
 
     // 커스텀 객체 타입인지 판단 (Spring처럼)
