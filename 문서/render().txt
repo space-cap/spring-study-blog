@@ -1,0 +1,197 @@
+private static void render(Model model, String viewName) throws IOException {
+    String result = "";
+    
+    // 1. 뷰의 내용을 한줄씩 읽어서 하나의 문자열로 만든다.
+    Scanner sc = new Scanner(new File("src/main/webapp/WEB-INF/views/"+viewName+".jsp"), "utf-8");
+    
+    while(sc.hasNextLine())
+        result += sc.nextLine()+ System.lineSeparator();
+    
+    // 2. model을 map으로 변환 
+    Map map = model.asMap();
+    
+    // 3. key를 하나씩 읽어서 template의 ${key}를 value로 바꾼다.
+    Iterator it = map.keySet().iterator();
+    
+    while(it.hasNext()) {
+        String key = (String)it.next();
+        Object value = map.get(key);
+        System.out.println("key="+key+", value="+value);
+        
+        // 4-1. 일반적인 값들 처리 (String, int, etc.)
+        if(!(value instanceof MyYoil)) {
+            result = result.replace("${"+key+"}", ""+value);
+        } else {
+            // 4-2. MyYoil 객체인 경우 속성별로 처리
+            MyYoil myYoil = (MyYoil)value;
+            
+            // MyYoil 객체의 각 속성을 개별적으로 치환
+            result = result.replace("${"+key+".year}", ""+myYoil.getYear());
+            result = result.replace("${"+key+".month}", ""+myYoil.getMonth());
+            result = result.replace("${"+key+".day}", ""+myYoil.getDay());
+            
+            // 전체 객체 자체도 치환 (toString() 사용)
+            result = result.replace("${"+key+"}", myYoil.toString());
+        }
+    }
+    
+    // 5. 렌더링 결과를 출력한다.
+    System.out.println(result);
+}
+
+// 더 유연한 방법: 리플렉션을 이용한 객체 속성 처리
+private static void renderWithReflection(Model model, String viewName) throws IOException {
+    String result = "";
+    
+    // 1. 뷰의 내용을 한줄씩 읽어서 하나의 문자열로 만든다.
+    Scanner sc = new Scanner(new File("src/main/webapp/WEB-INF/views/"+viewName+".jsp"), "utf-8");
+    
+    while(sc.hasNextLine())
+        result += sc.nextLine()+ System.lineSeparator();
+    
+    // 2. model을 map으로 변환 
+    Map map = model.asMap();
+    
+    // 3. key를 하나씩 읽어서 template의 ${key}를 value로 바꾼다.
+    Iterator it = map.keySet().iterator();
+    
+    while(it.hasNext()) {
+        String key = (String)it.next();
+        Object value = map.get(key);
+        System.out.println("key="+key+", value="+value);
+        
+        // 4-1. 기본 타입들 처리
+        if(value == null || isPrimitiveOrWrapper(value.getClass()) || value instanceof String) {
+            result = result.replace("${"+key+"}", ""+value);
+        } else {
+            // 4-2. 객체인 경우 리플렉션으로 속성 처리
+            result = processObjectProperties(result, key, value);
+            
+            // 전체 객체도 치환
+            result = result.replace("${"+key+"}", value.toString());
+        }
+    }
+    
+    // 5. 렌더링 결과를 출력한다.
+    System.out.println(result);
+}
+
+// 객체의 속성들을 리플렉션으로 처리하는 헬퍼 메서드
+private static String processObjectProperties(String template, String objectKey, Object obj) {
+    String result = template;
+    
+    try {
+        // 객체의 모든 메서드를 가져와서 getter 메서드 찾기
+        Method[] methods = obj.getClass().getDeclaredMethods();
+        
+        for(Method method : methods) {
+            String methodName = method.getName();
+            
+            // getter 메서드인지 확인 (get으로 시작하고 매개변수 없음)
+            if(methodName.startsWith("get") && method.getParameterCount() == 0) {
+                // 속성명 추출 (getYear -> year)
+                String propertyName = methodName.substring(3, 4).toLowerCase() + methodName.substring(4);
+                
+                // getter 메서드 실행
+                Object propertyValue = method.invoke(obj);
+                
+                // 템플릿에서 ${objectKey.propertyName} 치환
+                String placeholder = "${" + objectKey + "." + propertyName + "}";
+                result = result.replace(placeholder, "" + propertyValue);
+                
+                System.out.println("Replaced: " + placeholder + " -> " + propertyValue);
+            }
+        }
+    } catch (Exception e) {
+        System.out.println("Error processing object properties: " + e.getMessage());
+    }
+    
+    return result;
+}
+
+// 기본 타입인지 확인하는 헬퍼 메서드
+private static boolean isPrimitiveOrWrapper(Class<?> type) {
+    return type.isPrimitive() || 
+           type == Boolean.class || type == Byte.class || type == Character.class ||
+           type == Short.class || type == Integer.class || type == Long.class ||
+           type == Float.class || type == Double.class;
+}
+
+// MyYoil 클래스에 toString() 메서드 추가 (권장)
+public class MyYoil {
+    private int year;
+    private int month; 
+    private int day;
+    
+    // getter, setter 메서드들...
+    public int getYear() { return year; }
+    public void setYear(int year) { this.year = year; }
+    public int getMonth() { return month; }
+    public void setMonth(int month) { this.month = month; }
+    public int getDay() { return day; }
+    public void setDay(int day) { this.day = day; }
+    
+    // toString() 메서드 추가
+    @Override
+    public String toString() {
+        return year + "-" + month + "-" + day;
+    }
+}
+
+// 정규식을 이용한 더 고급 처리 방법
+private static void renderWithRegex(Model model, String viewName) throws IOException {
+    String result = "";
+    
+    // 1. 뷰의 내용을 읽기
+    Scanner sc = new Scanner(new File("src/main/webapp/WEB-INF/views/"+viewName+".jsp"), "utf-8");
+    while(sc.hasNextLine())
+        result += sc.nextLine()+ System.lineSeparator();
+    
+    // 2. model을 map으로 변환
+    Map map = model.asMap();
+    
+    // 3. 정규식으로 ${...} 패턴 찾아서 처리
+    java.util.regex.Pattern pattern = java.util.regex.Pattern.compile("\\$\\{([^}]+)\\}");
+    java.util.regex.Matcher matcher = pattern.matcher(result);
+    
+    StringBuffer sb = new StringBuffer();
+    
+    while(matcher.find()) {
+        String expression = matcher.group(1); // ${} 안의 내용
+        String replacement = evaluateExpression(expression, map);
+        matcher.appendReplacement(sb, replacement);
+    }
+    matcher.appendTail(sb);
+    
+    // 4. 결과 출력
+    System.out.println(sb.toString());
+}
+
+// EL 표현식 평가 메서드
+private static String evaluateExpression(String expression, Map map) {
+    try {
+        // 점(.)이 있는지 확인 (객체.속성 형태)
+        if(expression.contains(".")) {
+            String[] parts = expression.split("\\.");
+            String objectName = parts[0];
+            String propertyName = parts[1];
+            
+            Object obj = map.get(objectName);
+            if(obj != null) {
+                // getter 메서드 호출
+                String getterName = "get" + propertyName.substring(0, 1).toUpperCase() + propertyName.substring(1);
+                Method getter = obj.getClass().getMethod(getterName);
+                Object value = getter.invoke(obj);
+                return "" + value;
+            }
+        } else {
+            // 단순한 key 조회
+            Object value = map.get(expression);
+            return "" + (value != null ? value : "");
+        }
+    } catch (Exception e) {
+        System.out.println("Error evaluating expression: " + expression + " - " + e.getMessage());
+    }
+    
+    return "${" + expression + "}"; // 치환 실패시 원본 반환
+}

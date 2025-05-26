@@ -25,7 +25,7 @@ public class MethodCall4 {
 		Class clazz = Class.forName("com.fastcampus.ch2.YoilTellerMVC");
 		Object obj = clazz.getDeclaredConstructor().newInstance();
 		
-		Method main = clazz.getDeclaredMethod("main2", MyYoil.class, Model.class);
+		Method main = clazz.getDeclaredMethod("main2", MyDate.class, Model.class);
 				
 		Parameter[] paramArr = main.getParameters();
 		Object[] argArr = new Object[main.getParameterCount()];
@@ -36,9 +36,9 @@ public class MethodCall4 {
 			Object value = map.get(paramName);
 			
 			// paramType중에 Model이 있으면, 생성 & 저장
-			if(paramType == MyYoil.class) {
-				Class<?> myYoilClass = MyYoil.class;
-			    MyYoil myYoil = (MyYoil) myYoilClass.getDeclaredConstructor().newInstance();
+			if(paramType == MyDate.class) {
+				Class<?> myDateClass = MyDate.class;
+			    MyDate myDate = (MyDate) myDateClass.getDeclaredConstructor().newInstance();
 			    
 			    // 각 필드에 대해 setter 메서드 호출
 			    for(var entry : map.entrySet()) {
@@ -49,14 +49,14 @@ public class MethodCall4 {
 			        String setterName = "set" + kname.substring(0, 1).toUpperCase() + kname.substring(1);
 			        
 			        try {
-			            Method setter = myYoilClass.getMethod(setterName, int.class);
-			            setter.invoke(myYoil, Integer.parseInt(kvalue));
+			            Method setter = myDateClass.getMethod(setterName, int.class);
+			            setter.invoke(myDate, Integer.parseInt(kvalue));
 			        } catch (NoSuchMethodException e) {
 			            System.out.println("Setter not found: " + setterName);
 			        }
 			    }
 			    
-			    argArr[i] = myYoil; // MyYoil 객체를 argArr에 저장
+			    argArr[i] = myDate; // MyYoil 객체를 argArr에 저장
 			 
 			} else if(paramType==Model.class) {
 				argArr[i] = model = new BindingAwareModelMap(); 
@@ -77,7 +77,7 @@ public class MethodCall4 {
 		System.out.println("[after] model="+model);
 		
 		// 텍스트 파일을 이용한 rendering
-		render(model, viewName);
+		//render(model, viewName);
 	} // main
 	
 	private static Object convertTo(Object value, Class type) {

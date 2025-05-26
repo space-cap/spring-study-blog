@@ -30,8 +30,8 @@ public class YoilTellerMVC {
     }
     
     @RequestMapping("/getYoilMVC2")
-    public String main2(MyYoil myYoil, Model model) {
-    	model.addAttribute("myYoil", myYoil);
+    public String main2(MyDate myDate, Model model) {
+    	model.addAttribute("myDate", myDate);
         return "yoil"; // /WEB-INF/views/yoil.jsp
     }
     
