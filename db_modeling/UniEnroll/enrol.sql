@@ -71,30 +71,6 @@ INSERT INTO student_status (status_code, status_name) VALUES (2, '정학');
 INSERT INTO student_status (status_code, status_name) VALUES (3, '졸업');
 INSERT INTO student_status (status_code, status_name) VALUES (4, '입대');
 
-CREATE TABLE professor (
-    professor_no        	NUMBER(5)       PRIMARY KEY,
-    professor_name      	NVARCHAR2(20)    NOT NULL,
-    dept_code           	NUMBER(5)       NOT NULL,
-    course_code         	NUMBER(10)      NOT NULL,
-    resource_code       	NUMBER(5),
-    phone_number        	VARCHAR2(20),
-    email               	VARCHAR2(100),
-    address             	NVARCHAR2(150),
-    photo	            	RAW(2000),
-    status_code 			NUMBER(5)    	NOT NULL
-);
-
-COMMENT ON TABLE  professor 				IS '교수 정보';
-COMMENT ON COLUMN professor.professor_no 	IS '교번';
-COMMENT ON COLUMN professor.professor_name 	IS '이름';
-COMMENT ON COLUMN professor.dept_code 		IS '학부 코드';
-COMMENT ON COLUMN professor.course_code 	IS '과목 코드';
-COMMENT ON COLUMN professor.resource_code 	IS '자원 코드';
-COMMENT ON COLUMN professor.phone_number 	IS '연락처';
-COMMENT ON COLUMN professor.email 			IS '이메일 주소';
-COMMENT ON COLUMN professor.address 		IS '주소';
-COMMENT ON COLUMN professor.photo			IS '사진';
-COMMENT ON COLUMN professor.status_code 	IS 'professor_status 상태 코드';
 
 CREATE TABLE professor_status (
     status_code  	NUMBER(5)       PRIMARY KEY,
@@ -299,7 +275,7 @@ INSERT ALL
 SELECT 1 FROM DUAL;
 
 
-CREATE TABLE subjects (
+CREATE TABLE courses (
     subject_id        NUMBER(10)     PRIMARY KEY,         -- 과목ID
     subject_name      VARCHAR2(40)   NOT NULL,            -- 과목명
     subject_type_code NUMBER(5)      NOT NULL,            -- 교과구분코드
@@ -308,20 +284,20 @@ CREATE TABLE subjects (
     professor_id      NUMBER(5)      NOT NULL             -- 담당교수 교번
 );
 
-COMMENT ON TABLE  subjects                      IS '과목 정보';
-COMMENT ON COLUMN subjects.subject_id           IS '과목ID';
-COMMENT ON COLUMN subjects.subject_name         IS '과목명';
-COMMENT ON COLUMN subjects.subject_type_code    IS '교과구분코드';
-COMMENT ON COLUMN subjects.credit               IS '학점';
-COMMENT ON COLUMN subjects.room_id              IS '강의실 코드';
-COMMENT ON COLUMN subjects.professor_id         IS '담당교수 교번';
+COMMENT ON TABLE  courses                      IS '과목 정보';
+COMMENT ON COLUMN courses.subject_id           IS '과목ID';
+COMMENT ON COLUMN courses.subject_name         IS '과목명';
+COMMENT ON COLUMN courses.subject_type_code    IS '교과구분코드';
+COMMENT ON COLUMN courses.credit               IS '학점';
+COMMENT ON COLUMN courses.room_id              IS '강의실 코드';
+COMMENT ON COLUMN courses.professor_id         IS '담당교수 교번';
 
 -- 샘플 데이터 삽입
 INSERT ALL
-    INTO subjects (subject_id, subject_name, subject_type_code, credit, room_id, professor_id) VALUES (231546, '고전읽기', 0, 2, 2, 82)
-    INTO subjects (subject_id, subject_name, subject_type_code, credit, room_id, professor_id) VALUES (695745, '도시이해', 1, 2, 8, 135)
-    INTO subjects (subject_id, subject_name, subject_type_code, credit, room_id, professor_id) VALUES (569846, '다문화사회', 2, 3, 2, 201)
-    INTO subjects (subject_id, subject_name, subject_type_code, credit, room_id, professor_id) VALUES (320165, '연극치료', 3, 3, 4, 214)
+    INTO courses (subject_id, subject_name, subject_type_code, credit, room_id, professor_id) VALUES (231546, '고전읽기', 0, 2, 2, 82)
+    INTO courses (subject_id, subject_name, subject_type_code, credit, room_id, professor_id) VALUES (695745, '도시이해', 1, 2, 8, 135)
+    INTO courses (subject_id, subject_name, subject_type_code, credit, room_id, professor_id) VALUES (569846, '다문화사회', 2, 3, 2, 201)
+    INTO courses (subject_id, subject_name, subject_type_code, credit, room_id, professor_id) VALUES (320165, '연극치료', 3, 3, 4, 214)
 SELECT 1 FROM DUAL;
 
 
@@ -353,7 +329,7 @@ COMMENT ON TABLE 	student 				IS '학생 정보';
 COMMENT ON COLUMN 	student.no 				IS '학번';
 COMMENT ON COLUMN 	student.name 			IS '이름';
 COMMENT ON COLUMN 	student.grade 			IS '학년';
-COMMENT ON COLUMN 	student.department_code IS '학부코드';
+COMMENT ON COLUMN 	student.dept_code 		IS '학부코드';
 COMMENT ON COLUMN 	student.major_code 		IS '전공코드';
 COMMENT ON COLUMN 	student.phone1 			IS '연락처1';
 COMMENT ON COLUMN 	student.phone2 			IS '연락처2';
@@ -362,3 +338,37 @@ COMMENT ON COLUMN 	student.address 		IS '주소';
 COMMENT ON COLUMN 	student.photo 			IS '사진 2KB, BLOB 추천';
 COMMENT ON COLUMN 	student.status_code 	IS '상태코드';
 
+
+
+
+CREATE TABLE professor (
+    professor_no        	NUMBER(5)       PRIMARY KEY,
+    professor_name      	NVARCHAR2(20)   NOT NULL,
+    dept_code           	NUMBER(5)       NOT NULL,
+    course_code         	NUMBER(10)      NOT NULL,
+    resource_code       	NUMBER(5),
+    phone_number        	VARCHAR2(20),
+    email               	VARCHAR2(100),
+    address             	NVARCHAR2(150),
+    photo	            	RAW(2000),
+    status_code 			NUMBER(5)    	NOT NULL,
+	CONSTRAINT fk_professor_status
+        FOREIGN KEY (status_code)
+        REFERENCES professor_status(status_code),
+	CONSTRAINT fk_pr_department
+        FOREIGN KEY (dept_code)
+        REFERENCES department(dept_code),
+		
+);
+
+COMMENT ON TABLE  professor 				IS '교수 정보';
+COMMENT ON COLUMN professor.professor_no 	IS '교번';
+COMMENT ON COLUMN professor.professor_name 	IS '이름';
+COMMENT ON COLUMN professor.dept_code 		IS '학부 코드';
+COMMENT ON COLUMN professor.course_code 	IS '과목 코드';
+COMMENT ON COLUMN professor.resource_code 	IS '자원 코드';
+COMMENT ON COLUMN professor.phone_number 	IS '연락처';
+COMMENT ON COLUMN professor.email 			IS '이메일 주소';
+COMMENT ON COLUMN professor.address 		IS '주소';
+COMMENT ON COLUMN professor.photo			IS '사진';
+COMMENT ON COLUMN professor.status_code 	IS 'professor_status 상태 코드';
