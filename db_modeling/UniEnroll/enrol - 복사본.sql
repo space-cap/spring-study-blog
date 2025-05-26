@@ -53,7 +53,32 @@ END;
 
 
 -- Create tables
+CREATE TABLE student (
+    no        		NUMBER(10)    	PRIMARY KEY,         
+    name            NVARCHAR2(20),                      
+    grade           NUMBER(5),                         
+    department_code NUMBER(5),                         
+    major_code      NUMBER(5),                         
+    phone1          VARCHAR2(20),            
+    phone2          VARCHAR2(20),            
+    email           VARCHAR2(100),                     
+    address         NVARCHAR2(150),                     
+    photo           RAW(2000),                               
+    status_code     NUMBER(5)                          
+);
 
+COMMENT ON TABLE 	student 				IS '학생 정보';
+COMMENT ON COLUMN 	student.no 				IS '학번';
+COMMENT ON COLUMN 	student.name 			IS '이름';
+COMMENT ON COLUMN 	student.grade 			IS '학년';
+COMMENT ON COLUMN 	student.department_code IS '학부코드';
+COMMENT ON COLUMN 	student.major_code 		IS '전공코드';
+COMMENT ON COLUMN 	student.phone1 			IS '연락처1';
+COMMENT ON COLUMN 	student.phone2 			IS '연락처2';
+COMMENT ON COLUMN 	student.email 			IS '이메일';
+COMMENT ON COLUMN 	student.address 		IS '주소';
+COMMENT ON COLUMN 	student.photo 			IS '사진 2KB, BLOB 추천';
+COMMENT ON COLUMN 	student.status_code 	IS '상태코드';
 
 
 CREATE TABLE student_status (
@@ -323,33 +348,3 @@ INSERT ALL
     INTO subjects (subject_id, subject_name, subject_type_code, credit, room_id, professor_id) VALUES (569846, '다문화사회', 2, 3, 2, 201)
     INTO subjects (subject_id, subject_name, subject_type_code, credit, room_id, professor_id) VALUES (320165, '연극치료', 3, 3, 4, 214)
 SELECT 1 FROM DUAL;
-
-
-CREATE TABLE student (
-    no        		NUMBER(10)    	PRIMARY KEY,         
-    name            NVARCHAR2(20),                      
-    grade           NUMBER(5),                         
-    department_code NUMBER(5),                         
-    major_code      NUMBER(5),                         
-    phone1          VARCHAR2(20),            
-    phone2          VARCHAR2(20),            
-    email           VARCHAR2(100),                     
-    address         NVARCHAR2(150),                     
-    photo           RAW(2000),                               
-    status_code     NUMBER(5)
-	FOREIGN KEY (status_code) REFERENCES student_status(status_code)	
-);
-
-COMMENT ON TABLE 	student 				IS '학생 정보';
-COMMENT ON COLUMN 	student.no 				IS '학번';
-COMMENT ON COLUMN 	student.name 			IS '이름';
-COMMENT ON COLUMN 	student.grade 			IS '학년';
-COMMENT ON COLUMN 	student.department_code IS '학부코드';
-COMMENT ON COLUMN 	student.major_code 		IS '전공코드';
-COMMENT ON COLUMN 	student.phone1 			IS '연락처1';
-COMMENT ON COLUMN 	student.phone2 			IS '연락처2';
-COMMENT ON COLUMN 	student.email 			IS '이메일';
-COMMENT ON COLUMN 	student.address 		IS '주소';
-COMMENT ON COLUMN 	student.photo 			IS '사진 2KB, BLOB 추천';
-COMMENT ON COLUMN 	student.status_code 	IS '상태코드';
-
