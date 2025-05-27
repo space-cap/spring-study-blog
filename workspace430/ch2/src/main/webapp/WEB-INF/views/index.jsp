@@ -1,7 +1,5 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<c:set var="loginPath" value="${sessionScope.id == null ? 'login/login' : 'login/logout'}"/>
-<c:set var="loginText" value="${sessionScope.id == null ? 'login' : 'logout'}"/>
 <!DOCTYPE html>
 <html>
 <head>
@@ -17,3 +15,5 @@
 	<h1>This is HOME</h1>
 	<h1>This is HOME</h1>
 </div>
+</body>
+</html>
