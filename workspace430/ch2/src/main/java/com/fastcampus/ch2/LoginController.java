@@ -30,20 +30,23 @@ public class LoginController {
 		
 		return "loginForm";
 	}
+	
+	@GetMapping("/logout")
+	public String logout(HttpServletRequest request, HttpServletResponse response) {
+		HttpSession session = request.getSession();
+		session.invalidate(); // 세션 무효화
+		
+		return "redirect:/";
+	}
 
 	@PostMapping("/login")
-	public String login(HttpServletRequest request, HttpServletResponse response) throws UnsupportedEncodingException {
-		// System.out.println("login() called");
-
-		String id = request.getParameter("id");
-		String password = request.getParameter("pwd");
-		String rememberId = request.getParameter("rememberId");
+	public String login(String id, String pwd, boolean rememberId, HttpServletRequest request, HttpServletResponse response) throws UnsupportedEncodingException {
 		System.out.println("id : " + id);
-		System.out.println("password : " + password);
+		System.out.println("password : " + pwd);
 		System.out.println("rememberId : " + rememberId);
 
 		// 로그인 처리
-		if (!checkLogin(id, password)) {
+		if (!checkLogin(id, pwd)) {
 			String msg = URLEncoder.encode("id 또는 pwd가 일치하지 않습니다.", "utf-8");
 			return "redirect:/login/login?msg=" + msg;
 		}
@@ -54,7 +57,7 @@ public class LoginController {
 		session.setAttribute("id", id);
 
 		// 아이디 기억하기 체크박스가 선택되었으면 쿠키에 저장
-		if (rememberId != null) {
+		if (rememberId) {
 			setCookie(response, "id", id, 30 * 60); // 30분 동안 유효
 			setCookie(response, "isChecked", "checked", 30 * 60); // 30분 동안 유효
 		} else {
