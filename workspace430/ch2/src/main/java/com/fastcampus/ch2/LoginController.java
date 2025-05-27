@@ -14,21 +14,26 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
+@RequestMapping("/login")
 public class LoginController {
 	
-	@RequestMapping(value = "/login", method = RequestMethod.GET)
+	@GetMapping("/login")
 	public String loginForm() {
 		return "loginForm";
 	}
 	
-	@RequestMapping(value = "/login", method = RequestMethod.POST)
-	public String login() {
-		return "redirect:/";
+	@PostMapping("/login")
+	public String login() throws UnsupportedEncodingException {
+		System.out.println("login() called");
+		String msg = URLEncoder.encode("id 또는 pwd가 일치하지 않습니다.", "utf-8");
+		return "redirect:/login/login?msg="+msg;
 	}
 	
 	
