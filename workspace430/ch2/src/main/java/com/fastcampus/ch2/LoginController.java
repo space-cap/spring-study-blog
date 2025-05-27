@@ -2,16 +2,12 @@ package com.fastcampus.ch2;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
-import java.text.DateFormat;
-import java.util.Date;
-import java.util.Locale;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -23,79 +19,112 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @Controller
 @RequestMapping("/login")
 public class LoginController {
-	
+
 	@GetMapping("/login")
 	public String loginForm() {
 		return "loginForm";
 	}
-	
+
 	@PostMapping("/login")
-	public String login() throws UnsupportedEncodingException {
-		System.out.println("login() called");
-		String msg = URLEncoder.encode("id 또는 pwd가 일치하지 않습니다.", "utf-8");
-		return "redirect:/login/login?msg="+msg;
+	public String login(HttpServletRequest request, HttpServletResponse response) throws UnsupportedEncodingException {
+		// System.out.println("login() called");
+
+		String id = request.getParameter("id");
+		String password = request.getParameter("pwd");
+		String rememberId = request.getParameter("rememberId");
+		System.out.println("id : " + id);
+		System.out.println("password : " + password);
+		System.out.println("rememberId : " + rememberId);
+
+		// 로그인 처리
+		if (!checkLogin(id, password)) {
+			String msg = URLEncoder.encode("id 또는 pwd가 일치하지 않습니다.", "utf-8");
+			return "redirect:/login/login?msg=" + msg;
+		}
+
+		// 세션에 id 저장
+		// request.getSession().setAttribute("id", id);
+		HttpSession session = request.getSession();
+		session.setAttribute("id", id);
+
+		// 아이디 기억하기 체크박스가 선택되었으면 쿠키에 저장
+		if (rememberId != null) {
+			setCookie(response, "id", id, 30 * 60); // 30분 동안 유효
+			setCookie(response, "isChecked", "checked", 30 * 60); // 30분 동안 유효
+		} else {
+			setCookie(response, "id", id, 0); // 쿠키 삭제
+			setCookie(response, "isChecked", "checked", 0); // 쿠키 삭제
+		}
+
+		String toURL = request.getParameter("toURL");
+		if (toURL != null && !toURL.isEmpty()) {
+			// 로그인 성공 후, 원래 요청한 URL로 리다이렉트
+			return "redirect:" + toURL;
+		}
+
+		return "redirect:/";
+
 	}
-	
-	
+
 	@RequestMapping(value = "/loginx", method = RequestMethod.GET)
 	public String loginx() {
 		return "login";
 	}
-	
+
 	@RequestMapping(value = "/loginx", method = RequestMethod.POST)
-	public String loginx(LoginInfo loginInfo, HttpServletResponse response, Model model, 
+	public String loginx(LoginInfo loginInfo, HttpServletResponse response, Model model,
 			RedirectAttributes redirectAttributes) {
-		
-		//String id = request.getParameter("id");
-		//String password = request.getParameter("password");
-		//String rememberId = request.getParameter("rememberId");
-		
+
+		// String id = request.getParameter("id");
+		// String password = request.getParameter("password");
+		// String rememberId = request.getParameter("rememberId");
+
 		String id = loginInfo.getId();
 		String password = loginInfo.getPassword();
 		boolean rememberId = loginInfo.isRememberId();
-		
+
 		System.out.println("id : " + id);
 		System.out.println("password : " + password);
 		System.out.println("rememberId : " + rememberId);
-		
+
 		model.addAttribute("id", id);
 		model.addAttribute("password", password);
-		
-		// 로그인 처리		
+
+		// 로그인 처리
 		if (checkLogin(id, password)) {
-			if(rememberId) {
+			if (rememberId) {
 				setCookie(response, "id", id, 30 * 60); // 30분 동안 유효
 				setCookie(response, "isChecked", "checked", 30 * 60); // 30분 동안 유효
 			} else {
 				setCookie(response, "id", id, 0);
 				setCookie(response, "isChecked", "checked", 0);
 			}
-			
+
 			return "forward:/userInfo.jsp";
 		} else {
-			//redirectAttributes.addAttribute("errorMessage", "로그인 실패");
-			//return "redirect:/login.jsp";
+			// redirectAttributes.addAttribute("errorMessage", "로그인 실패");
+			// return "redirect:/login.jsp";
 			try {
-	            String encodedMessage = URLEncoder.encode("로그인에 실패했습니다", "UTF-8");
-	            return "redirect:/login.jsp?errorMessage=" + encodedMessage;
-	            //redirectAttributes.addFlashAttribute("errorMessage", encodedMessage);
-	            //return "redirect:/login.jsp";
-	            
-	            //redirectAttributes.addAttribute("errorMessage", encodedMessage);
-	            //redirectAttributes.addFlashAttribute("errorMessage", "로그인에 실패했습니다");
-	            //return "redirect:/login.jsp";
-	        } catch (UnsupportedEncodingException e) {
-	            return "redirect:/login.jsp?errorMessage=Login Failed&id=" + id;
-	        }
+				String encodedMessage = URLEncoder.encode("로그인에 실패했습니다", "UTF-8");
+				return "redirect:/login.jsp?errorMessage=" + encodedMessage;
+				// redirectAttributes.addFlashAttribute("errorMessage", encodedMessage);
+				// return "redirect:/login.jsp";
+
+				// redirectAttributes.addAttribute("errorMessage", encodedMessage);
+				// redirectAttributes.addFlashAttribute("errorMessage", "로그인에 실패했습니다");
+				// return "redirect:/login.jsp";
+			} catch (UnsupportedEncodingException e) {
+				return "redirect:/login.jsp?errorMessage=Login Failed&id=" + id;
+			}
 		}
-		
-		//return "redirect:/userInfo.jsp?key=val";
+
+		// return "redirect:/userInfo.jsp?key=val";
 	}
-	
+
 	private boolean checkLogin(String id, String pw) {
 		return id.equals("steve") && pw.equals("1234");
 	}
-	
+
 	private void setCookie(HttpServletResponse response, String name, String value, int maxAge) {
 		Cookie cookie = new Cookie(name, value);
 		cookie.setPath("/"); // 쿠키가 모든 경로에서 유효
