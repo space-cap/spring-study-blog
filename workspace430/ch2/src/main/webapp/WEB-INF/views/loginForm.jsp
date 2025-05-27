@@ -57,6 +57,7 @@
     </style>
 </head>
 <body>
+	<jsp:include page="/WEB-INF/views/common/nav.jsp" />
     <form action="<c:url value='/login/login'/>" method="post" onsubmit="return formCheck(this);">
         <h3 id="title">Login</h3>
         <div id="msg">
@@ -64,11 +65,11 @@
 		<i class="fa fa-exclamation-circle"> ${URLDecoder.decode(param.msg)}</i>            
 	    </c:if>        
 	</div>
-        <input type="text" name="id" value="${}" placeholder="이메일 입력" autofocus>
+        <input type="text" name="id" value="${cookie.id.value}" placeholder="이메일 입력" autofocus>
         <input type="password" name="pwd" placeholder="비밀번호">
         <button>로그인</button>
         <div>
-            <label><input type="checkbox" name="rememberId"> 아이디 기억</label> |
+            <label><input type="checkbox" name="rememberId" ${empty cookie.id.value ? "" : "checked"}> 아이디 기억</label> |
             <a href="">비밀번호 찾기</a> |
             <a href="">회원가입</a>
         </div>
@@ -90,7 +91,7 @@
             }
      
             function setMessage(msg, element){
-                 document.getElementById("msg").innerHTML = ` ${'${msg}'}`;
+                 document.getElementById("msg").innerHTML = `${'${msg}'}`;
      
                  if(element) {
                      element.select();
