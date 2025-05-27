@@ -13,7 +13,7 @@ public class LoginCheckInterceptor implements HandlerInterceptor {
         
     	HttpSession session = request.getSession(false);
         if (session == null || session.getAttribute("id") == null) {
-            response.sendRedirect("/login"); // 로그인 페이지로 리다이렉트
+            response.sendRedirect("/login/login"); // 로그인 페이지로 리다이렉트
             return false; // 컨트롤러 진입 차단
         }
         return true; // 로그인 되어 있으면 컨트롤러로 진입 허용
