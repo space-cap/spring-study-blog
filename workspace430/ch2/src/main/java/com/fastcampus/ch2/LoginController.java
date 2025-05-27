@@ -21,13 +21,24 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @Controller
 public class LoginController {
 	
-	@RequestMapping(value = "/loginx", method = RequestMethod.GET)
+	@RequestMapping(value = "/login", method = RequestMethod.GET)
+	public String loginForm() {
+		return "loginForm";
+	}
+	
+	@RequestMapping(value = "/login", method = RequestMethod.POST)
 	public String login() {
+		return "redirect:/";
+	}
+	
+	
+	@RequestMapping(value = "/loginx", method = RequestMethod.GET)
+	public String loginx() {
 		return "login";
 	}
 	
 	@RequestMapping(value = "/loginx", method = RequestMethod.POST)
-	public String login(LoginInfo loginInfo, HttpServletResponse response, Model model, 
+	public String loginx(LoginInfo loginInfo, HttpServletResponse response, Model model, 
 			RedirectAttributes redirectAttributes) {
 		
 		//String id = request.getParameter("id");
