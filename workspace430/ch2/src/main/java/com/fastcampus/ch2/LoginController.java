@@ -21,7 +21,13 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 public class LoginController {
 
 	@GetMapping("/login")
-	public String loginForm() {
+	public String loginForm(HttpServletRequest request) {
+		
+		HttpSession session = request.getSession();
+		if( session.getAttribute("id") != null) {
+			return "redirect:/"; // 이미 로그인한 상태이면, 메인 화면으로 이동
+		}
+		
 		return "loginForm";
 	}
 

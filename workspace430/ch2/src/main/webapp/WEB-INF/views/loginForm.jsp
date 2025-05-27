@@ -64,7 +64,7 @@
 		<i class="fa fa-exclamation-circle"> ${URLDecoder.decode(param.msg)}</i>            
 	    </c:if>        
 	</div>
-        <input type="text" name="id" placeholder="이메일 입력" autofocus>
+        <input type="text" name="id" value="${}" placeholder="이메일 입력" autofocus>
         <input type="password" name="pwd" placeholder="비밀번호">
         <button>로그인</button>
         <div>
