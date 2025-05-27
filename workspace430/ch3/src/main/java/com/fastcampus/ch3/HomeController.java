@@ -7,6 +7,7 @@ import java.util.Locale;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -33,6 +34,22 @@ public class HomeController {
 		String formattedDate = dateFormat.format(date);
 		
 		model.addAttribute("serverTime", formattedDate );
+		
+		return "home";
+	}
+
+	
+	private final DbInfoPrinter dbInfoPrinter;
+
+    // 생성자 주입 방식 (권장)
+    public HomeController(DbInfoPrinter dbInfoPrinter) {
+        this.dbInfoPrinter = dbInfoPrinter;
+    }
+    
+	@RequestMapping(value = "/h2", method = RequestMethod.GET)
+	public String home2(Locale locale, Model model) {
+
+		dbInfoPrinter.printDbInfo();
 		
 		return "home";
 	}

@@ -99,3 +99,4 @@ workspace430/ch2/.springBeans
 /intellij_work/ch3/target
 db_modeling/UniEnroll/modeling.xlsx
 db_modeling/UniEnroll/~$modeling.xlsx
+*.properties
