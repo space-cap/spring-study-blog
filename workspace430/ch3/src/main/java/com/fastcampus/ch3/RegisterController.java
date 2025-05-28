@@ -20,8 +20,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @RequestMapping("/register")
 public class RegisterController {
 	
-	@Autowired // ctrl+shift+o 자동 import
-	UserDao userDao;
+	@Autowired
+	//UserDao userDao;
+	UserDaoImpl userDao;
 	
 	@InitBinder
 	public void toDate(WebDataBinder binder) {
