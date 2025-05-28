@@ -8,8 +8,8 @@ public class DBConnectionTest {
         String DB_URL = "jdbc:mysql://localhost:3306/springbasic?useUnicode=true&characterEncoding=utf8";
 
         // DB의 userid와 pwd를 알맞게 변경해야 함
-        String DB_USER = "steve";
-        String DB_PASSWORD = "doolman";
+        String DB_USER = "";
+        String DB_PASSWORD = "";
 
         Connection conn = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD); // 데이터베이스의 연결을 얻는다.
         Statement stmt  = conn.createStatement(); // Statement를 생성한다.
