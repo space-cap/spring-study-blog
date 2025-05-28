@@ -1,13 +1,14 @@
 package com.fastcampus.ch3;
 
 
-import org.junit.Test;
-import static org.junit.Assert.*;
+
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.GenericXmlApplicationContext;
 
-import javax.sql.DataSource;
-import java.sql.Connection;
+import javax.sql.*;
+import java.sql.*;
 
 public class DBConnectionTest2Test {
     @Test
