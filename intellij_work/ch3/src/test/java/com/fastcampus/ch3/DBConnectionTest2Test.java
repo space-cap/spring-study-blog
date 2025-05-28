@@ -13,7 +13,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import javax.sql.*;
 import java.sql.*;
 
-@ExtendWith(SpringExtension.class)
+@ExtendWith(SpringExtension.class) // ac 를 만드는 것 하고 같다.
 @ContextConfiguration(locations = "file:src/main/webapp/WEB-INF/spring/**/root-context.xml")
 public class DBConnectionTest2Test {
 
