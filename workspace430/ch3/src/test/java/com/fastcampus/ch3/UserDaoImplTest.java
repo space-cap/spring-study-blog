@@ -4,6 +4,7 @@ import static org.junit.Assert.*;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.util.Calendar;
 import java.util.Date;
 
 import javax.sql.DataSource;
@@ -28,7 +29,14 @@ public class UserDaoImplTest {
 	public void updateUserTest() throws Exception {
 		deleteAll(); // 테스트 전에 기존 데이터를 모두 삭제
 
-		User user = new User("steve", "1234", "lee", "aaa", new Date(), "fb", new Date());
+		
+		Calendar cal = Calendar.getInstance();
+		cal.clear();
+		cal.set(2020, 1, 1, 0, 0, 0);
+		
+		
+		
+		User user = new User("steve", "1234", "lee", "aaa", new Date(cal.getTimeInMillis()), "fb", new Date());
 		int rowCnt = userDao.insertUser(user);
 		assertTrue(rowCnt == 1);
 
@@ -38,6 +46,10 @@ public class UserDaoImplTest {
 		assertTrue(rowCnt == 1);
 
 		User user2 = userDao.selectUser(user.getId());
+		
+		System.out.println("user1=" + user);
+		System.out.println("user2=" + user2);
+		
 		assertTrue(user2.getEmail().equals("bbb"));
 	}
 

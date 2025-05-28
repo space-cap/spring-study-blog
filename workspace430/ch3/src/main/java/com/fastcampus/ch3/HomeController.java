@@ -39,28 +39,28 @@ public class HomeController {
 		return "home";
 	}
 
-	private final DbInfoPrinter dbInfoPrinter;
-
-	// 생성자 주입 방식 (권장)
-	public HomeController(DbInfoPrinter dbInfoPrinter) {
-		this.dbInfoPrinter = dbInfoPrinter;
-	}
-
-	// application.properties에 정의된 spring.datasource.username 속성 주입
-	@Value("${spring.datasource.username}")
-	private String dbUsername;
-
-	// application.properties에 정의된 spring.datasource.password 속성 주입
-	// 보안상 비밀번호는 실제 화면에 출력하지 않도록 주의하세요!
-	@Value("${spring.datasource.password}")
-	private String dbPassword;
-
-	@RequestMapping(value = "/h2", method = RequestMethod.GET)
-	public String home2(Locale locale, Model model) {
-
-		System.out.println("DB Username: " + dbUsername);
-        System.out.println("DB Password: " + dbPassword); // 콘솔 출력도 주의
-		return "home";
-	}
+//	private final DbInfoPrinter dbInfoPrinter;
+//
+//	// 생성자 주입 방식 (권장)
+//	public HomeController(DbInfoPrinter dbInfoPrinter) {
+//		this.dbInfoPrinter = dbInfoPrinter;
+//	}
+//
+//	// application.properties에 정의된 spring.datasource.username 속성 주입
+//	@Value("${spring.datasource.username}")
+//	private String dbUsername;
+//
+//	// application.properties에 정의된 spring.datasource.password 속성 주입
+//	// 보안상 비밀번호는 실제 화면에 출력하지 않도록 주의하세요!
+//	@Value("${spring.datasource.password}")
+//	private String dbPassword;
+//
+//	@RequestMapping(value = "/h2", method = RequestMethod.GET)
+//	public String home2(Locale locale, Model model) {
+//
+//		System.out.println("DB Username: " + dbUsername);
+//        System.out.println("DB Password: " + dbPassword); // 콘솔 출력도 주의
+//		return "home";
+//	}
 
 }
