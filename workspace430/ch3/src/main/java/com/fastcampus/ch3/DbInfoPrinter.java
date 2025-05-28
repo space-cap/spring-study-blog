@@ -18,8 +18,8 @@ public class DbInfoPrinter {
     private String dbPassword;
 
     public void printDbInfo() {
-        System.out.println("DB URL: " + dbUrl);
-        System.out.println("DB User: " + dbUser);
+        //System.out.println("DB URL: " + dbUrl);
+        //System.out.println("DB User: " + dbUser);
         // 보안상 password는 출력하지 않는 것이 좋습니다.
     }
 }

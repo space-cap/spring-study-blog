@@ -58,6 +58,8 @@ public class HomeController {
 	@RequestMapping(value = "/h2", method = RequestMethod.GET)
 	public String home2(Locale locale, Model model) {
 
+		System.out.println("DB Username: " + dbUsername);
+        System.out.println("DB Password: " + dbPassword); // 콘솔 출력도 주의
 		return "home";
 	}
 
