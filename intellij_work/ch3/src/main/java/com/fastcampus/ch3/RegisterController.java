@@ -7,6 +7,7 @@ import java.util.Date;
 
 import javax.validation.Valid;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
 import org.springframework.beans.propertyeditors.StringArrayPropertyEditor;
 import org.springframework.core.convert.ConversionService;
@@ -20,6 +21,9 @@ import org.springframework.web.bind.annotation.*;
 @Controller // ctrl+shift+o 자동 import
 @RequestMapping("/register")
 public class RegisterController {
+
+    @Autowired
+    UserDao userDao;
 
     @InitBinder
     public void toDate(WebDataBinder binder) {
@@ -46,6 +50,11 @@ public class RegisterController {
         }
 
         // 2. DB에 신규회원 정보를 저장
+        int rowCnt = userDao.insertUser(user);
+        if(rowCnt==0) {
+            return "registerForm";
+        }
+
         return "registerInfo";
     }
 
