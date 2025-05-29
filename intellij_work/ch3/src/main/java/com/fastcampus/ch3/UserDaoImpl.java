@@ -45,7 +45,7 @@ public class UserDaoImpl implements UserDao {
     }
 
     @Override
-    public User selectUser(String id) throws Exception {
+    public User selectUser(String id) {
         User user = null;
 
         Connection conn = null;
