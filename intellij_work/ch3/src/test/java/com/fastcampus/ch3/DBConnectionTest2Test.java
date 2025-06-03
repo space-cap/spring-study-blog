@@ -21,6 +21,8 @@ public class DBConnectionTest2Test {
 
     @Autowired
     DataSource ds;
+    @Autowired
+    private UserDao userDao;
 
     @Test
     public void testSomething() {
@@ -94,5 +96,37 @@ public class DBConnectionTest2Test {
         return rowCnt;
     }
 
+
+    @Test
+    public void transactionTest() throws Exception {
+        Connection conn = null;
+
+        try {
+            deleteUser("asdf22");
+            conn = ds.getConnection();
+            conn.setAutoCommit(false); // default true
+
+            String sql = "insert into user_info values (?, ?, ?, ?,?,?, now()) ";
+
+            PreparedStatement pstmt = conn.prepareStatement(sql); // SQL Injection공격, 성능향상
+            pstmt.setString(1, "asdf22");
+            pstmt.setString(2, "1234");
+            pstmt.setString(3, "smith");
+            pstmt.setString(4,  "a@a.com");
+            pstmt.setDate(5, new java.sql.Date(new Date().getTime()));
+            pstmt.setString(6, "facebook");
+
+            int rowCnt = pstmt.executeUpdate(); //  insert, delete, update
+
+            pstmt.setString(1, "asdf23");
+            rowCnt = pstmt.executeUpdate();
+
+            conn.commit();
+        } catch (Exception e) {
+            conn.rollback();
+        } finally {
+            conn.close();
+        }
+    }
 
 }
