@@ -10,8 +10,8 @@
 	<properties>
 		<java-version>17</java-version>
 		<org.springframework-version>5.3.39</org.springframework-version>
-		<org.aspectj-version>1.6.10</org.aspectj-version>
-		<org.slf4j-version>1.6.6</org.slf4j-version>
+		<org.aspectj-version>1.9.24</org.aspectj-version>
+		<org.slf4j-version>2.0.17</org.slf4j-version>
 	</properties>
 	<dependencies>
 		<!-- https://mvnrepository.com/artifact/javax.validation/validation-api -->
@@ -60,6 +60,14 @@
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-webmvc</artifactId>
 			<version>${org.springframework-version}</version>
+		</dependency>
+
+		<!-- https://mvnrepository.com/artifact/org.aspectj/aspectjweaver -->
+		<dependency>
+			<groupId>org.aspectj</groupId>
+			<artifactId>aspectjweaver</artifactId>
+			<version>1.9.24</version>
+			<scope>runtime</scope>
 		</dependency>
 
 		<!-- https://mvnrepository.com/artifact/org.springframework/spring-aop -->
