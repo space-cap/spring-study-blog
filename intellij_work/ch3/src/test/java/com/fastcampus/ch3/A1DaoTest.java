@@ -12,13 +12,17 @@ import static org.junit.jupiter.api.Assertions.*;
 @ContextConfiguration(locations = "file:src/main/webapp/WEB-INF/spring/**/root-context.xml")
 class A1DaoTest {
 
+    @Autowired
+    A1Dao dao;
+
     @Test
     public void insertA1() throws Exception {
+        int a = dao.insertA1(3, 10);
+        int b = dao.insertA1(4, 20);
 
-        @Autowired
-        A1Dao dao;
+        System.out.println("a="+a+", b="+b);
 
-        dao.insertA1(1, 10);
+        assertEquals(1,1);
     }
 
 }
