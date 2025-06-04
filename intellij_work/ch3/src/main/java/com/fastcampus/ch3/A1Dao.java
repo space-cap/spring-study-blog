@@ -1,6 +1,7 @@
 package com.fastcampus.ch3;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.datasource.DataSourceUtils;
 import org.springframework.stereotype.Repository;
 
 import javax.sql.DataSource;
@@ -19,7 +20,8 @@ public class A1Dao {
         PreparedStatement ps = null;
 
         try {
-            conn = ds.getConnection();
+            //conn = ds.getConnection();
+            conn = DataSourceUtils.getConnection(ds);
             String sql = "insert into a1 values(?,?)";
             ps = conn.prepareStatement(sql);
             ps.setInt(1, key);
@@ -30,7 +32,9 @@ public class A1Dao {
             //throw new RuntimeException(e);
             e.printStackTrace();
         } finally {
-            close(conn, ps);
+            //close(conn, ps);
+            close(ps);
+            DataSourceUtils.releaseConnection(conn, ds);
         }
 
         return 0;
