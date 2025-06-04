@@ -36,6 +36,7 @@ class A1DaoTest {
         int a = 0;
         int b = 0;
         try {
+            dao.deleteAll();
             a = dao.insertA1(1, 10);
             b = dao.insertA1(1, 20);
 

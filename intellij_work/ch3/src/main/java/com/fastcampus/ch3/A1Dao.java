@@ -22,6 +22,7 @@ public class A1Dao {
         try {
             //conn = ds.getConnection();
             conn = DataSourceUtils.getConnection(ds);
+            System.out.println("conn = " + conn);
             String sql = "insert into a1 values(?,?)";
             ps = conn.prepareStatement(sql);
             ps.setInt(1, key);
@@ -43,5 +44,13 @@ public class A1Dao {
     private void close(AutoCloseable... acs) {
         for(AutoCloseable ac :acs)
             try { if(ac!=null) ac.close(); } catch(Exception e) { e.printStackTrace(); }
+    }
+
+    public void deleteAll() throws Exception {
+        Connection conn = ds.getConnection();
+        String sql = "delete from a1";
+        PreparedStatement ps = conn.prepareStatement(sql);
+        ps.executeUpdate();
+        close(conn, ps);
     }
 }
