@@ -31,14 +31,14 @@ public class A1Dao {
             return ps.executeUpdate();
         } catch (SQLException e) {
             //throw new RuntimeException(e);
-            e.printStackTrace();
+            //e.printStackTrace();
+            throw e;
         } finally {
             //close(conn, ps);
             close(ps);
             DataSourceUtils.releaseConnection(conn, ds);
         }
-
-        return 0;
+        
     }
 
     private void close(AutoCloseable... acs) {
