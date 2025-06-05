@@ -25,11 +25,14 @@ class A1DaoTest {
     @Autowired
     DataSource ds;
 
+    @Autowired
+    DataSourceTransactionManager tm;
+
     @Test
     public void insertA1() throws Exception {
 
         // 트랜젝션 생성 Tx 매니저 생성
-        PlatformTransactionManager tm = new DataSourceTransactionManager(ds);
+        //PlatformTransactionManager tm = new DataSourceTransactionManager(ds);
         TransactionStatus status = tm.getTransaction(new DefaultTransactionDefinition());
 
         // Tx 시작
@@ -38,7 +41,7 @@ class A1DaoTest {
         try {
             dao.deleteAll();
             a = dao.insertA1(1, 10);
-            b = dao.insertA1(1, 20);
+            b = dao.insertA1(2, 20);
 
             tm.commit(status);
         } catch (Exception e) {

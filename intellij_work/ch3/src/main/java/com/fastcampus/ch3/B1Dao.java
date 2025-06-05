@@ -10,7 +10,7 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
 @Repository
-public class A1Dao {
+public class B1Dao {
 
     @Autowired
     DataSource ds;
@@ -23,7 +23,7 @@ public class A1Dao {
             //conn = ds.getConnection();
             conn = DataSourceUtils.getConnection(ds);
             System.out.println("conn = " + conn);
-            String sql = "insert into a1 values(?,?)";
+            String sql = "insert into b1 values(?,?)";
             ps = conn.prepareStatement(sql);
             ps.setInt(1, key);
             ps.setInt(2, value);
