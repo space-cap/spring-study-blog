@@ -21,7 +21,10 @@ public class TxService {
     @Transactional // RuntimeExcepton, Error 만  rollback 한다.
     public void insertA1WithTxFail() throws Exception {
         a1Dao.insertA1(1, 10);
-        a1Dao.insertA1(1, 20);
+
+        // throw new RuntimeException();
+        throw new Exception();
+        //a1Dao.insertA1(1, 20);
     }
 
     @Transactional
