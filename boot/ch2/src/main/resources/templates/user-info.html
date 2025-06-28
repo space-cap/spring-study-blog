@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>사용자 정보</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background-color: white;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h2 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .user-info {
+            background-color: #e9f7ef;
+            padding: 20px;
+            border-radius: 8px;
+            border-left: 4px solid #28a745;
+            margin-bottom: 30px;
+        }
+        .info-row {
+            display: flex;
+            margin-bottom: 15px;
+            align-items: center;
+        }
+        .info-label {
+            font-weight: bold;
+            color: #555;
+            width: 120px;
+            flex-shrink: 0;
+        }
+        .info-value {
+            color: #333;
+            font-size: 16px;
+        }
+        .welcome-message {
+            text-align: center;
+            color: #28a745;
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 30px;
+        }
+        .btn {
+            background-color: #007bff;
+            color: white;
+            padding: 12px 30px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            text-decoration: none;
+            display: inline-block;
+            margin: 5px;
+        }
+        .btn:hover {
+            background-color: #0056b3;
+        }
+        .btn-secondary {
+            background-color: #6c757d;
+        }
+        .btn-secondary:hover {
+            background-color: #545b62;
+        }
+        .button-group {
+            text-align: center;
+            margin-top: 30px;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <!-- 페이지 제목 -->
+    <h2>사용자 정보</h2>
+
+    <!-- 환영 메시지 -->
+    <!-- 컨트롤러에서 전달받은 name 값을 표시 -->
+    <div class="welcome-message">
+        <span th:text="${name}">사용자명</span>님, 환영합니다! 🎉
+    </div>
+
+    <!-- 사용자 정보 표시 영역 -->
+    <div class="user-info">
+        <h3 style="margin-top: 0; color: #28a745;">계정 정보</h3>
+
+        <!-- 아이디 정보 -->
+        <div class="info-row">
+            <div class="info-label">아이디:</div>
+            <div class="info-value" th:text="${username}">admin</div>
+        </div>
+
+        <!-- 이름 정보 -->
+        <div class="info-row">
+            <div class="info-label">이름:</div>
+            <div class="info-value" th:text="${name}">관리자</div>
+        </div>
+
+        <!-- 이메일 정보 -->
+        <div class="info-row">
+            <div class="info-label">이메일:</div>
+            <div class="info-value" th:text="${email}">admin@example.com</div>
+        </div>
+
+        <!-- 로그인 시간 (현재 시간 표시) -->
+        <div class="info-row">
+            <div class="info-label">로그인 시간:</div>
+            <div class="info-value" th:text="${#dates.format(#dates.createNow(), 'yyyy-MM-dd HH:mm:ss')}">2025-06-28 14:26:13</div>
+        </div>
+    </div>
+
+    <!-- 추가 정보 또는 기능 영역 -->
+    <div style="background-color: #f8f9fa; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
+        <h4 style="margin-top: 0; color: #333;">계정 상태</h4>
+        <p style="color: #28a745; margin: 0;">✅ 활성 상태</p>
+        <p style="color: #666; margin: 5px 0 0 0; font-size: 14px;">마지막 로그인: 방금 전</p>
+    </div>
+
+    <!-- 버튼 그룹 -->
+    <div class="button-group">
+        <!-- 메인 페이지로 이동 -->
+        <a th:href="@{/}" class="btn">메인 페이지</a>
+
+        <!-- 로그아웃 (로그인 페이지로 이동) -->
+        <a th:href="@{/login}" class="btn btn-secondary">로그아웃</a>
+    </div>
+
+    <!-- 추가 안내 메시지 -->
+    <div style="margin-top: 30px; padding: 15px; background-color: #d1ecf1; border: 1px solid #bee5eb; border-radius: 5px; color: #0c5460;">
+        <strong>안내:</strong> 이것은 데모 페이지입니다. 실제 프로젝트에서는 세션 관리, 보안 등이 추가로 필요합니다.
+    </div>
+</div>
+</body>
+</html>

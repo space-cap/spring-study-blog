@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>메인 페이지</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            text-align: center;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background-color: white;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 30px;
+        }
+        .btn {
+            background-color: #007bff;
+            color: white;
+            padding: 12px 30px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            text-decoration: none;
+            display: inline-block;
+            margin: 10px;
+        }
+        .btn:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <!-- 메인 페이지 제목 -->
+    <h1>Spring Boot 로그인 시스템</h1>
+
+    <!-- 메인 페이지 설명 -->
+    <p>안녕하세요! 로그인 시스템 데모 페이지입니다.</p>
+
+    <!-- 로그인 페이지로 이동하는 버튼 -->
+    <!-- th:href를 사용하여 Thymeleaf 방식으로 URL 생성 -->
+    <a th:href="@{/login}" class="btn">로그인 하기</a>
+
+    <!-- 추가 정보 표시 -->
+    <div style="margin-top: 30px; padding: 15px; background-color: #e9ecef; border-radius: 5px;">
+        <h3>테스트 계정 정보</h3>
+        <p><strong>아이디:</strong> admin</p>
+        <p><strong>비밀번호:</strong> 1234</p>
+    </div>
+</div>
+</body>
+</html>

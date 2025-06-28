@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>요일 계산기</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background-color: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #555;
+        }
+        input[type="number"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        button {
+            background-color: #007bff;
+            color: white;
+            padding: 12px 30px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            width: 100%;
+            margin-top: 10px;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .result {
+            margin-top: 30px;
+            padding: 20px;
+            background-color: #e9f7ef;
+            border-left: 4px solid #28a745;
+            border-radius: 5px;
+        }
+        .error {
+            background-color: #f8d7da;
+            border-left: 4px solid #dc3545;
+            color: #721c24;
+        }
+        .date-info {
+            font-size: 18px;
+            font-weight: bold;
+            color: #333;
+        }
+        .yoil {
+            font-size: 24px;
+            font-weight: bold;
+            color: #007bff;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>요일 계산기</h1>
+
+    <form th:action="@{/yoil}" method="GET">
+        <div class="form-group">
+            <label for="year">년도:</label>
+            <input type="number" id="year" name="year"
+                   th:value="${year}"
+                   placeholder="예: 2025"
+                   min="1" max="9999" required>
+        </div>
+
+        <div class="form-group">
+            <label for="month">월:</label>
+            <input type="number" id="month" name="month"
+                   th:value="${month}"
+                   placeholder="1-12"
+                   min="1" max="12" required>
+        </div>
+
+        <div class="form-group">
+            <label for="day">일:</label>
+            <input type="number" id="day" name="day"
+                   th:value="${day}"
+                   placeholder="1-31"
+                   min="1" max="31" required>
+        </div>
+
+        <button type="submit">요일 계산하기</button>
+    </form>
+
+    <!-- 결과 표시 영역 -->
+    <div th:if="${yoil != null}" class="result">
+        <div class="date-info">
+            <span th:text="${year}">2025</span>년
+            <span th:text="${month}">1</span>월
+            <span th:text="${day}">1</span>일
+        </div>
+        <div class="yoil">
+            요일: <span th:text="${yoil}">수요일</span>
+        </div>
+    </div>
+
+    <!-- 에러 메시지 표시 -->
+    <div th:if="${error != null}" class="result error">
+        <strong>오류:</strong> <span th:text="${error}">잘못된 날짜입니다.</span>
+    </div>
+
+    <!-- 입력 예시 -->
+    <div th:if="${yoil == null and error == null}" style="margin-top: 30px; padding: 15px; background-color: #f8f9fa; border-radius: 5px;">
+        <h3 style="margin-top: 0; color: #666;">사용법:</h3>
+        <ul style="color: #666;">
+            <li>년도, 월, 일을 입력하고 "요일 계산하기" 버튼을 클릭하세요.</li>
+            <li>예시: 2025년 6월 28일 → 토요일</li>
+            <li>유효한 날짜 범위: 1년 1월 1일 ~ 9999년 12월 31일</li>
+        </ul>
+    </div>
+</div>
+</body>
+</html>
