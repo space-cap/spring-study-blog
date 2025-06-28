@@ -42,6 +42,9 @@ public class PerformanceFilter implements Filter {
         } finally {
             long processingTime = (System.nanoTime() - startTime) / 1_000_000;
 
+            System.out.print("[" + ((HttpServletRequest) request).getRequestURI() + "]");
+            System.out.println(" time=" + processingTime + "ms");
+
             if (processingTime > properties.getSlowThreshold()) {
                 System.out.println("⚠️ 느린 요청: " + processingTime + "ms");
             }
