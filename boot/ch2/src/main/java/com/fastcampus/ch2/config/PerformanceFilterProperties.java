@@ -1,7 +1,11 @@
 package com.fastcampus.ch2.config;
 
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.Pattern;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
+import org.springframework.validation.annotation.Validated;
 
 import java.util.List;
 
@@ -11,11 +15,19 @@ import java.util.List;
  */
 @Component
 @ConfigurationProperties(prefix = "performance.filter")
+@Validated
 public class PerformanceFilterProperties {
 
     private boolean enabled = true;
+
+    @Min(value = 1, message = "slowThreshold는 1 이상이어야 합니다")
+    @Max(value = 60000, message = "slowThreshold는 60초를 초과할 수 없습니다")
     private long slowThreshold = 1000L;
+
+    @Pattern(regexp = "DEBUG|INFO|WARN|ERROR|NONE",
+            message = "logLevel은 DEBUG, INFO, WARN, ERROR, NONE 중 하나여야 합니다")
     private String logLevel = "INFO";
+
     private boolean includeHeaders = false;
     private List<String> excludePatterns = List.of();
 
