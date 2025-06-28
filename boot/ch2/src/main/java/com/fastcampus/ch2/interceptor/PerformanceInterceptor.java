@@ -6,6 +6,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.resource.ResourceHttpRequestHandler;
 
 
 @Component
@@ -14,14 +15,23 @@ public class PerformanceInterceptor implements HandlerInterceptor { // 단일 �
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
+
+        // 정적 리소스 요청인 경우 그대로 통과
+        if (handler instanceof ResourceHttpRequestHandler) {
+            return true;
+        }
+
         // 1. 전처리 작업
         long startTime = System.currentTimeMillis();
         request.setAttribute("startTime", startTime); // request객체에 startTime을 저장
 
-        //  handler - 요청하고 연결된 컨트롤러의 메서드
-        HandlerMethod method = (HandlerMethod) handler;
-        System.out.println("method.getMethod() = " + method.getMethod()); // URL하고 연결된 메서드
-        System.out.println("method.getBean() = " + method.getBean()); // 메서드가 포함된 컨트롤러
+        // 컨트롤러 메서드 요청인 경우에만 처리
+        if (handler instanceof HandlerMethod) {
+            //  handler - 요청하고 연결된 컨트롤러의 메서드
+            HandlerMethod method = (HandlerMethod) handler;
+            System.out.println("method.getMethod() = " + method.getMethod()); // URL하고 연결된 메서드
+            System.out.println("method.getBean() = " + method.getBean()); // 메서드가 포함된 컨트롤러
+        }
 
         // return true; // 다음 인터셉터나 컨트롤러를 호출 false면 호출안함.
         return HandlerInterceptor.super.preHandle(request, response, handler);
