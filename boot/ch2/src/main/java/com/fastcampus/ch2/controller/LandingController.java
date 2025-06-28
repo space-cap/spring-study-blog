@@ -6,6 +6,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -27,7 +28,7 @@ public class LandingController {
         return "landing/index";
     }
 
-    @PostMapping("/insert")
+    /*@PostMapping("/insert")
     //@ResponseBody
     //public Map<String, Object> insertLanding(@RequestParam Map<String, String> params) {
     public String insertLanding(@RequestParam Map<String, String> params, Model model) {
@@ -69,6 +70,49 @@ public class LandingController {
 
         //return result; // 이 부분이 JSON으로 응답됨
         return "landing/success-page";
+    }*/
+
+    @PostMapping("/insert")
+    public String insertLanding(
+            @RequestParam("inq_form_option") String formOption,
+            @RequestParam("inq_name") String name,
+            @RequestParam("inq_hp") String hp,
+            RedirectAttributes redirectAttributes) {
+
+        try {
+            // 현재 시간 포맷
+            LocalDateTime now = LocalDateTime.now();
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy. M. d. a h:mm:ss", Locale.KOREA);
+            String registrationTime = now.format(formatter);
+
+            // 데이터 검증
+            if (name == null || name.trim().isEmpty()) {
+                redirectAttributes.addFlashAttribute("error", "이름을 입력해주세요.");
+                return "redirect:/landing";
+            }
+
+            if (hp == null || hp.trim().isEmpty()) {
+                redirectAttributes.addFlashAttribute("error", "연락처를 입력해주세요.");
+                return "redirect:/landing";
+            }
+
+            // Google Sheets에 데이터 저장
+            googleSheetsService.appendData(name, hp, registrationTime);
+
+            // 성공 페이지로 리다이렉트
+            redirectAttributes.addFlashAttribute("message", "문의가 성공적으로 등록되었습니다.");
+            redirectAttributes.addFlashAttribute("formOption", formOption);
+            redirectAttributes.addFlashAttribute("name", name);
+            redirectAttributes.addFlashAttribute("hp", hp);
+            redirectAttributes.addFlashAttribute("inquiry-time", registrationTime);
+
+            return "redirect:/landing/success-page";
+
+        } catch (Exception e) {
+            System.err.println("문의 등록 중 오류 발생: " + e.getMessage());
+            redirectAttributes.addFlashAttribute("error", "서버 오류가 발생했습니다.");
+            return "redirect:/landing";
+        }
     }
 
     @GetMapping("/success-page")
