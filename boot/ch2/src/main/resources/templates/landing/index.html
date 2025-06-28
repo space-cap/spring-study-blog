@@ -408,7 +408,7 @@
             $("label[for='form_select_1_3']").css("background", "no-repeat center/100% 100% url('./img/3.png')");
             $("label[for='form_select_1_4']").css("background", "no-repeat center/100% 100% url('./img/4.png')");
             $("label[for='" + $(this).attr('id') + "']").css("background", "no-repeat center/100% 100% url('./img/" + $(this).attr('id') + ".png')");
-            alert("선택한 값: " + $(this).val() + " : " + $(this).attr('id'));
+            // alert("선택한 값: " + $(this).val() + " : " + $(this).attr('id'));
         });
     });
 
@@ -536,34 +536,26 @@
 
         var form = $('#flanding')[0];
         var formData = new FormData(form);
+        // 디버깅: FormData 내용 확인
+        console.log('=== FormData 내용 ===');
+        for (let [key, value] of formData.entries()) {
+            console.log(`${key}: ${value}`);
+        }
 
         $.ajax({
-            url: g5_url+'/landing/ajax.inquiry.select.php',
+            url: '/landing/insert',
             type: 'POST',
             data: formData,
             dataType: 'json',
             success: function(data) {
-                if(data == "0"){
-                    $.ajax({
-                        url: g5_url+'/landing/ajax.inquiry.insert.php',
-                        type: 'POST',
-                        data: formData,
-                        success: function(data) {
-                            //_tfa.push({notify: 'event', name: 'lead', id: 1557787});
-                            // $("#flanding")[0].reset();
-                            location.href = g5_url+'/landing/submit/index.php';
-                            //alert("신청 완료되었습니다.");
-                            //location.reload();
-                        },
-                        error: function(data) {
-                            alert("오류가 발생했습니다.\n잠시 후 다시 시도해주세요.");
-                        },
-                        cache: false,
-                        contentType: false,
-                        processData: false
-                    });
-                }else{
-                    alert("고객님의 번호는 이미 접수신청이 완료된 연락처 입니다.");
+                console.log('서버 응답:', data);
+                console.log('성공 여부:', data.success);
+                console.log('메시지:', data.message);
+
+                if (data.success) {
+                    alert("성공: " + data.message);
+                } else {
+                    alert("실패: " + data.message);
                 }
             },
             error: function(data) {

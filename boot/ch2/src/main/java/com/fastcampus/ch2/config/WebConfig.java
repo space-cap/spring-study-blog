@@ -13,7 +13,7 @@ public class WebConfig implements WebMvcConfigurer {
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(new PerformanceInterceptor())
                 .addPathPatterns("/**") // 인터셉터 적용할 대상
-                .excludePathPatterns("/css/**","/js/**","/images/**","/fonts/**"); // 인터셉터 적용 제외 대상.
+                .excludePathPatterns("/css/**","/js/**","/images/**","/img/**","/fonts/**"); // 인터셉터 적용 제외 대상.
 
     }
 }

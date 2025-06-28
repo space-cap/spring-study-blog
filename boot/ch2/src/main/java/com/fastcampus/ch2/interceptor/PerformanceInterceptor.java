@@ -16,17 +16,21 @@ public class PerformanceInterceptor implements HandlerInterceptor { // 단일 �
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
 
+        // 1. 전처리 작업
+        long startTime = System.currentTimeMillis();
+        request.setAttribute("startTime", startTime); // request객체에 startTime을 저장
+        
         // 정적 리소스 요청인 경우 그대로 통과
         if (handler instanceof ResourceHttpRequestHandler) {
             return true;
         }
 
-        // 1. 전처리 작업
-        long startTime = System.currentTimeMillis();
-        request.setAttribute("startTime", startTime); // request객체에 startTime을 저장
+
 
         // 컨트롤러 메서드 요청인 경우에만 처리
         if (handler instanceof HandlerMethod) {
+
+
             //  handler - 요청하고 연결된 컨트롤러의 메서드
             HandlerMethod method = (HandlerMethod) handler;
             System.out.println("method.getMethod() = " + method.getMethod()); // URL하고 연결된 메서드
