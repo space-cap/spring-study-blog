@@ -236,7 +236,7 @@
 
 <img src="./img/img.jpg" style="position:absolute; width:900px; top:0; left:50%; transform:translateX(-50%); z-index:1; opacity:0.3; display:none;">
 
-<form name="flanding" id="flanding" enctype="multipart/form-data" autocomplete="off">
+<form name="flanding" id="flanding" enctype="multipart/form-data" autocomplete="off" action="/landing/insert" method="POST">
     <input type="hidden" name="inq_category" value="imp_full_F3_23019">
     <input type="hidden" name="inq_type" value="imp-fb-full">
     <div class="landing_header">
@@ -542,6 +542,15 @@
             console.log(`${key}: ${value}`);
         }
 
+        // 폼 제출
+        form.submit();
+
+        /*// 기존 AJAX 코드 모두 제거하고 아래만 추가
+        document.getElementById('flanding').addEventListener('submit', function(e) {
+            console.log('폼이 제출됩니다.');
+            // 추가 검증 로직이 필요하면 여기에 작성
+        });*/
+/*
         $.ajax({
             url: '/landing/insert',
             type: 'POST',
@@ -574,7 +583,7 @@
             cache: false,
             contentType: false,
             processData: false
-        });
+        });*/
 
     }
 </script>

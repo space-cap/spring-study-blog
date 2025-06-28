@@ -1,10 +1,15 @@
 package com.fastcampus.ch2.controller;
 
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 @Controller
@@ -18,8 +23,9 @@ public class LandingController {
     }
 
     @PostMapping("/insert")
-    @ResponseBody
-    public Map<String, Object> insertLanding(@RequestParam Map<String, String> params) {
+    //@ResponseBody
+    //public Map<String, Object> insertLanding(@RequestParam Map<String, String> params) {
+    public String insertLanding(@RequestParam Map<String, String> params, Model model) {
         Map<String, Object> result = new HashMap<>();
 
         try {
@@ -34,6 +40,9 @@ public class LandingController {
             System.out.println("연락처: " + hp);
 
             // 비즈니스 로직 처리
+            model.addAttribute("formOption", formOption);
+            model.addAttribute("name", name);
+            model.addAttribute("hp", hp);
 
             result.put("success", true);
             result.put("message", "등록 완료");
@@ -43,7 +52,18 @@ public class LandingController {
             result.put("message", "오류 발생");
         }
 
-        return result; // 이 부분이 JSON으로 응답됨
+        // 현재 시간을 한국 형식으로 포맷
+        LocalDateTime now = LocalDateTime.now();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy. M. d. a h:mm:ss", Locale.KOREA);
+        String inquiryTime = now.format(formatter);
+
+        System.out.println("등록 시간: " + inquiryTime); // 로그 확인
+
+        model.addAttribute("result", result);
+        model.addAttribute("inquiryTime", inquiryTime);
+
+        //return result; // 이 부분이 JSON으로 응답됨
+        return "landing/success-page";
     }
 
     @GetMapping("/success-page")

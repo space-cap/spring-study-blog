@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -239,13 +239,14 @@
       <strong>문의 유형:</strong> <span id="inquiry-type">-</span>
     </div>
     <div class="info-item">
-      <strong>성명:</strong> <span id="inquiry-name">-</span>
+      <strong>성명:</strong> <span id="inquiry-name" th:text="${name}">기본값</span>
+
     </div>
     <div class="info-item">
-      <strong>연락처:</strong> <span id="inquiry-phone">-</span>
+      <strong>연락처:</strong> <span id="inquiry-phone" th:text="${hp}">-</span>
     </div>
     <div class="info-item">
-      <strong>등록 시간:</strong> <span id="inquiry-time">-</span>
+      <strong>등록 시간:</strong> <span id="inquiry-time" th:text="${inquiryTime}">-</span>
     </div>
   </div>
 
@@ -294,9 +295,9 @@
     const inquiryPhone = urlParams.get('phone') || localStorage.getItem('inquiryPhone') || '-';
 
     document.getElementById('inquiry-type').textContent = inquiryType;
-    document.getElementById('inquiry-name').textContent = inquiryName;
-    document.getElementById('inquiry-phone').textContent = inquiryPhone;
-    document.getElementById('inquiry-time').textContent = new Date().toLocaleString('ko-KR');
+    //document.getElementById('inquiry-name').textContent = inquiryName;
+    //document.getElementById('inquiry-phone').textContent = inquiryPhone;
+    //document.getElementById('inquiry-time').textContent = new Date().toLocaleString('ko-KR');
 
     // 로컬 스토리지 정리
     localStorage.removeItem('inquiryType');
