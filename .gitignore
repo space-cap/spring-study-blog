@@ -101,3 +101,4 @@ db_modeling/UniEnroll/modeling.xlsx
 db_modeling/UniEnroll/~$modeling.xlsx
 *.properties
 /workspace430/ch3/target
+boot/ch2/src/main/resources/credentials.json
