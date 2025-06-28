@@ -548,23 +548,34 @@
             data: formData,
             dataType: 'json',
             success: function(data) {
-                console.log('서버 응답:', data);
-                console.log('성공 여부:', data.success);
-                console.log('메시지:', data.message);
+                // 서버에서 보낸 데이터 확인
+                console.log('=== 서버 응답 데이터 ===');
+                console.log('전체 데이터:', data);
+                console.log('success:', data.success);
+                console.log('message:', data.message);
 
-                if (data.success) {
-                    alert("성공: " + data.message);
+                // 성공/실패에 따른 처리
+                if (data.success === true) {
+                    alert("✅ " + data.message);
+                    // 성공 시 추가 처리 (폼 초기화, 페이지 이동 등)
+                    //$('#flanding')[0].reset(); // 폼 초기화
+                    // 성공 페이지로 이동
+                    window.location.href = "/landing/success-page";
                 } else {
-                    alert("실패: " + data.message);
+                    alert("❌ " + data.message);
                 }
             },
-            error: function(data) {
+            error: function(xhr, status, error) {
+                console.log('AJAX 오류:', error);
+                console.log('상태:', status);
+                console.log('응답:', xhr.responseText);
                 alert("오류가 발생했습니다.\n잠시 후 다시 시도해주세요.");
             },
             cache: false,
             contentType: false,
             processData: false
         });
+
     }
 </script>
 

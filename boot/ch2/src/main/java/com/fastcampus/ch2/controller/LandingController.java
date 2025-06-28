@@ -46,5 +46,9 @@ public class LandingController {
         return result; // 이 부분이 JSON으로 응답됨
     }
 
-
+    @GetMapping("/success-page")
+    public String success() {
+        System.out.println("API 요청됨");
+        return "landing/success-page";
+    }
 }
