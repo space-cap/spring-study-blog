@@ -8,6 +8,7 @@ import com.google.api.services.sheets.v4.model.*;
 import com.google.auth.http.HttpCredentialsAdapter;
 import com.google.auth.oauth2.GoogleCredentials;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -353,6 +354,7 @@ public class GoogleSheetsService {
      * @param registrationTime 등록시간
      * @return 성공 여부
      */
+    @Async("googleSheetsTaskExecutor")
     public boolean appendDataToSheet(String sheetName,
                                      String name, String phone,
                                      String registrationTime,
