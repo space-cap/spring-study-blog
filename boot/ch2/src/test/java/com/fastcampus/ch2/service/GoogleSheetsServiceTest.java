@@ -93,6 +93,109 @@ class GoogleSheetsServiceTest {
     }
 
 
+    /**
+     * 데이터 추가 실패 테스트
+     */
+    @Test
+    @DisplayName("데이터 추가 실패 테스트")
+    void appendData_Failure() throws IOException {
+        // Given (준비)
+        when(mockValues.append(anyString(), anyString(), any(ValueRange.class)))
+                .thenReturn(mockAppend);
+        when(mockAppend.setValueInputOption(anyString()))
+                .thenReturn(mockAppend);
+        when(mockAppend.setInsertDataOption(anyString()))
+                .thenReturn(mockAppend);
+        when(mockAppend.execute())
+                .thenThrow(new IOException("네트워크 오류"));
+
+        // When (실행)
+        boolean result = googleSheetsService.appendData(TEST_NAME, TEST_PHONE, TEST_TIME);
+
+        // Then (검증)
+        assertFalse(result, "데이터 추가가 실패해야 합니다");
+    }
+
+
+    /**
+     * 데이터 읽기 성공 테스트
+     */
+    @Test
+    @DisplayName("데이터 읽기 성공 테스트")
+    void readData_Success() throws IOException {
+        // Given (준비)
+        List<List<Object>> expectedData = Arrays.asList(
+                Arrays.asList("이름", "전화번호", "등록시간"),
+                Arrays.asList(TEST_NAME, TEST_PHONE, TEST_TIME)
+        );
+
+        ValueRange mockValueRange = new ValueRange();
+        mockValueRange.setValues(expectedData);
+
+        // Mock 객체 동작 설정
+        when(mockValues.get(anyString(), anyString()))
+                .thenReturn(mockGet);
+        when(mockGet.execute())
+                .thenReturn(mockValueRange);
+
+        // When (실행)
+        List<List<Object>> result = googleSheetsService.readData();
+
+        // Then (검증)
+        assertNotNull(result, "결과가 null이 아니어야 합니다");
+        assertEquals(2, result.size(), "2개의 행이 있어야 합니다");
+        assertEquals(expectedData, result, "예상 데이터와 일치해야 합니다");
+
+        // Mock 객체 호출 검증
+        verify(mockValues).get(anyString(), eq("Sheet1!A:C"));
+        verify(mockGet).execute();
+    }
+
+    /**
+     * 데이터 읽기 실패 테스트
+     */
+    @Test
+    @DisplayName("데이터 읽기 실패 테스트")
+    void readData_Failure() throws IOException {
+        // Given (준비)
+        when(mockValues.get(anyString(), anyString()))
+                .thenReturn(mockGet);
+        when(mockGet.execute())
+                .thenThrow(new IOException("권한 오류"));
+
+        // When (실행)
+        List<List<Object>> result = googleSheetsService.readData();
+
+        // Then (검증)
+        assertNotNull(result, "결과가 null이 아니어야 합니다");
+        assertTrue(result.isEmpty(), "빈 리스트를 반환해야 합니다");
+    }
+
+
+    /**
+     * null 값 처리 테스트
+     */
+    @Test
+    @DisplayName("null 값 처리 테스트")
+    void appendData_WithNullValues() throws IOException {
+        // Given (준비)
+        AppendValuesResponse mockResponse = new AppendValuesResponse();
+
+        when(mockValues.append(anyString(), anyString(), any(ValueRange.class)))
+                .thenReturn(mockAppend);
+        when(mockAppend.setValueInputOption(anyString()))
+                .thenReturn(mockAppend);
+        when(mockAppend.setInsertDataOption(anyString()))
+                .thenReturn(mockAppend);
+        when(mockAppend.execute())
+                .thenReturn(mockResponse);
+
+        // When (실행)
+        boolean result = googleSheetsService.appendData(null, null, null);
+
+        // Then (검증)
+        assertTrue(result, "null 값도 처리되어야 합니다");
+    }
 
     @Test
     void appendData() {
