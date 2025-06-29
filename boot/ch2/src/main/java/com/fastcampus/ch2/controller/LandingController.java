@@ -104,7 +104,7 @@ public class LandingController {
             redirectAttributes.addFlashAttribute("formOption", formOption);
             redirectAttributes.addFlashAttribute("name", name);
             redirectAttributes.addFlashAttribute("hp", hp);
-            redirectAttributes.addFlashAttribute("inquiry-time", registrationTime);
+            redirectAttributes.addFlashAttribute("inquiryTime", registrationTime);
 
             return "redirect:/landing/success-page";
 
