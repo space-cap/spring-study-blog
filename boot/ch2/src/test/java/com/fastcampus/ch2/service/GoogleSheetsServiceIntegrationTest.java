@@ -6,7 +6,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Locale;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -33,10 +36,39 @@ public class GoogleSheetsServiceIntegrationTest {
         // Given (준비)
         String testName = "테스트사용자";
         String testPhone = "010-9999-8888";
-        String testTime = "2025. 6. 29. 오전 9:30:00";
+        //String testTime = "2025. 6. 29. 오전 9:30:00";
+        LocalDateTime now = LocalDateTime.now();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy. M. d. a h:mm:ss", Locale.KOREA);
+        String testTime = now.format(formatter);
 
         // When (실행)
         boolean appendResult = googleSheetsService.appendData(testName, testPhone, testTime);
+
+        // Then (검증)
+        assertTrue(appendResult, "데이터 추가가 성공해야 합니다");
+
+        // 데이터 읽기 테스트
+        List<List<Object>> data = googleSheetsService.readData();
+        assertNotNull(data, "데이터를 읽을 수 있어야 합니다");
+        assertFalse(data.isEmpty(), "데이터가 존재해야 합니다");
+    }
+
+    @Test
+    @DisplayName("실제 Google Sheets 연동 테스트")
+    void testAppendDataToSheet() {
+        // Given (준비)
+        String testSheet = "임플란트상담신청자2506";
+        String testName = "테스트사용자";
+        String testPhone = "010-9999-8888";
+        //String testTime = "2025. 6. 29. 오전 9:30:00";
+        LocalDateTime now = LocalDateTime.now();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy. M. d. a h:mm:ss", Locale.KOREA);
+        String testTime = now.format(formatter);
+
+        // When (실행)
+        //boolean appendResult = googleSheetsService.appendData(testName, testPhone, testTime);
+        boolean appendResult = googleSheetsService.appendDataToSheet(testSheet, testName, testPhone, testTime, false);
+
 
         // Then (검증)
         assertTrue(appendResult, "데이터 추가가 성공해야 합니다");
