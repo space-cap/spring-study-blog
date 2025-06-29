@@ -96,8 +96,9 @@ public class LandingController {
                 return "redirect:/landing";
             }
 
+            String sheetName = "임플란트상담신청자2506";
             // Google Sheets에 데이터 저장
-            googleSheetsService.appendData(name, hp, registrationTime);
+            googleSheetsService.appendDataToSheet(sheetName, name, hp, registrationTime, false);
 
             // 성공 페이지로 리다이렉트
             redirectAttributes.addFlashAttribute("message", "문의가 성공적으로 등록되었습니다.");

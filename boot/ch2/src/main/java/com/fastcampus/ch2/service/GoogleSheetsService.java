@@ -150,8 +150,6 @@ public class GoogleSheetsService {
             // 헤더 행 범위 (A1:C1)
             String headerRange = "'" + sheetName + "'!A1:D1";
 
-
-
             // 헤더 데이터 업데이트
             service.spreadsheets().values()
                     .update(SPREADSHEET_ID, headerRange, headerBody)
@@ -159,7 +157,7 @@ public class GoogleSheetsService {
                     .execute();
 
             // 상담완료 컬럼(D열)에 체크박스 추가
-            setCheckboxValidation(sheetName);
+            //setCheckboxValidation(sheetName);
 
             System.out.println("헤더 행 설정 완료: " + sheetName);
             return true;
@@ -246,6 +244,86 @@ public class GoogleSheetsService {
 
 
     /**
+     * 특정 행의 상담완료 컬럼(D열)에 체크박스 설정
+     * @param sheetName 시트 이름
+     * @param rowIndex 행 번호 (0부터 시작, 헤더는 0번째 행)
+     */
+    private void setCheckboxForRow(String sheetName, int rowIndex) {
+        try {
+            Sheets service = getSheetsService();
+
+            // 시트 ID 가져오기
+            int sheetId = getSheetId(sheetName);
+            if (sheetId == -1) {
+                System.err.println("시트 ID를 찾을 수 없습니다: " + sheetName);
+                return;
+            }
+
+            // 체크박스 데이터 검증 규칙 생성
+            DataValidationRule checkboxRule = new DataValidationRule()
+                    .setCondition(new BooleanCondition()
+                            .setType("BOOLEAN"))
+                    .setInputMessage("상담 완료 여부를 체크하세요")
+                    .setShowCustomUi(true);
+
+            // 특정 행의 D열에만 체크박스 적용
+            GridRange range = new GridRange()
+                    .setSheetId(sheetId)
+                    .setStartColumnIndex(3)     // D열 (0부터 시작)
+                    .setEndColumnIndex(4)       // D열까지
+                    .setStartRowIndex(rowIndex) // 지정된 행
+                    .setEndRowIndex(rowIndex + 1); // 해당 행만
+
+            // 데이터 검증 설정 요청
+            SetDataValidationRequest validationRequest = new SetDataValidationRequest()
+                    .setRange(range)
+                    .setRule(checkboxRule);
+
+            Request request = new Request().setSetDataValidation(validationRequest);
+
+            BatchUpdateSpreadsheetRequest batchRequest = new BatchUpdateSpreadsheetRequest()
+                    .setRequests(Collections.singletonList(request));
+
+            service.spreadsheets().batchUpdate(SPREADSHEET_ID, batchRequest).execute();
+
+            System.out.println("체크박스 설정 완료 - 시트: " + sheetName + ", 행: " + (rowIndex + 1));
+
+        } catch (Exception e) {
+            System.err.println("체크박스 설정 중 오류: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * 시트의 현재 데이터 행 수 조회 (헤더 제외)
+     * @param sheetName 시트 이름
+     * @return 데이터 행 수
+     */
+    private int getDataRowCount(String sheetName) {
+        try {
+            Sheets service = getSheetsService();
+            String range = "'" + sheetName + "'!A:A"; // A열 전체 조회
+
+            ValueRange response = service.spreadsheets().values()
+                    .get(SPREADSHEET_ID, range)
+                    .execute();
+
+            List<List<Object>> values = response.getValues();
+            if (values == null || values.isEmpty()) {
+                return 0; // 헤더도 없는 경우
+            }
+
+            // 헤더를 제외한 데이터 행 수 반환
+            return Math.max(0, values.size() - 1);
+
+        } catch (Exception e) {
+            System.err.println("데이터 행 수 조회 중 오류: " + e.getMessage());
+            return 0;
+        }
+    }
+
+
+    /**
      * 시트 확인 및 생성 (헤더 포함)
      * @param sheetName 확인/생성할 시트 이름
      * @return 성공 여부
@@ -286,6 +364,10 @@ public class GoogleSheetsService {
                 return false;
             }
 
+            // 현재 데이터 행 수 확인 (새로 추가될 행의 인덱스 계산용)
+            int currentRowCount = getDataRowCount(sheetName);
+            int newRowIndex = currentRowCount + 1; // 헤더(0) + 기존 데이터 행들 + 새 행
+
             Sheets service = getSheetsService();
 
             // 추가할 데이터 행 생성
@@ -304,6 +386,10 @@ public class GoogleSheetsService {
                     .setValueInputOption("USER_ENTERED") // 체크박스를 위해 USER_ENTERED 사용
                     .setInsertDataOption("INSERT_ROWS")
                     .execute();
+
+            // 새로 추가된 행에 체크박스 설정
+            setCheckboxForRow(sheetName, newRowIndex);
+            System.out.println("데이터 추가 및 체크박스 설정 완료 - 시트: " + sheetName + ", 이름: " + name + ", 행: " + (newRowIndex + 1));
 
             System.out.println("데이터 추가 성공 - 시트: " + sheetName + ", 이름: " + name);
             return true;
