@@ -70,7 +70,7 @@ public class GoogleSheetsService {
                 .build();
     }
 
-    public void appendData(String name, String phone, String registrationTime) {
+    public boolean appendData(String name, String phone, String registrationTime) {
         try {
             Sheets service = getSheetsService();
 
@@ -86,10 +86,12 @@ public class GoogleSheetsService {
                     .execute();
 
             System.out.println("Google Sheets 데이터 추가 성공: " + name);
+            return true;
 
         } catch (Exception e) {
             System.err.println("Google Sheets 오류: " + e.getMessage());
             e.printStackTrace();
+            return false;
         }
     }
 
