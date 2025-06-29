@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+      th:replace="admin/layout :: layout(~{::title}, ~{::content}, ~{::scripts})">
+<head>
+    <title>문의 관리</title>
+</head>
+<body>
+<div th:fragment="content">
+    <!-- 페이지 헤더 -->
+    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+        <h1 class="h2">
+            <i class="bi bi-chat-dots me-2"></i>문의 관리
+        </h1>
+        <div class="btn-toolbar mb-2 mb-md-0">
+            <span class="badge bg-primary fs-6" th:text="'총 ' + ${totalElements} + '건'">총 0건</span>
+        </div>
+    </div>
+
+    <!-- 검색 폼 -->
+    <form th:action="@{/admin/inquiries}" method="get" class="search-form">
+        <div class="row g-3">
+            <!-- 이름 검색 -->
+            <div class="col-md-3">
+                <label for="name" class="form-label">이름</label>
+                <input type="text" class="form-control" id="name" name="name"
+                       th:value="${searchDto.name}" placeholder="이름 검색">
+            </div>
+            <!-- 전화번호 검색 -->
+            <div class="col-md-3">
+                <label for="phone" class="form-label">전화번호</label>
+                <input type="text" class="form-control" id="phone" name="phone"
+                       th:value="${searchDto.phone}" placeholder="전화번호 검색">
+            </div>
+            <!-- 우선순위 필터 -->
+            <div class="col-md-2">
+                <label for="priority" class="form-label">우선순위</label>
+                <select class="form-select" id="priority" name="priority">
+                    <option value="">전체</option>
+                    <option value="높음" th:selected="${searchDto.priority == '높음'}">높음</option>
+                    <option value="보통" th:selected="${searchDto.priority == '보통'}">보통</option>
+                    <option value="낮음" th:selected="${searchDto.priority == '낮음'}">낮음</option>
+                </select>
+            </div>
+            <!-- 상담완료 필터 -->
+            <div class="col-md-2">
+                <label for="consultationCompleted" class="form-label">상담완료</label>
+                <select class="form-select" id="consultationCompleted" name="consultationCompleted">
+                    <option value="">전체</option>
+                    <option value="true" th:selected="${searchDto.consultationCompleted == true}">완료</option>
+                    <option value="false" th:selected="${searchDto.consultationCompleted == false}">미완료</option>
+                </select>
+            </div>
+            <!-- 검색 버튼 -->
+            <div class="col-md-2 d-flex align-items-end">
+                <button type="submit" class="btn btn-primary w-100">
+                    <i class="bi bi-search me-1"></i>검색
+                </button>
+            </div>
+        </div>
+
+        <!-- 정렬 및 페이징 옵션 -->
+        <div class="row g-3 mt-2">
+            <!-- 정렬 기준 -->
+            <div class="col-md-3">
+                <label for="sortBy" class="form-label">정렬 기준</label>
+                <select class="form-select" id="sortBy" name="sortBy">
+                    <option value="registrationTime" th:selected="${searchDto.sortBy == 'registrationTime'}">등록시간</option>
+                    <option value="name" th:selected="${searchDto.sortBy == 'name'}">이름</option>
+                    <option value="priority" th:selected="${searchDto.sortBy == 'priority'}">우선순위</option>
+                    <option value="consultationCompleted" th:selected="${searchDto.sortBy == 'consultationCompleted'}">상담완료</option>
+                </select>
+            </div>
+            <!-- 정렬 방향 -->
+            <div class="col-md-2">
+                <label for="sortDir" class="form-label">정렬 방향</label>
+                <select class="form-select" id="sortDir" name="sortDir">
+                    <option value="desc" th:selected="${searchDto.sortDir == 'desc'}">내림차순</option>
+                    <option value="asc" th:selected="${searchDto.sortDir == 'asc'}">오름차순</option>
+                </select>
+            </div>
+            <!-- 페이지 크기 -->
+            <div class="col-md-2">
+                <label for="size" class="form-label">페이지 크기</label>
+                <select class="form-select" id="size" name="size">
+                    <option value="10" th:selected="${pageSize == 10}">10개</option>
+                    <option value="20" th:selected="${pageSize == 20}">20개</option>
+                    <option value="50" th:selected="${pageSize == 50}">50개</option>
+                    <option value="100" th:selected="${pageSize == 100}">100개</option>
+                </select>
+            </div>
+            <!-- 초기화 버튼 -->
+            <div class="col-md-2 d-flex align-items-end">
+                <a th:href="@{/admin/inquiries}" class="btn btn-secondary w-100">
+                    <i class="bi bi-arrow-clockwise me-1"></i>초기화
+                </a>
+            </div>
+        </div>
+    </form>
+
+    <!-- 컬럼 표시 옵션 -->
+    <div class="column-toggle">
+        <h6 class="mb-3"><i class="bi bi-eye me-2"></i>표시할 컬럼 선택</h6>
+        <form id="columnToggleForm">
+            <div class="row g-2">
+                <!-- 각 컬럼별 체크박스 -->
+                <div class="col-md-2">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="showAge"
+                               th:checked="${searchDto.showAge}" onchange="toggleColumn('age', this.checked)">
+                        <label class="form-check-label" for="showAge">나이</label>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="showGender"
+                               th:checked="${searchDto.showGender}" onchange="toggleColumn('gender', this.checked)">
+                        <label class="form-check-label" for="showGender">성별</label>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="showConsultationType"
+                               th:checked="${searchDto.showConsultationType}" onchange="toggleColumn('consultationType', this.checked)">
+                        <label class="form-check-label" for="showConsultationType">상담유형</label>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="showMainSymptoms"
+                               th:checked="${searchDto.showMainSymptoms}" onchange="toggleColumn('mainSymptoms', this.checked)">
+                        <label class="form-check-label" for="showMainSymptoms">주요증상</label>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="showPreferredDate"
+                               th:checked="${searchDto.showPreferredDate}" onchange="toggleColumn('preferredDate', this.checked)">
+                        <label class="form-check-label" for="showPreferredDate">예약희망일</label>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="showConsultationSource"
+                               th:checked="${searchDto.showConsultationSource}" onchange="toggleColumn('consultationSource', this.checked)">
+                        <label class="form-check-label" for="showConsultationSource">상담경로</label>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="showExpectedCost"
+                               th:checked="${searchDto.showExpectedCost}" onchange="toggleColumn('expectedCost', this.checked)">
+                        <label class="form-check-label" for="showExpectedCost">예상비용</label>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="showPriority"
+                               th:checked="${searchDto.showPriority}" onchange="toggleColumn('priority', this.checked)">
+                        <label class="form-check-label" for="showPriority">우선순위</label>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="showNextContactDate"
+                               th:checked="${searchDto.showNextContactDate}" onchange="toggleColumn('nextContactDate', this.checked)">
+                        <label class="form-check-label" for="showNextContactDate">재연락예정일</label>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="showMemo"
+                               th:checked="${searchDto.showMemo}" onchange="toggleColumn('memo', this.checked)">
+                        <label class="form-check-label" for="showMemo">메모</label>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <!-- 문의 목록 테이블 -->
+    <div class="card">
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover mb-0">
+                    <thead>
+                    <tr>
+                        <!-- 기본 컬럼들 (항상 표시) -->
+                        <th>ID</th>
+                        <th>이름</th>
+                        <th>전화번호</th>
+                        <th>폼옵션</th>
+                        <th>등록시간</th>
+                        <!-- 선택적 컬럼들 -->
+                        <th class="column-age" th:style="${searchDto.showAge} ? '' : 'display: none;'">나이</th>
+                        <th class="column-gender" th:style="${searchDto.showGender} ? '' : 'display: none;'">성별</th>
+                        <th class="column-consultationType" th:style="${searchDto.showConsultationType} ? '' : 'display: none;'">상담유형</th>
+                        <th class="column-mainSymptoms" th:style="${searchDto.showMainSymptoms} ? '' : 'display: none;'">주요증상</th>
+                        <th class="column-preferredDate" th:style="${searchDto.showPreferredDate} ? '' : 'display: none;'">예약희망일</th>
+                        <th class="column-consultationSource" th:style="${searchDto.showConsultationSource} ? '' : 'display: none;'">상담경로</th>
+                        <th class="column-expectedCost" th:style="${searchDto.showExpectedCost} ? '' : 'display: none;'">예상비용</th>
+                        <th class="column-priority" th:style="${searchDto.showPriority} ? '' : 'display: none;'">우선순위</th>
+                        <!-- 기본 컬럼 (항상 표시) -->
+                        <th>상담완료</th>
+                        <!-- 선택적 컬럼들 -->
+                        <th class="column-nextContactDate" th:style="${searchDto.showNextContactDate} ? '' : 'display: none;'">재연락예정일</th>
+                        <th class="column-memo" th:style="${searchDto.showMemo} ? '' : 'display: none;'">메모</th>
+                        <!-- 작업 컬럼 (항상 표시) -->
+                        <th>작업</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <!-- 데이터가 없을 때 -->
+                    <tr th:if="${inquiryPage.content.isEmpty()}">
+                        <td th:colspan="${15}" class="text-center py-4 text-muted">
+                            <i class="bi bi-inbox fs-1 d-block mb-2"></i>
+                            검색 결과가 없습니다.
+                        </td>
+                    </tr>
+                    <!-- 문의 데이터 반복 -->
+                    <tr th:each="inquiry : ${inquiryPage.content}">
+                        <!-- 기본 정보 -->
+                        <td th:text="${inquiry.id}">1</td>
+                        <td>
+                            <a th:href="@{/admin/inquiry/{id}(id=${inquiry.id})}"
+                               class="text-decoration-none fw-bold" th:text="${inquiry.name}">홍길동</a>
+                        </td>
+                        <td th:text="${inquiry.phone}">010-1234-5678</td>
+                        <td>
+                            <span class="badge bg-info" th:text="${inquiry.formOption}">일반상담</span>
+                        </td>
+                        <td th:text="${#temporals.format(inquiry.registrationTime, 'yyyy-MM-dd HH:mm')}">2023-01-01 10:00</td>
+
+                        <!-- 선택적 컬럼들 -->
+                        <td class="column-age" th:style="${searchDto.showAge} ? '' : 'display: none;'"
+                            th:text="${inquiry.age != null ? inquiry.age + '세' : '-'}">30세</td>
+                        <td class="column-gender" th:style="${searchDto.showGender} ? '' : 'display: none;'"
+                            th:text="${inquiry.gender ?: '-'}">남성</td>
+                        <td class="column-consultationType" th:style="${searchDto.showConsultationType} ? '' : 'display: none;'"
+                            th:text="${inquiry.consultationType ?: '-'}">임플란트</td>
+                        <td class="column-mainSymptoms" th:style="${searchDto.showMainSymptoms} ? '' : 'display: none;'">
+                            <span th:text="${inquiry.mainSymptoms != null ? (inquiry.mainSymptoms.length() > 20 ? inquiry.mainSymptoms.substring(0, 20) + '...' : inquiry.mainSymptoms) : '-'}">증상...</span>
+                        </td>
+                        <td class="column-preferredDate" th:style="${searchDto.showPreferredDate} ? '' : 'display: none;'"
+                            th:text="${inquiry.preferredDate != null ? #temporals.format(inquiry.preferredDate, 'yyyy-MM-dd') : '-'}">2023-01-15</td>
+                        <td class="column-consultationSource" th:style="${searchDto.showConsultationSource} ? '' : 'display: none;'"
+                            th:text="${inquiry.consultationSource ?: '-'}">온라인</td>
+                        <td class="column-expectedCost" th:style="${searchDto.showExpectedCost} ? '' : 'display: none;'"
+                            th:text="${inquiry.expectedCost != null ? #numbers.formatDecimal(inquiry.expectedCost, 0, 'COMMA', 0, 'POINT') + '원' : '-'}">1,000,000원</td>
+                        <td class="column-priority" th:style="${searchDto.showPriority} ? '' : 'display: none;'">
+                            <span th:if="${inquiry.priority == '높음'}" class="badge bg-danger" th:text="${inquiry.priority}">높음</span>
+                            <span th:if="${inquiry.priority == '보통'}" class="badge bg-warning" th:text="${inquiry.priority}">보통</span>
+                            <span th:if="${inquiry.priority == '낮음'}" class="badge bg-secondary" th:text="${inquiry.priority}">낮음</span>
+                            <span th:if="${inquiry.priority == null or inquiry.priority == ''}" class="text-muted">-</span>
+                        </td>
+
+                        <!-- 상담완료 상태 -->
+                        <td>
+                            <span th:if="${inquiry.consultationCompleted}" class="badge bg-success">완료</span>
+                            <span th:unless="${inquiry.consultationCompleted}" class="badge bg-warning">대기</span>
+                        </td>
+
+                        <!-- 선택적 컬럼들 -->
+                        <td class="column-nextContactDate" th:style="${searchDto.showNextContactDate} ? '' : 'display: none;'"
+                            th:text="${inquiry.nextContactDate != null ? #temporals.format(inquiry.nextContactDate, 'yyyy-MM-dd') : '-'}">2023-01-20</td>
+                        <td class="column-memo" th:style="${searchDto.showMemo} ? '' : 'display: none;'">
+                            <span th:text="${inquiry.memo != null ? (inquiry.memo.length() > 15 ? inquiry.memo.substring(0, 15) + '...' : inquiry.memo) : '-'}">메모...</span>
+                        </td>
+
+                        <!-- 작업 버튼들 -->
+                        <td>
+                            <div class="btn-group btn-group-sm" role="group">
+                                <!-- 상세보기 버튼 -->
+                                <a th:href="@{/admin/inquiry/{id}(id=${inquiry.id})}"
+                                   class="btn btn-outline-primary btn-sm" title="상세보기">
+                                    <i class="bi bi-eye"></i>
+                                </a>
+                                <!-- 수정 버튼 -->
+                                <a th:href="@{/admin/inquiry/{id}/edit(id=${inquiry.id})}"
+                                   class="btn btn-outline-warning btn-sm" title="수정">
+                                    <i class="bi bi-pencil"></i>
+                                </a>
+                                <!-- 삭제 버튼 -->
+                                <button type="button" class="btn btn-outline-danger btn-sm"
+                                        title="삭제" onclick="confirmDelete([[${inquiry.id}]], '[[${inquiry.name}]]')">
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- 페이징 네비게이션 -->
+    <nav aria-label="페이지 네비게이션" th:if="${totalPages > 1}">
+        <ul class="pagination justify-content-center mt-4">
+            <!-- 이전 페이지 -->
+            <li class="page-item" th:classappend="${!hasPrevious} ? 'disabled'">
+                <a class="page-link" th:href="@{/admin/inquiries(page=${currentPage - 1}, size=${pageSize}, name=${searchDto.name}, phone=${searchDto.phone}, priority=${searchDto.priority}, consultationCompleted=${searchDto.consultationCompleted}, sortBy=${searchDto.sortBy}, sortDir=${searchDto.sortDir})}"
+                   th:if="${hasPrevious}">
+                    <i class="bi bi-chevron-left"></i>
+                </a>
+                <span class="page-link" th:unless="${hasPrevious}">
+                        <i class="bi bi-chevron-left"></i>
+                    </span>
+            </li>
+
+            <!-- 페이지 번호들 -->
+            <li class="page-item" th:each="pageNum : ${#numbers.sequence(0, totalPages - 1)}"
+                th:if="${pageNum >= (currentPage - 2) and pageNum <= (currentPage + 2)}"
+                th:classappend="${pageNum == currentPage} ? 'active'">
+                <a class="page-link" th:href="@{/admin/inquiries(page=${pageNum}, size=${pageSize}, name=${searchDto.name}, phone=${searchDto.phone}, priority=${searchDto.priority}, consultationCompleted=${searchDto.consultationCompleted}, sortBy=${searchDto.sortBy}, sortDir=${searchDto.sortDir})}"
+                   th:text="${pageNum + 1}">1</a>
+            </li>
+
+            <!-- 다음 페이지 -->
+            <li class="page-item" th:classappend="${!hasNext} ? 'disabled'">
+                <a class="page-link" th:href="@{/admin/inquiries(page=${currentPage + 1}, size=${pageSize}, name=${searchDto.name}, phone=${searchDto.phone}, priority=${searchDto.priority}, consultationCompleted=${searchDto.consultationCompleted}, sortBy=${searchDto.sortBy}, sortDir=${searchDto.sortDir})}"
+                   th:if="${hasNext}">
+                    <i class="bi bi-chevron-right"></i>
+                </a>
+                <span class="page-link" th:unless="${hasNext}">
+                        <i class="bi bi-chevron-right"></i>
+                    </span>
+            </li>
+        </ul>
+    </nav>
+
+    <!-- 페이지 정보 -->
+    <div class="text-center text-muted mt-3">
+        <small>
+            페이지 <span th:text="${currentPage + 1}">1</span> / <span th:text="${totalPages}">1</span>
+            (총 <span th:text="${totalElements}">0</span>건)
+        </small>
+    </div>
+</div>
+
+<!-- JavaScript -->
+<div th:fragment="scripts">
+    <script>
+        /**
+         * 컬럼 표시/숨김 토글 함수
+         * @param {string} columnName - 컬럼명
+         * @param {boolean} show - 표시 여부
+         */
+        function toggleColumn(columnName, show) {
+            const columns = document.querySelectorAll('.column-' + columnName);
+            columns.forEach(column => {
+                column.style.display = show ? '' : 'none';
+            });
+        }
+
+        /**
+         * 삭제 확인 다이얼로그
+         * @param {number} id - 문의 ID
+         * @param {string} name - 문의자 이름
+         */
+        function confirmDelete(id, name) {
+            if (confirm(`정말로 "${name}"님의 문의를 삭제하시겠습니까?\n\n이 작업은 되돌릴 수 없습니다.`)) {
+                // 삭제 폼 생성 및 제출
+                const form = document.createElement('form');
+                form.method = 'POST';
+                form.action = `/admin/inquiry/${id}/delete`;
+
+                // CSRF 토큰 추가 (Spring Security 사용 시)
+                const csrfToken = document.querySelector('meta[name="_csrf"]');
+                if (csrfToken) {
+                    const csrfInput = document.createElement('input');
+                    csrfInput.type = 'hidden';
+                    csrfInput.name = '_csrf';
+                    csrfInput.value = csrfToken.getAttribute('content');
+                    form.appendChild(csrfInput);
+                }
+
+                document.body.appendChild(form);
+                form.submit();
+            }
+        }
+
+        /**
+         * 페이지 로드 시 실행
+         */
+        document.addEventListener('DOMContentLoaded', function() {
+            // 테이블 행 호버 효과
+            const tableRows = document.querySelectorAll('tbody tr');
+            tableRows.forEach(row => {
+                row.addEventListener('mouseenter', function() {
+                    this.style.backgroundColor = 'rgba(52, 152, 219, 0.05)';
+                });
+                row.addEventListener('mouseleave', function() {
+                    this.style.backgroundColor = '';
+                });
+            });
+
+            // 검색 폼 자동 제출 (정렬 변경 시)
+            const sortSelects = document.querySelectorAll('#sortBy, #sortDir, #size');
+            sortSelects.forEach(select => {
+                select.addEventListener('change', function() {
+                    this.closest('form').submit();
+                });
+            });
+        });
+    </script>
+</div>
+</body>
+</html>

@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{admin/layout :: layout(~{::title}, ~{::content}, ~{::scripts})}">
+<head>
+    <title>대시보드</title>
+</head>
+<body>
+<div th:fragment="content">
+    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+        <h1 class="h2">
+            <i class="bi bi-speedometer2 me-2"></i>대시보드
+        </h1>
+    </div>
+
+    <!-- 통계 카드들 -->
+    <div class="row mb-4">
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="stats-card">
+                <div class="stats-number" th:text="${totalCount ?: 0}">0</div>
+                <div>총 문의 수</div>
+                <i class="bi bi-chat-dots" style="font-size: 2rem; opacity: 0.3; margin-top: 10px;"></i>
+            </div>
+        </div>
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="stats-card" style="background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);">
+                <div class="stats-number" th:text="${completedCount ?: 0}">0</div>
+                <div>완료된 상담</div>
+                <i class="bi bi-check-circle" style="font-size: 2rem; opacity: 0.3; margin-top: 10px;"></i>
+            </div>
+        </div>
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="stats-card" style="background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%);">
+                <div class="stats-number" th:text="${todayCount ?: 0}">0</div>
+                <div>오늘 문의</div>
+                <i class="bi bi-calendar-day" style="font-size: 2rem; opacity: 0.3; margin-top: 10px;"></i>
+            </div>
+        </div>
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="stats-card" style="background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%); color: #333;">
+                <div class="stats-number" th:text="${totalCount != null and completedCount != null ? (totalCount - completedCount) : 0}">0</div>
+                <div>대기 중인 상담</div>
+                <i class="bi bi-clock-history" style="font-size: 2rem; opacity: 0.3; margin-top: 10px;"></i>
+            </div>
+        </div>
+    </div>
+
+    <!-- 빠른 액세스 -->
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="bi bi-lightning-fill me-2"></i>빠른 액세스
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <a th:href="@{/admin/inquiries}" class="btn btn-primary w-100 py-3">
+                                <i class="bi bi-list-ul me-2"></i>
+                                전체 문의 보기
+                            </a>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <a th:href="@{/admin/inquiries(consultationCompleted=false)}" class="btn btn-warning w-100 py-3">
+                                <i class="bi bi-exclamation-circle me-2"></i>
+                                미완료 상담
+                            </a>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <a th:href="@{/admin/inquiries(priority='높음')}" class="btn btn-danger w-100 py-3">
+                                <i class="bi bi-star-fill me-2"></i>
+                                높은 우선순위
+                            </a>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <a href="/h2-console" target="_blank" class="btn btn-info w-100 py-3">
+                                <i class="bi bi-database me-2"></i>
+                                데이터베이스 콘솔
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="bi bi-info-circle-fill me-2"></i>시스템 정보
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <strong>데이터베이스:</strong> H2 (파일 기반)
+                    </div>
+                    <div class="mb-3">
+                        <strong>프레임워크:</strong> Spring Boot
+                    </div>
+                    <div class="mb-3">
+                        <strong>템플릿 엔진:</strong> Thymeleaf
+                    </div>
+                    <div class="mb-3">
+                        <strong>JDK 버전:</strong> 17
+                    </div>
+                    <div>
+                        <strong>빌드 도구:</strong> Maven
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div th:fragment="scripts">
+    <!-- 대시보드 전용 스크립트 -->
+    <script>
+        // 페이지 로드 시 애니메이션 효과
+        document.addEventListener('DOMContentLoaded', function() {
+            const cards = document.querySelectorAll('.stats-card, .card');
+            cards.forEach((card, index) => {
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(20px)';
+                setTimeout(() => {
+                    card.style.transition = 'all 0.5s ease';
+                    card.style.opacity = '1';
+                    card.style.transform = 'translateY(0)';
+                }, index * 100);
+            });
+        });
+    </script>
+</div>
+</body>
+</html>

@@ -127,6 +127,14 @@
 			<artifactId>google-http-client-gson</artifactId>
 			<version>1.45.0</version>
 		</dependency>
+
+		<!-- Spring Security -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-security</artifactId>
+		</dependency>
+
+
 	</dependencies>
 
 	<build>

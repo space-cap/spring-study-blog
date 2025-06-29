@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+      th:replace="admin/layout :: layout(~{::title}, ~{::content}, ~{::scripts})">
+<head>
+    <title>문의 수정</title>
+</head>
+<body>
+<div th:fragment="content">
+    <!-- 페이지 헤더 -->
+    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+        <h1 class="h2">
+            <i class="bi bi-pencil-square me-2"></i>문의 수정
+        </h1>
+        <div class="btn-toolbar mb-2 mb-md-0">
+            <a th:href="@{/admin/inquiry/{id}(id=${inquiry.id})}" class="btn btn-outline-secondary">
+                <i class="bi bi-arrow-left me-1"></i>상세보기로
+            </a>
+        </div>
+    </div>
+
+    <!-- 수정 폼 -->
+    <form th:action="@{/admin/inquiry/{id}/edit(id=${inquiry.id})}" th:object="${inquiry}" method="post">
+        <div class="row">
+            <!-- 기본 정보 -->
+            <div class="col-lg-8">
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5 class="mb-0">
+                            <i class="bi bi-person me-2"></i>기본 정보
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="name" class="form-label">이름 <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="name" th:field="*{name}" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="phone" class="form-label">전화번호 <span class="text-danger">*</span></label>
+                                <input type="tel" class="form-control" id="phone" th:field="*{phone}" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="age" class="form-label">나이</label>
+                                <input type="number" class="form-control" id="age" th:field="*{age}" min="1" max="120">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="gender" class="form-label">성별</label>
+                                <select class="form-select" id="gender" th:field="*{gender}">
+                                    <option value="">선택하세요</option>
+                                    <option value="남성">남성</option>
+                                    <option value="여성">여성</option>
+                                    <option value="기타">기타</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="formOption" class="form-label">폼 옵션</label>
+                                <input type="text" class="form-control" id="formOption" th:field="*{formOption}">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 상담 정보 -->
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5 class="mb-0">
+                            <i class="bi bi-chat-square-text me-2"></i>상담 정보
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="consultationType" class="form-label">상담유형</label>
+                                <select class="form-select" id="consultationType" th:field="*{consultationType}">
+                                    <option value="">선택하세요</option>
+                                    <option value="임플란트">임플란트</option>
+                                    <option value="교정">교정</option>
+                                    <option value="보철">보철</option>
+                                    <option value="치주">치주</option>
+                                    <option value="일반진료">일반진료</option>
+                                    <option value="기타">기타</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="consultationSource" class="form-label">상담경로</label>
+                                <select class="form-select" id="consultationSource" th:field="*{consultationSource}">
+                                    <option value="">선택하세요</option>
+                                    <option value="온라인 광고">온라인 광고</option>
+                                    <option value="지인 추천">지인 추천</option>
+                                    <option value="검색">검색</option>
+                                    <option value="SNS">SNS</option>
+                                    <option value="기타">기타</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="preferredDate" class="form-label">예약희망일</label>
+                                <input type="date" class="form-control" id="preferredDate" th:field="*{preferredDate}">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="expectedCost" class="form-label">예상비용</label>
+                                <input type="number" class="form-control" id="expectedCost" th:field="*{expectedCost}"
+                                       placeholder="원 단위로 입력">
+                            </div>
+                            <div class="col-12 mb-3">
+                                <label for="mainSymptoms" class="form-label">주요증상</label>
+                                <textarea class="form-control" id="mainSymptoms" th:field="*{mainSymptoms}"
+                                          rows="4" placeholder="주요 증상을 상세히 입력하세요..."></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 메모 -->
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5 class="mb-0">
+                            <i class="bi bi-journal-text me-2"></i>메모
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                            <textarea class="form-control" id="memo" th:field="*{memo}"
+                                      rows="5" placeholder="상담 관련 메모를 입력하세요..."></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 상태 관리 -->
+            <div class="col-lg-4">
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5 class="mb-0">
+                            <i class="bi bi-gear me-2"></i>상태 관리
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <label for="priority" class="form-label">우선순위</label>
+                            <select class="form-select" id="priority" th:field="*{priority}">
+                                <option value="">선택하세요</option>
+                                <option value="높음">높음</option>
+                                <option value="보통">보통</option>
+                                <option value="낮음">낮음</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="nextContactDate" class="form-label">재연락예정일</label>
+                            <input type="date" class="form-control" id="nextContactDate" th:field="*{nextContactDate}">
+                        </div>
+                        <div class="mb-3">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="consultationCompleted"
+                                       th:field="*{consultationCompleted}">
+                                <label class="form-check-label" for="consultationCompleted">
+                                    상담 완료
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 등록 정보 (읽기 전용) -->
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5 class="mb-0">
+                            <i class="bi bi-info-circle me-2"></i>등록 정보
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-2">
+                            <strong>문의 ID:</strong> <span th:text="${inquiry.id}">1</span>
+                        </div>
+                        <div class="mb-2">
+                            <strong>등록시간:</strong>
+                            <span th:text="${#temporals.format(inquiry.registrationTime, 'yyyy-MM-dd HH:mm:ss')}">2023-01-01 10:00:00</span>
+                        </div>
+                        <small class="text-muted">등록시간은 수정할 수 없습니다.</small>
+                    </div>
+                </div>
+
+                <!-- 저장 버튼 -->
+                <div class="d-grid gap-2">
+                    <button type="submit" class="btn btn-primary btn-lg">
+                        <i class="bi bi-check-lg me-2"></i>저장
+                    </button>
+                    <a th:href="@{/admin/inquiry/{id}(id=${inquiry.id})}" class="btn btn-secondary">
+                        <i class="bi bi-x-lg me-2"></i>취소
+                    </a>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+<!-- JavaScript -->
+<div th:fragment="scripts">
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // 폼 유효성 검사
+            const form = document.querySelector('form');
+            form.addEventListener('submit', function(e) {
+                const name = document.getElementById('name').value.trim();
+                const phone = document.getElementById('phone').value.trim();
+
+                if (!name) {
+                    alert('이름을 입력해주세요.');
+                    e.preventDefault();
+                    document.getElementById('name').focus();
+                    return;
+                }
+
+                if (!phone) {
+                    alert('전화번호를 입력해주세요.');
+                    e.preventDefault();
+                    document.getElementById('phone').focus();
+                    return;
+                }
+
+                // 전화번호 형식 검사 (간단한 검사)
+                const phonePattern = /^[0-9-+\s()]+$/;
+                if (!phonePattern.test(phone)) {
+                    alert('올바른 전화번호 형식을 입력해주세요.');
+                    e.preventDefault();
+                    document.getElementById('phone').focus();
+                    return;
+                }
+            });
+
+            // 숫자 입력 필드 제한
+            const numberInputs = document.querySelectorAll('input[type="number"]');
+            numberInputs.forEach(input => {
+                input.addEventListener('input', function() {
+                    if (this.value < 0) {
+                        this.value = 0;
+                    }
+                });
+            });
+
+            // 예상비용 포맷팅
+            const expectedCostInput = document.getElementById('expectedCost');
+            expectedCostInput.addEventListener('blur', function() {
+                if (this.value) {
+                    // 천 단위 콤마 추가 (표시용)
+                    const value = parseInt(this.value);
+                    if (!isNaN(value)) {
+                        this.setAttribute('data-formatted', value.toLocaleString() + '원');
+                    }
+                }
+            });
+        });
+    </script>
+</div>
+</body>
+</html>

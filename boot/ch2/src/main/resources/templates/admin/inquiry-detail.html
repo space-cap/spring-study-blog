@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+      th:replace="admin/layout :: layout(~{::title}, ~{::content}, ~{::scripts})">
+<head>
+    <title>문의 상세</title>
+</head>
+<body>
+<div th:fragment="content">
+    <!-- 페이지 헤더 -->
+    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+        <h1 class="h2">
+            <i class="bi bi-person-circle me-2"></i>문의 상세
+        </h1>
+        <div class="btn-toolbar mb-2 mb-md-0">
+            <!-- 뒤로가기 버튼 -->
+            <a th:href="@{/admin/inquiries}" class="btn btn-outline-secondary me-2">
+                <i class="bi bi-arrow-left me-1"></i>목록으로
+            </a>
+            <!-- 수정 버튼 -->
+            <a th:href="@{/admin/inquiry/{id}/edit(id=${inquiry.id})}" class="btn btn-warning me-2">
+                <i class="bi bi-pencil me-1"></i>수정
+            </a>
+            <!-- 삭제 버튼 -->
+            <button type="button" class="btn btn-danger" onclick="confirmDelete([[${inquiry.id}]], '[[${inquiry.name}]]')">
+                <i class="bi bi-trash me-1"></i>삭제
+            </button>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- 기본 정보 카드 -->
+        <div class="col-lg-8">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="bi bi-info-circle me-2"></i>기본 정보
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-bold">이름</label>
+                            <p class="form-control-plaintext" th:text="${inquiry.name}">홍길동</p>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-bold">전화번호</label>
+                            <p class="form-control-plaintext" th:text="${inquiry.phone}">010-1234-5678</p>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-bold">나이</label>
+                            <p class="form-control-plaintext" th:text="${inquiry.age != null ? inquiry.age + '세' : '미입력'}">30세</p>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-bold">성별</label>
+                            <p class="form-control-plaintext" th:text="${inquiry.gender ?: '미입력'}">남성</p>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-bold">폼 옵션</label>
+                            <p class="form-control-plaintext">
+                                <span class="badge bg-info" th:text="${inquiry.formOption}">일반상담</span>
+                            </p>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-bold">등록시간</label>
+                            <p class="form-control-plaintext" th:text="${formattedRegistrationTime}">2023-01-01 10:00:00</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 상담 정보 카드 -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="bi bi-chat-square-text me-2"></i>상담 정보
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-bold">상담유형</label>
+                            <p class="form-control-plaintext" th:text="${inquiry.consultationType ?: '미입력'}">임플란트</p>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-bold">상담경로</label>
+                            <p class="form-control-plaintext" th:text="${inquiry.consultationSource ?: '미입력'}">온라인 광고</p>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-bold">예약희망일</label>
+                            <p class="form-control-plaintext"
+                               th:text="${inquiry.preferredDate != null ? #temporals.format(inquiry.preferredDate, 'yyyy년 MM월 dd일') : '미입력'}">2023년 01월 15일</p>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-bold">예상비용</label>
+                            <p class="form-control-plaintext"
+                               th:text="${inquiry.expectedCost != null ? #numbers.formatDecimal(inquiry.expectedCost, 0, 'COMMA', 0, 'POINT') + '원' : '미입력'}">1,000,000원</p>
+                        </div>
+                        <div class="col-12 mb-3">
+                            <label class="form-label fw-bold">주요증상</label>
+                            <div class="border rounded p-3 bg-light">
+                                <p class="mb-0" th:text="${inquiry.mainSymptoms ?: '미입력'}">치아가 아파요...</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 메모 카드 -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="bi bi-journal-text me-2"></i>메모
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="border rounded p-3 bg-light" style="min-height: 100px;">
+                        <p class="mb-0" th:text="${inquiry.memo ?: '메모가 없습니다.'}">상담 메모...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 상태 및 관리 카드 -->
+        <div class="col-lg-4">
+            <!-- 상담 상태 카드 -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="bi bi-clipboard-check me-2"></i>상담 상태
+                    </h5>
+                </div>
+                <div class="card-body text-center">
+                    <div class="mb-3">
+                            <span th:if="${inquiry.consultationCompleted}" class="badge bg-success fs-6 px-3 py-2">
+                                <i class="bi bi-check-circle me-1"></i>상담 완료
+                            </span>
+                        <span th:unless="${inquiry.consultationCompleted}" class="badge bg-warning fs-6 px-3 py-2">
+                                <i class="bi bi-clock me-1"></i>상담 대기
+                            </span>
+                    </div>
+
+                    <!-- 우선순위 -->
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">우선순위</label>
+                        <div>
+                            <span th:if="${inquiry.priority == '높음'}" class="badge bg-danger fs-6">높음</span>
+                            <span th:if="${inquiry.priority == '보통'}" class="badge bg-warning fs-6">보통</span>
+                            <span th:if="${inquiry.priority == '낮음'}" class="badge bg-secondary fs-6">낮음</span>
+                            <span th:if="${inquiry.priority == null or inquiry.priority == ''}" class="text-muted">미설정</span>
+                        </div>
+                    </div>
+
+                    <!-- 재연락예정일 -->
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">재연락예정일</label>
+                        <p class="form-control-plaintext"
+                           th:text="${inquiry.nextContactDate != null ? #temporals.format(inquiry.nextContactDate, 'yyyy년 MM월 dd일') : '미설정'}">2023년 01월 20일</p>
+                    </div>
+
+                    <!-- 상담 완료 버튼 (미완료인 경우만) -->
+                    <div th:unless="${inquiry.consultationCompleted}">
+                        <button type="button" class="btn btn-success w-100 mb-2" data-bs-toggle="modal" data-bs-target="#completeModal">
+                            <i class="bi bi-check-circle me-1"></i>상담 완료 처리
+                        </button>
+                    </div>
+
+                    <!-- 재연락 예정일 설정 버튼 -->
+                    <button type="button" class="btn btn-info w-100" data-bs-toggle="modal" data-bs-target="#scheduleModal">
+                        <i class="bi bi-calendar-plus me-1"></i>재연락 예정일 설정
+                    </button>
+                </div>
+            </div>
+
+            <!-- 통계 정보 카드 -->
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="bi bi-graph-up me-2"></i>문의 정보
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="mb-2">
+                        <strong>문의 ID:</strong> <span th:text="${inquiry.id}">1</span>
+                    </div>
+                    <div class="mb-2">
+                        <strong>등록일:</strong> <span th:text="${#temporals.format(inquiry.registrationTime, 'yyyy-MM-dd')}">2023-01-01</span>
+                    </div>
+                    <div class="mb-2">
+                        <strong>등록시간:</strong> <span th:text="${#temporals.format(inquiry.registrationTime, 'HH:mm:ss')}">10:00:00</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 상담 완료 모달 -->
+    <div class="modal fade" id="completeModal" tabindex="-1" aria-labelledby="completeModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="completeModalLabel">
+                        <i class="bi bi-check-circle me-2"></i>상담 완료 처리
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form th:action="@{/admin/inquiry/{id}/complete(id=${inquiry.id})}" method="post">
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label for="completeMemo" class="form-label">완료 메모</label>
+                            <textarea class="form-control" id="completeMemo" name="memo" rows="3"
+                                      placeholder="상담 완료에 대한 메모를 입력하세요..."></textarea>
+                        </div>
+                        <div class="alert alert-info">
+                            <i class="bi bi-info-circle me-2"></i>
+                            상담을 완료로 처리하시겠습니까? 이 작업은 되돌릴 수 있습니다.
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">취소</button>
+                        <button type="submit" class="btn btn-success">
+                            <i class="bi bi-check-circle me-1"></i>완료 처리
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- 재연락 예정일 설정 모달 -->
+    <div class="modal fade" id="scheduleModal" tabindex="-1" aria-labelledby="scheduleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="scheduleModalLabel">
+                        <i class="bi bi-calendar-plus me-2"></i>재연락 예정일 설정
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form th:action="@{/admin/schedule-contact/{id}(id=${inquiry.id})}" method="post">
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label for="nextContactDate" class="form-label">재연락 예정일</label>
+                            <input type="date" class="form-control" id="nextContactDate" name="nextContactDate"
+                                   th:value="${inquiry.nextContactDate}" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="scheduleMemo" class="form-label">메모</label>
+                            <textarea class="form-control" id="scheduleMemo" name="memo" rows="3"
+                                      placeholder="재연락에 대한 메모를 입력하세요..."></textarea>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">취소</button>
+                        <button type="submit" class="btn btn-info">
+                            <i class="bi bi-calendar-plus me-1"></i>설정
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- JavaScript -->
+<div th:fragment="scripts">
+    <script>
+        /**
+         * 삭제 확인 함수
+         */
+        function confirmDelete(id, name) {
+            if (confirm(`정말로 "${name}"님의 문의를 삭제하시겠습니까?\n\n이 작업은 되돌릴 수 없습니다.`)) {
+                const form = document.createElement('form');
+                form.method = 'POST';
+                form.action = `/admin/inquiry/${id}/delete`;
+                document.body.appendChild(form);
+                form.submit();
+            }
+        }
+
+        /**
+         * 페이지 로드 시 실행
+         */
+        document.addEventListener('DOMContentLoaded', function() {
+            // 오늘 날짜를 기본값으로 설정
+            const today = new Date().toISOString().split('T')[0];
+            const nextContactDateInput = document.getElementById('nextContactDate');
+            if (nextContactDateInput && !nextContactDateInput.value) {
+                nextContactDateInput.value = today;
+            }
+        });
+    </script>
+</div>
+</body>
+</html>
