@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest
 @ActiveProfiles("test") // 테스트 프로필 사용
 @DisplayName("GoogleSheetsService 통합 테스트")
-class GoogleSheetsServiceIntegrationTest {
+public class GoogleSheetsServiceIntegrationTest {
 
     @Autowired
     private GoogleSheetsService googleSheetsService;
