@@ -95,6 +95,14 @@ public class LoginController {
         return "redirect:/login"; // 로그인 페이지로 리다이렉트
     }
 
+
+    @GetMapping("/logout-confirm")
+    public String logoutPage(Model model) {
+        System.out.println("로그아웃 페이지 요청됨");
+        //return "logout";
+        return "logout-confirm";
+    }
+
     /**
      * 사용자 인증을 확인하는 메서드
      * @param username 입력받은 아이디
@@ -111,5 +119,7 @@ public class LoginController {
         // 실제 프로젝트에서는 데이터베이스에서 사용자 정보를 조회하여 비교
         return VALID_USERNAME.equals(username) && VALID_PASSWORD.equals(password);
     }
+
+
 }
 

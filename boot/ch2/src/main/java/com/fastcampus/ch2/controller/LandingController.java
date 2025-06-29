@@ -115,6 +115,7 @@ public class LandingController {
             Inquiry savedInquiry = inquiryService.saveInquiry(formOption, name, hp);
 
             String sheetName = "임플란트상담신청자2506";
+
             // Google Sheets에 데이터 저장
             googleSheetsService.appendDataToSheet(sheetName, name, hp, registrationTime, false);
 
