@@ -1,6 +1,8 @@
 package com.fastcampus.ch2.controller;
 
+import com.fastcampus.ch2.entity.Inquiry;
 import com.fastcampus.ch2.service.GoogleSheetsService;
+import com.fastcampus.ch2.service.InquiryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -21,6 +23,9 @@ public class LandingController {
 
     @Autowired
     private GoogleSheetsService googleSheetsService;
+
+    @Autowired
+    private InquiryService inquiryService; // GoogleSheetsService 대신 InquiryService 사용
 
     @GetMapping({"", "/"})
     public String index() {
@@ -85,6 +90,11 @@ public class LandingController {
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy. M. d. a h:mm:ss", Locale.KOREA);
             String registrationTime = now.format(formatter);
 
+            System.out.println("받은 데이터:");
+            System.out.println("옵션: " + formOption);
+            System.out.println("이름: " + name);
+            System.out.println("연락처: " + hp);
+
             // 데이터 검증
             if (name == null || name.trim().isEmpty()) {
                 redirectAttributes.addFlashAttribute("error", "이름을 입력해주세요.");
@@ -95,6 +105,15 @@ public class LandingController {
                 redirectAttributes.addFlashAttribute("error", "연락처를 입력해주세요.");
                 return "redirect:/landing";
             }
+
+            // 중복 체크 (선택사항)
+            if (inquiryService.isPhoneDuplicate(hp)) {
+                redirectAttributes.addFlashAttribute("error", "이미 등록된 연락처입니다.");
+                return "redirect:/landing";
+            }
+
+            // H2 데이터베이스에 데이터 저장
+            Inquiry savedInquiry = inquiryService.saveInquiry(formOption, name, hp);
 
             String sheetName = "임플란트상담신청자2506";
             // Google Sheets에 데이터 저장
