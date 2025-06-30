@@ -31,7 +31,7 @@ public class SecurityConfig {
                         .requestMatchers("/h2-console/**").hasRole("ADMIN")
                         .requestMatchers("/error").permitAll()  // 에러 페이지 접근 허용
                         // 랜딩 페이지와 정적 리소스는 모두 허용
-                        .requestMatchers("/landing/**", "/css/**", "/js/**", "/images/**").permitAll()
+                        .requestMatchers("/landing/**", "/css/**", "/js/**", "/images/**", "/img/**").permitAll()
                         // 그 외 모든 요청은 허용
                         .anyRequest().permitAll()
                 )
