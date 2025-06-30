@@ -1,5 +1,6 @@
 package com.fastcampus.ch2;
 
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -25,8 +26,23 @@ public class LoginController {
      * @return index.html 템플릿 반환
      */
     @GetMapping("/")
-    public String index() {
+    public String index(HttpServletRequest request, Model model) {
         System.out.println("메인 페이지 요청됨");
+
+        String host = request.getHeader("Host");
+        String serverName = request.getServerName();
+
+        System.out.println("Host header: " + host);
+        System.out.println("Server name: " + serverName);
+
+        if (host.contains("sajuai.shop")) {
+            //return "Welcome to SajuAI";
+            return "redirect:/index-sajuai";
+        } else if (host.contains("develead.shop")) {
+            //return "Welcome to Develead";
+            return "redirect:/index-develead";
+        }
+
         return "index"; // templates/index.html 반환
     }
 
