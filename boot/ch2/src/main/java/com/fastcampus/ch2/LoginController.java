@@ -37,13 +37,15 @@ public class LoginController {
 
         if (host.contains("sajuai.shop")) {
             //return "Welcome to SajuAI";
-            return "redirect:/index-sajuai";
+            return "index-sajuai";
         } else if (host.contains("develead.shop")) {
             //return "Welcome to Develead";
-            return "redirect:/index-develead";
+            return "index-develead";
+        } else if(serverName.contains("localhost")) {
+            return "index";
         }
 
-        return "index"; // templates/index.html 반환
+        return "index-other"; // templates/index.html 반환
     }
 
     /**
