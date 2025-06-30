@@ -13,6 +13,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.TimeUnit;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
@@ -65,7 +67,7 @@ class GoogleSheetsServiceTest {
      */
     //@Test
     //@DisplayName("데이터 추가 성공 테스트")
-    void appendData_Success() throws IOException {
+    void appendData_Success() throws Exception {
         // Given (준비)
         AppendValuesResponse mockResponse = new AppendValuesResponse();
 
@@ -80,10 +82,10 @@ class GoogleSheetsServiceTest {
                 .thenReturn(mockResponse);
 
         // When (실행)
-        boolean result = googleSheetsService.appendData(TEST_NAME, TEST_PHONE, TEST_TIME);
+        CompletableFuture<Boolean> result = googleSheetsService.appendData(TEST_NAME, TEST_PHONE, TEST_TIME);
 
         // Then (검증)
-        assertTrue(result, "데이터 추가가 성공해야 합니다");
+        assertTrue(result.get(5, TimeUnit.SECONDS), "데이터 추가가 성공해야 합니다");
 
         // Mock 객체 호출 검증
         verify(mockValues).append(anyString(), eq("시트1!A1:C"), any(ValueRange.class));
@@ -98,7 +100,7 @@ class GoogleSheetsServiceTest {
      */
     //@Test
     //@DisplayName("데이터 추가 실패 테스트")
-    void appendData_Failure() throws IOException {
+    void appendData_Failure() throws Exception {
         // Given (준비)
         when(mockValues.append(anyString(), anyString(), any(ValueRange.class)))
                 .thenReturn(mockAppend);
@@ -110,10 +112,10 @@ class GoogleSheetsServiceTest {
                 .thenThrow(new IOException("네트워크 오류"));
 
         // When (실행)
-        boolean result = googleSheetsService.appendData(TEST_NAME, TEST_PHONE, TEST_TIME);
+        CompletableFuture<Boolean> result = googleSheetsService.appendData(TEST_NAME, TEST_PHONE, TEST_TIME);
 
         // Then (검증)
-        assertFalse(result, "데이터 추가가 실패해야 합니다");
+        assertFalse(result.get(5, TimeUnit.SECONDS), "데이터 추가가 실패해야 합니다");
     }
 
 
@@ -177,7 +179,7 @@ class GoogleSheetsServiceTest {
      */
     //@Test
     //@DisplayName("null 값 처리 테스트")
-    void appendData_WithNullValues() throws IOException {
+    void appendData_WithNullValues() throws Exception {
         // Given (준비)
         AppendValuesResponse mockResponse = new AppendValuesResponse();
 
@@ -191,10 +193,10 @@ class GoogleSheetsServiceTest {
                 .thenReturn(mockResponse);
 
         // When (실행)
-        boolean result = googleSheetsService.appendData(null, null, null);
+        CompletableFuture<Boolean> result = googleSheetsService.appendData(null, null, null);
 
         // Then (검증)
-        assertTrue(result, "null 값도 처리되어야 합니다");
+        assertTrue(result.get(5,TimeUnit.SECONDS), "null 값도 처리되어야 합니다");
     }
 
     //@Test

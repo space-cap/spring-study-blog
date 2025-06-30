@@ -17,6 +17,7 @@ import java.security.GeneralSecurityException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 @Service
 public class GoogleSheetsService {
@@ -355,15 +356,15 @@ public class GoogleSheetsService {
      * @return 성공 여부
      */
     @Async("googleSheetsTaskExecutor")
-    public boolean appendDataToSheet(String sheetName,
-                                     String name, String phone,
-                                     String registrationTime,
-                                     boolean consultationComplete) {
+    public CompletableFuture<Boolean> appendDataToSheet(String sheetName,
+                                                        String name, String phone,
+                                                        String registrationTime,
+                                                        boolean consultationComplete) {
         try {
             // 시트 존재 확인 및 생성
             if (!ensureSheetExists(sheetName)) {
                 System.err.println("시트 생성 또는 확인 실패: " + sheetName);
-                return false;
+                return CompletableFuture.completedFuture(false);
             }
 
             // 현재 데이터 행 수 확인 (새로 추가될 행의 인덱스 계산용)
@@ -394,12 +395,12 @@ public class GoogleSheetsService {
             System.out.println("데이터 추가 및 체크박스 설정 완료 - 시트: " + sheetName + ", 이름: " + name + ", 행: " + (newRowIndex + 1));
 
             System.out.println("데이터 추가 성공 - 시트: " + sheetName + ", 이름: " + name);
-            return true;
+            return CompletableFuture.completedFuture(true);
 
         } catch (Exception e) {
             System.err.println("데이터 추가 중 오류: " + e.getMessage());
             e.printStackTrace();
-            return false;
+            return CompletableFuture.completedFuture(false);
         }
     }
 
@@ -410,7 +411,7 @@ public class GoogleSheetsService {
      * @param registrationTime 등록시간
      * @return 성공 여부
      */
-    public boolean appendData(String name, String phone, String registrationTime) {
+    public CompletableFuture<Boolean> appendData(String name, String phone, String registrationTime) {
         return appendDataToSheet("시트1", name, phone, registrationTime, false);
     }
 

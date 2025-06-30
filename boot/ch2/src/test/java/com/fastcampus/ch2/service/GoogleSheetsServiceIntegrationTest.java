@@ -10,6 +10,8 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Locale;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.TimeUnit;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -32,7 +34,7 @@ public class GoogleSheetsServiceIntegrationTest {
      */
     @Test
     @DisplayName("실제 Google Sheets 연동 테스트")
-    void realGoogleSheetsIntegration() {
+    void realGoogleSheetsIntegration() throws Exception {
         // Given (준비)
         String testName = "테스트사용자";
         String testPhone = "010-9999-8888";
@@ -42,10 +44,10 @@ public class GoogleSheetsServiceIntegrationTest {
         String testTime = now.format(formatter);
 
         // When (실행)
-        boolean appendResult = googleSheetsService.appendData(testName, testPhone, testTime);
+        CompletableFuture<Boolean> appendResult = googleSheetsService.appendData(testName, testPhone, testTime);
 
         // Then (검증)
-        assertTrue(appendResult, "데이터 추가가 성공해야 합니다");
+        assertTrue(appendResult.get(5, TimeUnit.SECONDS), "데이터 추가가 성공해야 합니다");
 
         // 데이터 읽기 테스트
         List<List<Object>> data = googleSheetsService.readData();
@@ -55,7 +57,7 @@ public class GoogleSheetsServiceIntegrationTest {
 
     @Test
     @DisplayName("실제 Google Sheets 연동 테스트")
-    void testAppendDataToSheet() {
+    void testAppendDataToSheet() throws Exception {
         // Given (준비)
         String testSheet = "임플란트상담신청자2506";
         String testName = "테스트사용자";
@@ -67,11 +69,11 @@ public class GoogleSheetsServiceIntegrationTest {
 
         // When (실행)
         //boolean appendResult = googleSheetsService.appendData(testName, testPhone, testTime);
-        boolean appendResult = googleSheetsService.appendDataToSheet(testSheet, testName, testPhone, testTime, false);
+        CompletableFuture<Boolean> appendResult = googleSheetsService.appendDataToSheet(testSheet, testName, testPhone, testTime, false);
 
 
         // Then (검증)
-        assertTrue(appendResult, "데이터 추가가 성공해야 합니다");
+        assertTrue(appendResult.get(5, TimeUnit.SECONDS), "데이터 추가가 성공해야 합니다");
 
         // 데이터 읽기 테스트
         List<List<Object>> data = googleSheetsService.readData();
