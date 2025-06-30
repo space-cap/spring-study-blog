@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class DebugController {
 
-    @RequestMapping("/**")
+    /*@RequestMapping("/**")
     public String debug(HttpServletRequest request) {
         String host = request.getHeader("Host");
         String serverName = request.getServerName();
@@ -16,5 +16,5 @@ public class DebugController {
         System.out.println("Server name: " + serverName);
 
         return "Host: " + host + ", Server: " + serverName;
-    }
+    }*/
 }
