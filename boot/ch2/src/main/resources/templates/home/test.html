@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>test</title>
+</head>
+<body>
+
+<a href="board.html" th:href="@{/board/list(bno=${bno}, type='L')}">ffffff</a>
+
+
+<h1 th:text="${lastName}">lastName</h1>
+<h1>[[${lastName}]]</h1>
+<span th:text="${'<i>lee</i>'}"></span>
+<span th:utext="${'<i>lee</i>'}"></span>
+
+<h1 th:text="'my name is ' + ${lastName}">my name is lastname</h1>
+<h1 th:text="|my name is ${lastName}|">my name is lastname</h1>
+<br>
+
+<table border="1">
+    <tr th:each="item : ${list}">
+        <td th:text="${item}"></td>
+    </tr>
+    <tr th:unless="${list.size()} == 0">
+        <td>게시물이 없습니다.</td>
+    </tr>
+</table>
+
+<br>
+
+<select multiple>
+    <option th:each="opt:${list}" th:value="${opt}" th:selected="${optStat.first}">[[${opt}]]</option>
+</select>
+
+<br>
+
+
+<th:block th:each="opt : ${list}">
+    <label for="horns"></label><input type="checkbox" id="horns" name="horns" th:value="${opt}"/>[[${opt}]]
+    <br>
+</th:block>
+
+<fieldset>
+    <legend>Choose your monster's features:</legend>
+    <th:block th:each="opt : ${list}">
+    <div>
+        <input type="checkbox" id="scales" name="scales" th:value="${opt}" />
+        <label for="scales">[[${opt}]]</label>
+    </div>
+    </th:block>
+</fieldset>
+
+
+</body>
+</html>
