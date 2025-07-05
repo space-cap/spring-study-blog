@@ -1,4 +1,4 @@
-package com.fastcampus.ch2;
+package com.fastcampus.ch2.controller;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
