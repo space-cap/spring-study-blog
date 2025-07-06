@@ -17,6 +17,7 @@ public class SysInfo {
 
     @Value("${autosaveInterval}")
     int autosaveInterval;
+
     @Value("${autosave}")
     boolean autosave;
 
