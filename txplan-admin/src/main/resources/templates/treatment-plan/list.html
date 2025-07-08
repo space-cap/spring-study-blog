@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org" th:replace="~{layout/base :: layout(~{::title}, ~{::main}, ~{::script})}">
+<head>
+    <title>치료계획 목록</title>
+</head>
+<body>
+    <main th:fragment="main">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <h2>치료계획 목록</h2>
+                <p class="text-muted mb-0">
+                    환자: <strong th:text="${patient.name}">김예영</strong> 
+                    (차트번호: <span th:text="${patient.chartNumber}">1</span>)
+                </p>
+            </div>
+            <div>
+                <a th:href="@{/treatment-plans/new(patientId=${patient.id})}" class="btn btn-primary me-2">
+                    <i class="fas fa-plus me-1"></i>새 치료계획
+                </a>
+                <a th:href="@{/patients}" class="btn btn-secondary">
+                    <i class="fas fa-arrow-left me-1"></i>환자 목록
+                </a>
+            </div>
+        </div>
+
+        <!-- Patient Info Card -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="mb-0">환자 정보</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-3">
+                        <strong>차트번호:</strong> <span th:text="${patient.chartNumber}">1</span>
+                    </div>
+                    <div class="col-md-3">
+                        <strong>이름:</strong> <span th:text="${patient.name}">김예영</span>
+                    </div>
+                    <div class="col-md-3">
+                        <strong>성별/나이:</strong> 
+                        <span th:text="${patient.gender.korean}">여</span> / 
+                        <span th:text="${#temporals.format(patient.birthDate, 'yyyy-MM-dd')}">1978-06-05</span>
+                    </div>
+                    <div class="col-md-3">
+                        <strong>담당의사:</strong> 
+                        <span th:text="${patient.doctorName != null ? patient.doctorName : '미지정'}">심승환</span>
+                    </div>
+                </div>
+                <div class="row mt-2" th:if="${patient.chiefComplaint}">
+                    <div class="col-12">
+                        <strong>Chief Complaint:</strong> 
+                        <span th:text="${patient.chiefComplaint}">치과의 주요 호소 증상</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Treatment Plans List -->
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">치료 계획</h5>
+            </div>
+            <div class="card-body">
+                <div th:if="${treatmentPlans.empty}" class="text-center py-4">
+                    <i class="fas fa-clipboard-list fa-3x text-muted mb-3"></i>
+                    <p class="text-muted">등록된 치료계획이 없습니다.</p>
+                    <a th:href="@{/treatment-plans/new(patientId=${patient.id})}" class="btn btn-primary">
+                        <i class="fas fa-plus me-1"></i>첫 번째 치료계획 만들기
+                    </a>
+                </div>
+                
+                <div th:unless="${treatmentPlans.empty}">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>날짜</th>
+                                    <th>상태</th>
+                                    <th>Chief Complaint</th>
+                                    <th>치료비</th>
+                                    <th>치료계획</th>
+                                    <th>진료비</th>
+                                    <th>치료계획서</th>
+                                    <th>작업</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:each="plan : ${treatmentPlans}">
+                                    <td>
+                                        <span th:text="${#temporals.format(plan.planDate, 'yyyy-MM-dd HH:mm')}">2018-11-09 PM 5:54</span>
+                                    </td>
+                                    <td>
+                                        <span class="badge" 
+                                              th:classappend="${plan.status.name() == 'DRAFT' ? 'bg-secondary' : 
+                                                             plan.status.name() == 'CONFIRMED' ? 'bg-primary' : 
+                                                             plan.status.name() == 'IN_PROGRESS' ? 'bg-warning' : 
+                                                             plan.status.name() == 'COMPLETED' ? 'bg-success' : 'bg-danger'}"
+                                              th:text="${plan.status.korean}">초안</span>
+                                    </td>
+                                    <td>
+                                        <span th:text="${plan.notes != null ? plan.notes : '-'}" 
+                                              class="text-truncate" style="max-width: 200px;">-</span>
+                                    </td>
+                                    <td>
+                                        <span th:text="${plan.totalCost != null ? #numbers.formatDecimal(plan.totalCost, 0, 'COMMA', 0, 'POINT') + '원' : '0원'}">0 / 0</span>
+                                    </td>
+                                    <td>
+                                        <span th:text="${plan.selfCost != null ? #numbers.formatDecimal(plan.selfCost, 0, 'COMMA', 0, 'POINT') + '원' : '0원'}">0 / 0</span>
+                                    </td>
+                                    <td>
+                                        <button class="btn btn-sm btn-outline-primary" 
+                                                th:onclick="'downloadPdf(' + ${plan.id} + ', \'bill\')'">
+                                            <i class="fas fa-print me-1"></i>Print
+                                        </button>
+                                    </td>
+                                    <td>
+                                        <button class="btn btn-sm btn-outline-success" 
+                                                th:onclick="'downloadPdf(' + ${plan.id} + ', \'treatment-plan\')'">
+                                            <i class="fas fa-print me-1"></i>Print
+                                        </button>
+                                    </td>
+                                    <td>
+                                        <div class="btn-group" role="group">
+                                            <a th:href="@{/treatment-plans/{id}(id=${plan.id})}" 
+                                               class="btn btn-sm btn-outline-info">
+                                                <i class="fas fa-eye"></i>
+                                            </a>
+                                            <a th:href="@{/treatment-plans/{id}/edit(id=${plan.id})}" 
+                                               class="btn btn-sm btn-outline-primary">
+                                                <i class="fas fa-edit"></i>
+                                            </a>
+                                            <button type="button" class="btn btn-sm btn-outline-danger" 
+                                                    onclick="confirmDeletePlan(this)" 
+                                                    th:data-url="@{/treatment-plans/{id}/delete(id=${plan.id})}"
+                                                    th:data-date="${#temporals.format(plan.planDate, 'yyyy-MM-dd')}">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script th:fragment="script">
+        function confirmDeletePlan(button) {
+            const planDate = button.getAttribute('data-date');
+            const deleteUrl = button.getAttribute('data-url');
+            
+            if (confirm(`정말로 "${planDate}" 치료계획을 삭제하시겠습니까?`)) {
+                const form = document.createElement('form');
+                form.method = 'POST';
+                form.action = deleteUrl;
+                document.body.appendChild(form);
+                form.submit();
+            }
+        }
+        
+        function downloadPdf(planId, type) {
+            const url = `/treatment-plans/${planId}/pdf/${type}`;
+            window.open(url, '_blank');
+        }
+    </script>
+</body>
+</html>
+

@@ -2,7 +2,9 @@ package com.fastcampus.ch3.aop;
 
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
+import org.aspectj.lang.annotation.Aspect;
 import org.springframework.boot.SpringApplication;
+import org.springframework.boot.WebApplicationType;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -14,7 +16,12 @@ import java.util.Arrays;
 
 public class AppMain2 {
     public static void main(String[] args) {
-        ApplicationContext context = SpringApplication.run(Config.class);
+        //ApplicationContext context = SpringApplication.run(Config.class, args);
+
+        SpringApplication app = new SpringApplication(Config.class);
+        app.setWebApplicationType(WebApplicationType.NONE); // 웹 애플리케이션 비활성화
+        ApplicationContext context = app.run(args);
+
 
         MyMath math = context.getBean(MyMath.class);
         math.add(2,3);
@@ -25,13 +32,15 @@ public class AppMain2 {
 }
 
 
-@EnableAspectJAutoProxy
+@EnableAspectJAutoProxy // AOP 자동 설정.
 @ComponentScan
 @Configuration
 class Config {
 
 }
 
+@Aspect
+@Component
 class LoggingAdvice {
     @Around("execution(* com.fastcampus.ch3.aop.MyMath.add*(..))") // pointcut - 부가기능이 적용될 메서드의 패턴
     public Object methodCallLog(ProceedingJoinPoint pjp) throws Throwable {

@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org" th:replace="~{layout/base :: layout(~{::title}, ~{::main}, ~{::script})}">
+<head>
+    <title>검색 / 치료계획 삭제</title>
+</head>
+<body>
+    <main th:fragment="main">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2>검색 / 치료계획 삭제</h2>
+            <a th:href="@{/patients/new}" class="btn btn-primary">
+                <i class="fas fa-plus me-1"></i>신환 등록
+            </a>
+        </div>
+
+        <!-- Search Form -->
+        <div class="card mb-4">
+            <div class="card-body">
+                <form th:action="@{/patients}" method="get" class="row g-3">
+                    <div class="col-md-8">
+                        <input type="text" class="form-control" name="search" th:value="${search}" 
+                               placeholder="환자명 또는 차트번호로 검색">
+                    </div>
+                    <div class="col-md-4">
+                        <button type="submit" class="btn btn-outline-primary me-2">
+                            <i class="fas fa-search me-1"></i>Search
+                        </button>
+                        <a th:href="@{/patients}" class="btn btn-outline-secondary">
+                            <i class="fas fa-refresh me-1"></i>전체보기
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Patient List -->
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">환자 목록</h5>
+            </div>
+            <div class="card-body">
+                <div th:if="${patients.empty}" class="text-center py-4">
+                    <i class="fas fa-users fa-3x text-muted mb-3"></i>
+                    <p class="text-muted">등록된 환자가 없습니다.</p>
+                </div>
+                
+                <div th:unless="${patients.empty}">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>차트번호</th>
+                                    <th>이름</th>
+                                    <th>성별/나이</th>
+                                    <th>생년월일</th>
+                                    <th>담당의사</th>
+                                    <th>Chief Complaint</th>
+                                    <th>치료계획</th>
+                                    <th>작업</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:each="patient : ${patients}">
+                                    <td>
+                                        <span class="badge bg-primary" th:text="${patient.chartNumber}">1</span>
+                                    </td>
+                                    <td>
+                                        <strong th:text="${patient.name}">김예영</strong>
+                                    </td>
+                                    <td>
+                                        <span th:text="${patient.gender.korean}">여</span> /
+                                        <span th:text="${#temporals.format(patient.birthDate, 'yyyy-MM-dd')}">1978-06-05</span>
+                                    </td>
+                                    <td th:text="${#temporals.format(patient.birthDate, 'yyyy-MM-dd')}">1978-06-05</td>
+                                    <td>
+                                        <span th:text="${patient.doctorName != null ? patient.doctorName : '미지정'}" 
+                                              class="badge bg-info">심승환</span>
+                                    </td>
+                                    <td>
+                                        <span th:text="${patient.chiefComplaint != null ? patient.chiefComplaint : '-'}" 
+                                              class="text-truncate" style="max-width: 200px;">치과의 주요 호소 증상</span>
+                                    </td>
+                                    <td>
+                                        <a th:href="@{/patients/{id}/treatment-plans(id=${patient.id})}" 
+                                           class="btn btn-sm btn-outline-success">
+                                            <i class="fas fa-clipboard-list me-1"></i>치료계획
+                                        </a>
+                                    </td>
+                                    <td>
+                                        <div class="btn-group" role="group">
+                                            <a th:href="@{/patients/{id}/edit(id=${patient.id})}" 
+                                               class="btn btn-sm btn-outline-primary">
+                                                <i class="fas fa-edit"></i>
+                                            </a>
+                                            <button type="button" class="btn btn-sm btn-outline-danger" 
+                                                    onclick="confirmDelete(this)" 
+                                                    th:data-url="@{/patients/{id}/delete(id=${patient.id})}"
+                                                    th:data-name="${patient.name}">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script th:fragment="script">
+        function confirmDelete(button) {
+            const patientName = button.getAttribute('data-name');
+            const deleteUrl = button.getAttribute('data-url');
+            
+            if (confirm(`정말로 "${patientName}" 환자를 삭제하시겠습니까?`)) {
+                const form = document.createElement('form');
+                form.method = 'POST';
+                form.action = deleteUrl;
+                document.body.appendChild(form);
+                form.submit();
+            }
+        }
+    </script>
+</body>
+</html>
+

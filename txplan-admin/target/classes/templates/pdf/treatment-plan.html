@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>치료계획서 & 진료비</title>
+    <style>
+        @page {
+            size: A4;
+            margin: 20mm;
+        }
+        
+        body {
+            font-family: 'Malgun Gothic', sans-serif;
+            font-size: 12px;
+            line-height: 1.4;
+            color: #333;
+        }
+        
+        .header {
+            text-align: center;
+            border-bottom: 2px solid #333;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .hospital-name {
+            font-size: 16px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        .document-title {
+            font-size: 24px;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+        
+        .patient-info {
+            margin-bottom: 20px;
+        }
+        
+        .patient-info table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .patient-info td {
+            padding: 5px;
+            border: 1px solid #ddd;
+        }
+        
+        .tooth-chart {
+            text-align: center;
+            margin: 20px 0;
+        }
+        
+        .tooth-chart-title {
+            font-size: 14px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        
+        .teeth-row {
+            display: flex;
+            justify-content: center;
+            margin: 10px 0;
+        }
+        
+        .tooth-item {
+            width: 30px;
+            height: 40px;
+            margin: 2px;
+            text-align: center;
+            border: 1px solid #ccc;
+            position: relative;
+        }
+        
+        .tooth-number {
+            font-size: 8px;
+            font-weight: bold;
+        }
+        
+        .tooth-visual {
+            width: 20px;
+            height: 25px;
+            margin: 2px auto;
+            background-color: #ffd700;
+            border-radius: 3px;
+        }
+        
+        .treatment-quote {
+            background-color: #f8f9fa;
+            border-left: 4px solid #007bff;
+            padding: 15px;
+            margin: 20px 0;
+            font-style: italic;
+        }
+        
+        .treatment-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        
+        .treatment-table th,
+        .treatment-table td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: center;
+        }
+        
+        .treatment-table th {
+            background-color: #f8f9fa;
+            font-weight: bold;
+        }
+        
+        .total-cost {
+            text-align: right;
+            font-size: 16px;
+            font-weight: bold;
+            margin: 20px 0;
+        }
+        
+        .payment-info {
+            background-color: #f8f9fa;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+        
+        .payment-info h4 {
+            color: #dc3545;
+            margin-bottom: 10px;
+        }
+        
+        .highlight {
+            color: #dc3545;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="hospital-name">S.LEADER DENTAL HOSPITAL</div>
+        <div style="font-size: 12px; color: #666;" th:text="${#temporals.format(treatmentPlan.planDate, 'yyyy-MM-dd')}">2018-11-09</div>
+    </div>
+    
+    <h1 class="document-title">치료계획서 & 진료비</h1>
+    
+    <div class="patient-info">
+        <table>
+            <tr>
+                <td style="background-color: #f8f9fa; font-weight: bold; width: 20%;">차트번호</td>
+                <td th:text="${treatmentPlan.chartNumber}">1</td>
+                <td style="background-color: #f8f9fa; font-weight: bold; width: 20%;">성명</td>
+                <td th:text="${treatmentPlan.patientName}">김예영</td>
+            </tr>
+        </table>
+    </div>
+    
+    <!-- Tooth Chart -->
+    <div class="tooth-chart">
+        <div class="tooth-chart-title">치아 차트</div>
+        
+        <!-- Upper Teeth -->
+        <div class="teeth-row">
+            <div th:each="i : ${#numbers.sequence(18, 11, -1)}" class="tooth-item">
+                <div class="tooth-number" th:text="${i}">18</div>
+                <div class="tooth-visual"></div>
+            </div>
+            <div th:each="i : ${#numbers.sequence(21, 28)}" class="tooth-item">
+                <div class="tooth-number" th:text="${i}">21</div>
+                <div class="tooth-visual"></div>
+            </div>
+        </div>
+        
+        <!-- Lower Teeth -->
+        <div class="teeth-row">
+            <div th:each="i : ${#numbers.sequence(48, 41, -1)}" class="tooth-item">
+                <div class="tooth-visual"></div>
+                <div class="tooth-number" th:text="${i}">48</div>
+            </div>
+            <div th:each="i : ${#numbers.sequence(31, 38)}" class="tooth-item">
+                <div class="tooth-visual"></div>
+                <div class="tooth-number" th:text="${i}">31</div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Treatment Quote -->
+    <div class="treatment-quote">
+        치료계획 및 치료에 대한 설명을 받았습니다. 치료계획 및 1차 진료 후 치료 계획 변경 시 재상담 
+        후에 치료 받겠습니다. 치료계획 및 치료에 대한 설명을 받았습니다. 치료계획 및 1차 진료 후 치료 
+        계획 변경 시 재상담 후에 치료 받겠습니다. 치료계획 및 치료에 대한 설명을 받았습니다. 치료계획 
+        및 1차 진료 후 치료 계획 변경 시 재상담 후에 치료 받겠습니다.
+    </div>
+    
+    <!-- Treatment Items Table -->
+    <table class="treatment-table">
+        <thead>
+            <tr>
+                <th>치료내용</th>
+                <th>치아</th>
+                <th>가격</th>
+                <th>치료항목</th>
+                <th>담당의사</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="item : ${treatmentItems}">
+                <td th:text="${item.treatmentName}">임플란트 크라운 제작 및 장착</td>
+                <td th:text="${item.toothNumber}">17</td>
+                <td th:text="${item.totalPrice != null ? #numbers.formatDecimal(item.totalPrice, 0, 'COMMA', 0, 'POINT') : '0'}">310,000</td>
+                <td>O</td>
+                <td>심승환</td>
+            </tr>
+            <tr th:if="${treatmentItems == null or treatmentItems.empty}">
+                <td colspan="5">등록된 치료 항목이 없습니다.</td>
+            </tr>
+        </tbody>
+    </table>
+    
+    <!-- Total Cost -->
+    <div class="total-cost">
+        <div>총 치료비 금액: <span class="highlight" th:text="${totalCost != null ? #numbers.formatDecimal(totalCost, 0, 'COMMA', 0, 'POINT') + '원' : '0원'}">2,789,400원</span> + 부가 진료비</div>
+    </div>
+    
+    <!-- Payment Information -->
+    <div class="payment-info">
+        <h4>결제방법:</h4>
+        <p>
+            제진료 시 진료비는 진료 시마다 <span class="highlight">신경치료</span>가 될 수 있습니다.<br>
+            신경치료 및 잇몸치료 받는 <span class="highlight">보철 진료비</span>가 추가되며, 치료비 간격 내에서 마지막 2-3회째 내원으로 방문합니다.<br>
+            내원횟수는 최소 3-7회에 방문이 3-4회 진료됩니다.<br>
+            치아 위치에 따라 및 모든 치아에도의 치료하기 때문에, <span class="highlight">보철 진료비</span>가 추가로도 방문됩니다.
+        </p>
+    </div>
+</body>
+</html>
+

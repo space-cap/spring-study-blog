@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org" th:replace="~{layout/base :: layout(~{::title}, ~{::main}, ~{::script})}">
+<head>
+    <title>치료계획 상세</title>
+</head>
+<body>
+    <main th:fragment="main">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <h2>치료계획 상세</h2>
+                <p class="text-muted mb-0">
+                    환자: <strong th:text="${treatmentPlan.patientName}">김예영</strong> 
+                    (차트번호: <span th:text="${treatmentPlan.chartNumber}">1</span>)
+                </p>
+            </div>
+            <div>
+                <button class="btn btn-success me-2" th:onclick="'downloadPdf(' + ${treatmentPlan.id} + ', \'treatment-plan\')'">
+                    <i class="fas fa-download me-1"></i>치료계획서 PDF
+                </button>
+                <button class="btn btn-info me-2" th:onclick="'downloadPdf(' + ${treatmentPlan.id} + ', \'bill\')'">
+                    <i class="fas fa-download me-1"></i>진료비 PDF
+                </button>
+                <a th:href="@{/treatment-plans/{id}/edit(id=${treatmentPlan.id})}" class="btn btn-primary me-2">
+                    <i class="fas fa-edit me-1"></i>수정
+                </a>
+                <a th:href="@{/patients/{id}/treatment-plans(id=${treatmentPlan.patientId})}" class="btn btn-secondary">
+                    <i class="fas fa-arrow-left me-1"></i>목록으로
+                </a>
+            </div>
+        </div>
+
+        <!-- Patient & Plan Info -->
+        <div class="row mb-4">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0">환자 정보</h5>
+                    </div>
+                    <div class="card-body">
+                        <p><strong>차트번호:</strong> <span th:text="${treatmentPlan.chartNumber}">1</span></p>
+                        <p><strong>이름:</strong> <span th:text="${treatmentPlan.patientName}">김예영</span></p>
+                        <p><strong>계획일:</strong> <span th:text="${#temporals.format(treatmentPlan.planDate, 'yyyy-MM-dd HH:mm')}">2018-11-09</span></p>
+                        <p><strong>상태:</strong> 
+                            <span class="badge" 
+                                  th:classappend="${treatmentPlan.status.name() == 'DRAFT' ? 'bg-secondary' : 
+                                                 treatmentPlan.status.name() == 'CONFIRMED' ? 'bg-primary' : 
+                                                 treatmentPlan.status.name() == 'IN_PROGRESS' ? 'bg-warning' : 
+                                                 treatmentPlan.status.name() == 'COMPLETED' ? 'bg-success' : 'bg-danger'}"
+                                  th:text="${treatmentPlan.status.korean}">초안</span>
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0">진료비 정보</h5>
+                    </div>
+                    <div class="card-body">
+                        <p><strong>총 진료비:</strong> 
+                            <span class="text-primary fw-bold" 
+                                  th:text="${treatmentPlan.totalCost != null ? #numbers.formatDecimal(treatmentPlan.totalCost, 0, 'COMMA', 0, 'POINT') + '원' : '0원'}">2,789,400원</span>
+                        </p>
+                        <p><strong>보험 적용:</strong> 
+                            <span th:text="${treatmentPlan.insuranceCost != null ? #numbers.formatDecimal(treatmentPlan.insuranceCost, 0, 'COMMA', 0, 'POINT') + '원' : '0원'}">0원</span>
+                        </p>
+                        <p><strong>본인 부담:</strong> 
+                            <span class="text-danger fw-bold" 
+                                  th:text="${treatmentPlan.selfCost != null ? #numbers.formatDecimal(treatmentPlan.selfCost, 0, 'COMMA', 0, 'POINT') + '원' : '0원'}">2,789,400원</span>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tooth Chart -->
+        <div class="card mb-4">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">치아 차트</h5>
+                <div class="btn-group" role="group">
+                    <button type="button" class="btn btn-sm btn-outline-secondary active" data-tab="dmf">DMF</button>
+                    <button type="button" class="btn btn-sm btn-outline-secondary" data-tab="plan">Plan</button>
+                    <button type="button" class="btn btn-sm btn-outline-secondary" data-tab="history">History</button>
+                </div>
+            </div>
+            <div class="card-body">
+                <!-- Tooth Chart Grid -->
+                <div class="tooth-chart-container">
+                    <!-- Upper Teeth -->
+                    <div class="upper-teeth mb-3">
+                        <div class="row justify-content-center">
+                            <div class="col-auto">
+                                <div class="teeth-row">
+                                    <!-- 18-11 -->
+                                    <div th:each="i : ${#numbers.sequence(18, 11, -1)}" class="tooth-item" th:data-tooth="${i}">
+                                        <div class="tooth-number" th:text="${i}">18</div>
+                                        <div class="tooth-visual upper-tooth">
+                                            <div class="tooth-crown"></div>
+                                        </div>
+                                    </div>
+                                    <!-- 21-28 -->
+                                    <div th:each="i : ${#numbers.sequence(21, 28)}" class="tooth-item" th:data-tooth="${i}">
+                                        <div class="tooth-number" th:text="${i}">21</div>
+                                        <div class="tooth-visual upper-tooth">
+                                            <div class="tooth-crown"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Lower Teeth -->
+                    <div class="lower-teeth">
+                        <div class="row justify-content-center">
+                            <div class="col-auto">
+                                <div class="teeth-row">
+                                    <!-- 48-41 -->
+                                    <div th:each="i : ${#numbers.sequence(48, 41, -1)}" class="tooth-item" th:data-tooth="${i}">
+                                        <div class="tooth-visual lower-tooth">
+                                            <div class="tooth-crown"></div>
+                                            <div class="tooth-root"></div>
+                                        </div>
+                                        <div class="tooth-number" th:text="${i}">48</div>
+                                    </div>
+                                    <!-- 31-38 -->
+                                    <div th:each="i : ${#numbers.sequence(31, 38)}" class="tooth-item" th:data-tooth="${i}">
+                                        <div class="tooth-visual lower-tooth">
+                                            <div class="tooth-crown"></div>
+                                            <div class="tooth-root"></div>
+                                        </div>
+                                        <div class="tooth-number" th:text="${i}">31</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- DMF Rate Display -->
+                <div class="dmf-rate-display text-center mt-4">
+                    <h3 class="display-4">DMFT Rate</h3>
+                    <h1 class="display-1 text-primary">100.0%</h1>
+                </div>
+            </div>
+        </div>
+
+        <!-- Treatment Items -->
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">치료 항목</h5>
+            </div>
+            <div class="card-body">
+                <div th:if="${treatmentPlan.treatmentItems == null or treatmentPlan.treatmentItems.empty}" class="text-center py-4">
+                    <i class="fas fa-clipboard-list fa-3x text-muted mb-3"></i>
+                    <p class="text-muted">등록된 치료 항목이 없습니다.</p>
+                </div>
+                
+                <div th:unless="${treatmentPlan.treatmentItems == null or treatmentPlan.treatmentItems.empty}">
+                    <div class="table-responsive">
+                        <table class="table table-sm">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>치료내용</th>
+                                    <th>치아</th>
+                                    <th>가격</th>
+                                    <th>치료항목</th>
+                                    <th>완료</th>
+                                    <th>담당의사</th>
+                                    <th>상태</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:each="item : ${treatmentPlan.treatmentItems}">
+                                    <td th:text="${item.treatmentName}">임플란트 크라운 제작 및 장착</td>
+                                    <td>
+                                        <span class="badge bg-info" th:text="${item.toothNumber}">17</span>
+                                    </td>
+                                    <td th:text="${item.totalPrice != null ? #numbers.formatDecimal(item.totalPrice, 0, 'COMMA', 0, 'POINT') : '0'}">310,000</td>
+                                    <td>
+                                        <i class="fas fa-check text-success" th:if="${item.insuranceCovered}"></i>
+                                        <i class="fas fa-times text-muted" th:unless="${item.insuranceCovered}"></i>
+                                    </td>
+                                    <td>
+                                        <i class="fas fa-check text-success" th:if="${item.status.name() == 'COMPLETED'}"></i>
+                                        <i class="fas fa-clock text-warning" th:unless="${item.status.name() == 'COMPLETED'}"></i>
+                                    </td>
+                                    <td>심승환</td>
+                                    <td>
+                                        <span class="badge bg-secondary" th:text="${item.insuranceRate != null ? item.insuranceRate + '%' : '40%'}">40%</span>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script th:fragment="script">
+        function downloadPdf(planId, type) {
+            const url = `/treatment-plans/${planId}/pdf/${type}`;
+            window.open(url, '_blank');
+        }
+        
+        // Tab switching
+        document.querySelectorAll('[data-tab]').forEach(button => {
+            button.addEventListener('click', function() {
+                // Remove active class from all buttons
+                document.querySelectorAll('[data-tab]').forEach(btn => btn.classList.remove('active'));
+                // Add active class to clicked button
+                this.classList.add('active');
+                
+                // Here you would implement tab content switching logic
+                const tab = this.getAttribute('data-tab');
+                console.log('Switched to tab:', tab);
+            });
+        });
+    </script>
+</body>
+</html>
+

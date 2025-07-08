@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>진료비 명세서</title>
+    <style>
+        @page {
+            size: A4;
+            margin: 20mm;
+        }
+        
+        body {
+            font-family: 'Malgun Gothic', sans-serif;
+            font-size: 12px;
+            line-height: 1.4;
+            color: #333;
+        }
+        
+        .header {
+            text-align: center;
+            border-bottom: 2px solid #333;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .hospital-name {
+            font-size: 16px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        .document-title {
+            font-size: 24px;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+        
+        .patient-info {
+            margin-bottom: 20px;
+        }
+        
+        .patient-info table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .patient-info td {
+            padding: 8px;
+            border: 1px solid #ddd;
+        }
+        
+        .bill-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        
+        .bill-table th,
+        .bill-table td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: center;
+        }
+        
+        .bill-table th {
+            background-color: #f8f9fa;
+            font-weight: bold;
+        }
+        
+        .bill-table .text-left {
+            text-align: left;
+        }
+        
+        .bill-table .text-right {
+            text-align: right;
+        }
+        
+        .total-section {
+            background-color: #f8f9fa;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+        
+        .total-row {
+            display: flex;
+            justify-content: space-between;
+            margin: 5px 0;
+            font-size: 14px;
+        }
+        
+        .total-row.final {
+            font-size: 18px;
+            font-weight: bold;
+            color: #dc3545;
+            border-top: 2px solid #dc3545;
+            padding-top: 10px;
+            margin-top: 15px;
+        }
+        
+        .checkbox {
+            display: inline-block;
+            width: 15px;
+            height: 15px;
+            border: 2px solid #333;
+            margin-right: 5px;
+            vertical-align: middle;
+        }
+        
+        .checkbox.checked::after {
+            content: '✓';
+            display: block;
+            text-align: center;
+            line-height: 11px;
+            font-weight: bold;
+        }
+        
+        .highlight {
+            color: #dc3545;
+            font-weight: bold;
+        }
+        
+        .note {
+            background-color: #fff3cd;
+            border: 1px solid #ffeaa7;
+            padding: 10px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="hospital-name">S.LEADER DENTAL HOSPITAL</div>
+        <div style="font-size: 12px; color: #666;" th:text="${#temporals.format(treatmentPlan.planDate, 'yyyy-MM-dd')}">2018-11-09</div>
+    </div>
+    
+    <h1 class="document-title">진료비 명세서</h1>
+    
+    <div class="patient-info">
+        <table>
+            <tr>
+                <td style="background-color: #f8f9fa; font-weight: bold; width: 15%;">차트번호</td>
+                <td style="width: 20%;" th:text="${treatmentPlan.chartNumber}">1</td>
+                <td style="background-color: #f8f9fa; font-weight: bold; width: 15%;">성명</td>
+                <td style="width: 20%;" th:text="${treatmentPlan.patientName}">김예영</td>
+                <td style="background-color: #f8f9fa; font-weight: bold; width: 15%;">진료일</td>
+                <td style="width: 15%;" th:text="${#temporals.format(treatmentPlan.planDate, 'yyyy-MM-dd')}">2018-11-09</td>
+            </tr>
+        </table>
+    </div>
+    
+    <!-- Bill Items Table -->
+    <table class="bill-table">
+        <thead>
+            <tr>
+                <th style="width: 10%;">순번</th>
+                <th style="width: 40%;">치료내용</th>
+                <th style="width: 10%;">치아</th>
+                <th style="width: 15%;">가격</th>
+                <th style="width: 10%;">보험</th>
+                <th style="width: 15%;">본인부담</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="item, iterStat : ${treatmentItems}">
+                <td th:text="${iterStat.count}">1</td>
+                <td class="text-left" th:text="${item.treatmentName}">임플란트 크라운 제작 및 장착</td>
+                <td th:text="${item.toothNumber}">17</td>
+                <td class="text-right" th:text="${item.totalPrice != null ? #numbers.formatDecimal(item.totalPrice, 0, 'COMMA', 0, 'POINT') : '0'}">310,000</td>
+                <td>
+                    <span class="checkbox" th:classappend="${item.insuranceCovered ? 'checked' : ''}"></span>
+                </td>
+                <td class="text-right" th:text="${item.totalPrice != null ? #numbers.formatDecimal(item.totalPrice, 0, 'COMMA', 0, 'POINT') : '0'}">310,000</td>
+            </tr>
+            <tr th:if="${treatmentItems == null or treatmentItems.empty}">
+                <td colspan="6" class="text-center">등록된 치료 항목이 없습니다.</td>
+            </tr>
+        </tbody>
+    </table>
+    
+    <!-- Total Section -->
+    <div class="total-section">
+        <div class="total-row">
+            <span>총 치료비:</span>
+            <span th:text="${totalCost != null ? #numbers.formatDecimal(totalCost, 0, 'COMMA', 0, 'POINT') + '원' : '0원'}">2,789,400원</span>
+        </div>
+        <div class="total-row">
+            <span>보험 적용 금액:</span>
+            <span th:text="${insuranceCost != null ? #numbers.formatDecimal(insuranceCost, 0, 'COMMA', 0, 'POINT') + '원' : '0원'}">0원</span>
+        </div>
+        <div class="total-row final">
+            <span>본인 부담 금액:</span>
+            <span th:text="${selfCost != null ? #numbers.formatDecimal(selfCost, 0, 'COMMA', 0, 'POINT') + '원' : '0원'}">2,789,400원</span>
+        </div>
+    </div>
+    
+    <!-- Payment Methods -->
+    <div style="margin: 30px 0;">
+        <h3 style="margin-bottom: 15px;">결제 방법</h3>
+        <div style="display: flex; gap: 30px;">
+            <div>
+                <span class="checkbox"></span> 현금
+            </div>
+            <div>
+                <span class="checkbox"></span> 카드
+            </div>
+            <div>
+                <span class="checkbox"></span> 계좌이체
+            </div>
+            <div>
+                <span class="checkbox"></span> 분할결제
+            </div>
+        </div>
+    </div>
+    
+    <!-- Notes -->
+    <div class="note">
+        <h4 style="margin-bottom: 10px;">안내사항</h4>
+        <ul style="margin: 0; padding-left: 20px;">
+            <li>치료비는 치료 진행에 따라 변동될 수 있습니다.</li>
+            <li>보험 적용 여부는 건강보험공단 기준에 따릅니다.</li>
+            <li>분할결제를 원하시는 경우 상담 후 진행 가능합니다.</li>
+            <li>치료 중단 시 이미 진행된 치료비는 환불되지 않습니다.</li>
+        </ul>
+    </div>
+    
+    <!-- Signature Section -->
+    <div style="margin-top: 40px; display: flex; justify-content: space-between;">
+        <div style="text-align: center;">
+            <div style="border-bottom: 1px solid #333; width: 150px; margin-bottom: 5px;"></div>
+            <div>환자 서명</div>
+        </div>
+        <div style="text-align: center;">
+            <div style="border-bottom: 1px solid #333; width: 150px; margin-bottom: 5px;"></div>
+            <div>담당의 서명</div>
+        </div>
+    </div>
+</body>
+</html>
+
