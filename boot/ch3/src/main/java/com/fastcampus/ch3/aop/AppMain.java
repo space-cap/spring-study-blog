@@ -1,5 +1,7 @@
 package com.fastcampus.ch3.aop;
 
+import org.springframework.transaction.annotation.Transactional;
+
 import java.lang.reflect.Method;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -29,13 +31,21 @@ class MyAdvice {
     }
 
     public void invoke(Method m, Object o, Object[] args) throws Exception {
-        System.out.println("before invoke");
+        if(m.getAnnotation(Transactional.class) != null) {
+            System.out.println("before invoke");
+        }
+
         m.invoke(o, args);
-        System.out.println("after invoke");
+
+        if(matches(m)) {
+            System.out.println("after invoke");
+        }
+
     }
 }
 
 class MyClass {
+    @Transactional
     public void aaa() {
         System.out.println("aaa");
     }
