@@ -14,7 +14,7 @@
     <name>TxPlan Admin</name>
     <description>Dental Treatment Plan Management System</description>
     <properties>
-        <java.version>21</java.version>
+        <java.version>17</java.version>
     </properties>
     <dependencies>
         <!-- Spring Boot Starters -->
@@ -76,6 +76,12 @@
             <artifactId>lombok</artifactId>
             <optional>true</optional>
         </dependency>
+
+        <dependency>
+            <groupId>nz.net.ultraq.thymeleaf</groupId>
+            <artifactId>thymeleaf-layout-dialect</artifactId>
+        </dependency>
+
     </dependencies>
 
     <build>

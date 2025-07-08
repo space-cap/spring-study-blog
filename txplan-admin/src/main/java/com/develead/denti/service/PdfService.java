@@ -66,7 +66,7 @@ public class PdfService {
         try (PdfWriter writer = new PdfWriter(outputStream);
              PdfDocument pdfDocument = new PdfDocument(writer)) {
             
-            HtmlConverter.convertToPdf(htmlContent, pdfDocument);
+            //HtmlConverter.convertToPdf(htmlContent, pdfDocument);
         }
         
         return outputStream.toByteArray();
