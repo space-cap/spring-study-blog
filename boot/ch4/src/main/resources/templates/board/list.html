@@ -172,7 +172,7 @@
             <tr th:each="board : ${list}">
                 <td th:text="${board.bno}" th:class="no">1</td>
                 <td><a th:href="@{/board/read(bno=${board.bno})}" th:text="${board.title}">Today I'm gonna finish</a></td>
-                <td th:text="${board.user.id}">aaa</td>
+                <td th:text="${board.writer}">aaa</td>
                 <td th:text="${#dates.format(board.upDate,'yyyy-MM-dd')}">2020-01-30</td>
                 <td th:text="${board.viewCnt}" th:class="viewcnt">999</td>
             </tr>
@@ -183,4 +183,4 @@
     </div>
 </div>
 </body>
-</html>
+</html>0

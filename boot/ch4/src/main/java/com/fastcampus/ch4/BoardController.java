@@ -133,6 +133,6 @@ public class BoardController {
         List<Board> list = boardService.getList();
         model.addAttribute("list", list);
 
-        return "/board/list";
+        return "board/list";
     }
 }
