@@ -66,8 +66,8 @@
 <div class="container">
     <h2 th:class="writing-header">게시판 쓰기</h2>
     <form id="form" class="frm" method="post">
-        <input type="hidden" name="bno" th:value="${board.bno}">
-        <input name="user" type="hidden" th:value="${board.user.id}" readonly='readonly'>
+        <!--<input type="hidden" name="bno" th:value="${board.bno}">-->
+        <input name="user.id" type="hidden" th:value="${board?.user?.id}">
 
         <input name="title" type="text" placeholder="제목을 입력해 주세요." th:value="${board.title}"><br>
         <textarea name="content" rows="20" placeholder="내용을 입력해 주세요." th:text="${board.content}"></textarea><br>

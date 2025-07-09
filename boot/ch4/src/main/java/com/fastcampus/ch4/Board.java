@@ -31,6 +31,18 @@ public class Board {
     @Temporal(value= TemporalType.TIMESTAMP)
     private Date upDate;
 
+    @ManyToOne // 여러 Board에 하나의 User. FK자동 생성
+    @JoinColumn(name="user_id", nullable = false)
+    private User user;
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
     public Long getBno() {
         return bno;
     }

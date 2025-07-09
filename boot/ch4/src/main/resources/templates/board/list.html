@@ -159,6 +159,7 @@
     </style>
 </head>
 <body>
+
 <div style="text-align:center">
     <div class="board-container">
         <table>
@@ -172,15 +173,17 @@
             <tr th:each="board : ${list}">
                 <td th:text="${board.bno}" th:class="no">1</td>
                 <td><a th:href="@{/board/read(bno=${board.bno})}" th:text="${board.title}">Today I'm gonna finish</a></td>
-                <td th:text="${board.writer}">aaa</td>
+                <td th:text="${board.user.id}">aaa</td>
                 <td th:text="${#dates.format(board.upDate,'yyyy-MM-dd')}">2020-01-30</td>
                 <td th:text="${board.viewCnt}" th:class="viewcnt">999</td>
             </tr>
-            </c:forEach>
         </table>
         <br>
-        <button id="writeBtn" class="btn-write" onclick="location.href='/board/write'"><i class="fa fa-pencil"></i> 글쓰기</button>
+        <button id="writeBtn" class="btn-write" onclick="location.href='/board/write'">
+            <i class="fa fa-pencil"></i> 글쓰기
+        </button>
     </div>
 </div>
+
 </body>
-</html>0
+</html>
