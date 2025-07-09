@@ -78,8 +78,12 @@ class BoardServiceTest {
             //b.setBno(i);
             b.setTitle("title"+i);
             b.setContent("content"+i);
+
             User user = new User();
             user.setId("aaa");
+            user.setName("aaa"+i);
+            user.setInDate(new Date());
+            user.setUpDate(new Date());
             userRepository.save(user);
 
             //b.setUser(user);
