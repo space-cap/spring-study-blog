@@ -1,6 +1,12 @@
 package com.fastcampus.ch4;
 
+import com.querydsl.core.BooleanBuilder;
+import com.querydsl.core.QueryFactory;
+import com.querydsl.jpa.impl.JPAQuery;
+import com.querydsl.jpa.impl.JPAQueryFactory;
+import jakarta.persistence.EntityManager;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
@@ -11,13 +17,14 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
+import static com.fastcampus.ch4.QBoard.board;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 @SpringBootTest
 class BoardRepositoryTest2 {
 
     @Autowired
-    private TestEntityManager entityManager;
+    private EntityManager em;
 
     @Autowired
     private BoardRepository boardRepository;
@@ -53,77 +60,62 @@ class BoardRepositoryTest2 {
         testBoard3.setViewCnt(5L);
         testBoard3.setInDate(new Date());
         testBoard3.setUpDate(new Date());
+
+        for (int i = 1; i <= 100; i++) {
+            Board board = new Board();
+            //board.setBno((long) i);
+            board.setTitle("title" + i);
+            board.setContent("content" + i);
+            board.setWriter("writer" + (i % 5)); // writer0~4
+            board.setViewCnt((long) (Math.random() * 100)); // 0~99
+            board.setInDate(new Date());
+            board.setUpDate(new Date());
+            boardRepository.save(board);
+        }
+    }
+
+    @Test
+    @DisplayName("querydsl로 쿼리 작성 테스트3 - 동적 쿼리작성")
+    public void querydslTest3() {
+        String searchBy = "TC" ; // 제목(title)과 작성내용(content)에서 검색
+        String keyword = "lee";
+        keyword = "%" + keyword + "%";
+
+        BooleanBuilder builder = new BooleanBuilder();
+
+        // 동적으로 조건을 달리하게
+        if(searchBy.equalsIgnoreCase("T"))
+            builder.and(board.title.like(keyword));
+        else if(searchBy.equalsIgnoreCase("C"))
+            builder.and(board.content.like(keyword));
+        else if(searchBy.equalsIgnoreCase("TC"))
+            builder.and(board.title.like(keyword).or(board.content.like(keyword)));
+
+        JPAQueryFactory qf = new JPAQueryFactory(em);
+        JPAQuery query = qf.selectFrom(board)
+                .where(builder)
+                .orderBy(board.upDate.desc());
+
+        List<Board> list = query.fetch();
+        list.forEach(System.out::println);
+
     }
 
 
     @Test
     void testSaveBoard() {
-        // Given
-        Board board = new Board();
-        board.setTitle("테스트 게시글");
-        board.setWriter("테스터");
-        board.setContent("테스트 내용");
-        board.setViewCnt(0L);
-        board.setInDate(new Date());
-        board.setUpDate(new Date());
+        //QBoard board = QBoard.board;
 
-        // When
-        Board savedBoard = boardRepository.save(board);
+        JPAQueryFactory qf = new JPAQueryFactory(em);
 
-        // Then
-        assertThat(savedBoard).isNotNull();
-        assertThat(savedBoard.getBno()).isNotNull();
-        assertThat(savedBoard.getTitle()).isEqualTo("테스트 게시글");
-        assertThat(savedBoard.getWriter()).isEqualTo("테스터");
-        assertThat(savedBoard.getContent()).isEqualTo("테스트 내용");
-        assertThat(savedBoard.getViewCnt()).isEqualTo(0L);
-    }
+        JPAQuery<Board> query = qf.selectFrom(board)
+                .where(board.title.eq(testBoard1.getTitle()));
+        List<Board> boards = query.fetch();
 
-    @Test
-    void testFindById() {
-        // Given
-        Board savedBoard = entityManager.persistAndFlush(testBoard1);
-
-        // When
-        Optional<Board> foundBoard = boardRepository.findById(savedBoard.getBno());
-
-        // Then
-        assertThat(foundBoard).isPresent();
-        assertThat(foundBoard.get().getTitle()).isEqualTo("첫 번째 게시글");
-        assertThat(foundBoard.get().getWriter()).isEqualTo("홍길동");
-    }
-
-    @Test
-    public void insertTest()
-    {
-        Board board = new Board();
-        //board.setBno(1L);
-        board.setTitle("lee");
-        board.setContent("content");
-        board.setWriter("writer");
-        board.setViewCnt(0L);
-        board.setInDate(new Date());
-        board.setUpDate(new Date());
-        boardRepository.save(board);
-
-        board.setBno(null);
-        boardRepository.save(board);
-        board.setBno(null);
-        boardRepository.save(board);
-    }
-
-    @Test
-    public void findAllTest() {
-        List<Board> boards = boardRepository.findAll();
         System.out.println("board size: " + boards.size());
+
+        //assertThat(boards.size()).isEqualTo(1);
     }
 
-    @Test
-    public void findAllNative1Test() {
-        List<Object[]> list = boardRepository.findAllNative2();
-        System.out.println("list size: " + list.size());
-
-        list.stream().map(arr-> Arrays.toString(arr)).forEach(System.out::println);
-    }
 
 }
