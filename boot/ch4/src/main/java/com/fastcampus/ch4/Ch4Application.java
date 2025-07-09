@@ -20,13 +20,13 @@ public class Ch4Application implements CommandLineRunner {
     public static void main(String[] args) {
         // SpringApplication.run(Ch4Application.class, args);
         SpringApplication app = new SpringApplication(Ch4Application.class);
-        app.setWebApplicationType(WebApplicationType.NONE);
+        //app.setWebApplicationType(WebApplicationType.NONE);
         app.run(args);
     }
 
     @Override
     public void run(String... args) throws Exception {
-        //System.out.println("emf: " + emf);
+       /* //System.out.println("emf: " + emf);
         EntityManager em = emf.createEntityManager();
         System.out.println("em = " + em.toString());
 
@@ -55,7 +55,7 @@ public class Ch4Application implements CommandLineRunner {
 
         tx.begin();
         em.remove(user);
-        tx.commit();
+        tx.commit();*/
 
 
     }
