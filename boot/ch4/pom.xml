@@ -34,7 +34,10 @@
         <dependency>
             <groupId>com.querydsl</groupId>
             <artifactId>querydsl-apt</artifactId>
+            <classifier>jakarta</classifier>
+            <scope>provided</scope>
         </dependency>
+
         <!-- https://mvnrepository.com/artifact/com.querydsl/querydsl-jpa -->
         <dependency>
             <groupId>com.querydsl</groupId>
