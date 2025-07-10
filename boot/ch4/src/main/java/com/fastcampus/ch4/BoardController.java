@@ -29,6 +29,20 @@ public class BoardController {
     @Autowired
     UserRepository userRepository;
 
+    @GetMapping("/modify")
+    public String modify(Long bno, Model model){
+        Board board = boardService.read(bno);
+        model.addAttribute("board", board);
+        return "/board/write";
+    }
+
+    @PostMapping("/modify")
+    public String modify(Board board){
+        boardService.modify(board);
+
+        return "redirect:/board/list";
+    }
+    
     @GetMapping("/write")
     public String showWriteForm(Model model){
         Board board = new Board();
