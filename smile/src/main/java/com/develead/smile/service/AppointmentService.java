@@ -25,6 +25,8 @@ public class AppointmentService {
         Appointment appointment = new Appointment();
         appointment.setCustomer(customer);
         appointment.setDoctor(doctor);
+        // [수정] 의사 정보에서 clinic 정보를 가져와 설정
+        appointment.setClinic(doctor.getClinic());
         appointment.setAppointmentDatetime(LocalDateTime.of(dto.getAppointmentDate(), dto.getAppointmentTime()));
         appointment.setDescription(dto.getDescription());
         appointmentRepository.save(appointment);
@@ -33,7 +35,7 @@ public class AppointmentService {
     public List<Appointment> findAppointmentsByLoginId(String loginId) {
         UserAccount user = userAccountRepository.findByLoginId(loginId).orElseThrow();
         Customer customer = customerRepository.findByUserAccount(user).orElseThrow();
-        return appointmentRepository.findByCustomerCustomerIdOrderByAppointmentDatetimeDesc(customer.getCustomer_id());
+        return appointmentRepository.findAppointmentsByCustomerId(customer.getCustomer_id());
     }
 
     @Transactional
