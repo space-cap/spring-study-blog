@@ -7,11 +7,95 @@
 </head>
 <body>
 <section layout:fragment="content" class="container py-5">
-    <div class="text-center">
-        <h1 class="fw-bold">온라인 예약</h1>
-        <p class="lead text-muted">온라인 예약 기능은 현재 준비 중입니다. 곧 더 편리한 서비스로 찾아뵙겠습니다.</p>
-        <!-- 실제 예약 폼이 여기에 구현될 예정입니다. -->
+    <div class="row g-5">
+        <!-- 예약 폼 -->
+        <div class="col-lg-5">
+            <div class="card shadow-sm">
+                <div class="card-body p-4">
+                    <h2 class="card-title text-center mb-4"><i class="bi bi-calendar-plus"></i> 예약 신청</h2>
+                    <form th:action="@{/appointments}" th:object="${appointmentDto}" method="post">
+                        <div class="mb-3">
+                            <label for="doctor" class="form-label">의사 선택</label>
+                            <select id="doctor" th:field="*{doctorId}" class="form-select" required>
+                                <option value="">-- 담당 의사를 선택하세요 --</option>
+                                <option th:each="doctor : ${doctors}" th:value="${doctor.doctor_id}" th:text="${doctor.name} + ' 원장 (' + ${doctor.specialty} + ')'"></option>
+                            </select>
+                            <div class="text-danger" th:if="${#fields.hasErrors('doctorId')}" th:errors="*{doctorId}"></div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="appointmentDate" class="form-label">예약 날짜</label>
+                            <input type="text" id="appointmentDate" th:field="*{appointmentDate}" class="form-control" placeholder="날짜를 선택하세요" required>
+                            <div class="text-danger" th:if="${#fields.hasErrors('appointmentDate')}" th:errors="*{appointmentDate}"></div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="appointmentTime" class="form-label">예약 시간</label>
+                            <select id="appointmentTime" th:field="*{appointmentTime}" class="form-select" required>
+                                <option value="">-- 시간을 선택하세요 --</option>
+                                <option value="09:00">09:00</option>
+                                <option value="10:00">10:00</option>
+                                <option value="11:00">11:00</option>
+                                <option value="14:00">14:00</option>
+                                <option value="15:00">15:00</option>
+                                <option value="16:00">16:00</option>
+                            </select>
+                            <div class="text-danger" th:if="${#fields.hasErrors('appointmentTime')}" th:errors="*{appointmentTime}"></div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="description" class="form-label">증상 또는 요청사항</label>
+                            <textarea id="description" th:field="*{description}" class="form-control" rows="3" required></textarea>
+                            <div class="text-danger" th:if="${#fields.hasErrors('description')}" th:errors="*{description}"></div>
+                        </div>
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary">예약하기</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- 예약 내역 -->
+        <div class="col-lg-7">
+            <h2 class="mb-4"><i class="bi bi-card-list"></i> 나의 예약 내역</h2>
+            <div th:if="${successMessage}" class="alert alert-success" th:text="${successMessage}"></div>
+            <div th:if="${errorMessage}" class="alert alert-danger" th:text="${errorMessage}"></div>
+
+            <div th:if="${#lists.isEmpty(appointments)}" class="text-center text-muted p-5">
+                예약 내역이 없습니다.
+            </div>
+            <div class="accordion" id="appointmentAccordion">
+                <div th:each="app, iter : ${appointments}" class="accordion-item">
+                    <h2 class="accordion-header" th:id="'heading' + ${iter.index}">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" th:data-bs-target="'#collapse' + ${iter.index}">
+                            <span class="fw-bold me-2" th:text="${#temporals.format(app.appointmentDatetime, 'yyyy-MM-dd HH:mm')}"></span>
+                            <span th:text="${app.doctor.name} + ' 원장'"></span>
+                            <span class="badge ms-auto" th:classappend="${app.status == '예약완료'} ? 'bg-success' : (${app.status == '진료완료'} ? 'bg-secondary' : 'bg-danger')" th:text="${app.status}"></span>
+                        </button>
+                    </h2>
+                    <div th:id="'collapse' + ${iter.index}" class="accordion-collapse collapse" data-bs-parent="#appointmentAccordion">
+                        <div class="accordion-body">
+                            <p><strong>증상:</strong> <span th:text="${app.description}"></span></p>
+                            <div th:if="${app.status == '예약완료'}">
+                                <form th:action="@{/appointments/cancel/{id}(id=${app.appointment_id})}" method="post" onsubmit="return confirm('정말로 이 예약을 취소하시겠습니까?');">
+                                    <button type="submit" class="btn btn-sm btn-outline-danger">예약 취소</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </section>
+
+<th:block layout:fragment="script">
+    <script>
+        flatpickr("#appointmentDate", {
+            locale: "ko",
+            dateFormat: "Y-m-d",
+            minDate: "today"
+        });
+    </script>
+</th:block>
+
 </body>
 </html>
