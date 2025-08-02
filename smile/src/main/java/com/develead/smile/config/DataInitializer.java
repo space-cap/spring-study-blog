@@ -44,7 +44,7 @@ public class DataInitializer implements CommandLineRunner {
 
             UserAccount admin = new UserAccount();
             admin.setLoginId("admin");
-            admin.setPasswordHash(passwordEncoder.encode("password")); // 초기 비밀번호: password
+            admin.setPasswordHash(passwordEncoder.encode("123456")); // 초기 비밀번호: password
             admin.setRole(adminRole);
             userAccountRepository.save(admin);
         }
