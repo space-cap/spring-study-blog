@@ -7,7 +7,6 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 @Configuration
 @EnableWebSecurity
@@ -39,8 +38,8 @@ public class SecurityConfig {
                         .permitAll()
                 )
                 .logout(logout -> logout
-                        // 로그아웃 URL
-                        .logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
+                        // 로그아웃 URL 설정 (권장 방식으로 변경)
+                        .logoutUrl("/logout")
                         // 로그아웃 성공 시 이동할 URL
                         .logoutSuccessUrl("/login?logout")
                         .invalidateHttpSession(true)

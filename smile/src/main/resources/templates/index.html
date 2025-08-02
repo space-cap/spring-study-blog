@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/default}">
+<head>
+    <title>홈</title>
+</head>
+<body>
+<section layout:fragment="content">
+    <div class="px-4 py-5 my-5 text-center">
+        <h1 class="display-5 fw-bold text-body-emphasis">행복 치과 관리 시스템</h1>
+        <div class="col-lg-6 mx-auto">
+            <p class="lead mb-4">환영합니다! 효율적이고 안정적인 병원 관리를 위한 최상의 솔루션입니다.</p>
+            <div class="d-grid gap-2 d-sm-flex justify-content-sm-center">
+                <a th:href="@{/admin}" class="btn btn-primary btn-lg px-4 gap-3">관리자 페이지로 이동</a>
+                <a th:href="@{/logout}" class="btn btn-outline-secondary btn-lg px-4">로그아웃</a>
+            </div>
+        </div>
+    </div>
+</section>
+</body>
+</html>

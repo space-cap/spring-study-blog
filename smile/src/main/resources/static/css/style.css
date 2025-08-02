@@ -1,0 +1,21 @@
+/* 전반적인 폰트 및 배경색 설정 */
+body {
+    font-family: 'Noto Sans KR', sans-serif;
+    background-color: #f8f9fa;
+}
+
+/* 네비게이션 바 브랜드 로고 스타일 */
+.navbar-brand {
+    color: #0d6efd; /* Bootstrap Primary Color */
+}
+
+/* 카드 컴포넌트 스타일 */
+.card {
+    border: none;
+    border-radius: 0.75rem;
+}
+
+/* 버튼에 약간의 전환 효과 추가 */
+.btn {
+    transition: all 0.2s ease-in-out;
+}

@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/default}">
+<head>
+    <title>관리자 대시보드</title>
+</head>
+<body>
+<section layout:fragment="content">
+    <h1 class="mb-4">관리자 대시보드</h1>
+    <div class="row">
+        <div class="col-md-4">
+            <div class="card text-center">
+                <div class="card-body">
+                    <h5 class="card-title">고객 관리</h5>
+                    <p class="card-text">고객 정보 등록, 수정, 조회</p>
+                    <a th:href="@{/admin/customers}" class="btn btn-primary">바로가기</a>
+                </div>
+            </div>
+        </div>
+        <!-- 다른 관리 메뉴 추가 공간 -->
+    </div>
+</section>
+</body>
+</html>
