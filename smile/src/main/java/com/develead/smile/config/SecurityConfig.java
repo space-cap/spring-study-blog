@@ -23,8 +23,8 @@ public class SecurityConfig {
                 .authorizeHttpRequests(authz -> authz
                         // CSS, JS, 이미지 등 정적 리소스는 모두 허용
                         .requestMatchers("/css/**", "/js/**", "/images/**").permitAll()
-                        // 회원가입, 로그인 페이지는 모두 허용
-                        .requestMatchers("/register", "/login").permitAll()
+                        // 홈, 회원가입, 로그인 페이지는 모두 허용 (홈 "/" 추가)
+                        .requestMatchers("/", "/register", "/login").permitAll()
                         // 관리자 페이지는 'ADMIN' 역할만 접근 가능
                         .requestMatchers("/admin/**").hasRole("ADMIN")
                         // 그 외 모든 요청은 인증된 사용자만 접근 가능
@@ -38,7 +38,7 @@ public class SecurityConfig {
                         .permitAll()
                 )
                 .logout(logout -> logout
-                        // 로그아웃 URL 설정 (권장 방식으로 변경)
+                        // 로그아웃 URL 설정
                         .logoutUrl("/logout")
                         // 로그아웃 성공 시 이동할 URL
                         .logoutSuccessUrl("/login?logout")
