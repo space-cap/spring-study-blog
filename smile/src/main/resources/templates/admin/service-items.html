@@ -29,7 +29,12 @@
                 </tr>
                 </thead>
                 <tbody>
-                <tr th:each="item : ${serviceItems}" th:if="${item.deleted == 'N'}">
+                <!-- 디버그용 정보 -->
+                <tr th:if="${#lists.isEmpty(serviceItems)}">
+                    <td colspan="7" class="text-center text-muted">등록된 항목이 없습니다.</td>
+                </tr>
+
+                <tr th:each="item : ${serviceItems}">
                     <td th:text="${item.serviceCode}"></td>
                     <td th:text="${item.serviceName}"></td>
                     <td th:text="${item.category}"></td>

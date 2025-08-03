@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Controller @RequestMapping("/admin") @RequiredArgsConstructor
 public class AdminController {
@@ -26,9 +27,18 @@ public class AdminController {
     // Service Item CRUD
     @GetMapping("/service-items")
     public String listServiceItems(Model model) {
-        List<ServiceItem> row = serviceItemService.findAll();
-        System.out.println(row);
-        model.addAttribute("serviceItems", row);
+        List<ServiceItem> serviceItems = serviceItemService.findAll();
+        List<ServiceItem> activeItems = serviceItems.stream()
+                .filter(item -> item.getDeleted() == 'N')  // char 비교
+                .collect(Collectors.toList());
+
+        // 디버그용 로그 추가
+        System.out.println("Active items count: " + activeItems.size());
+        //activeItems.forEach(item ->
+                //System.out.println("Item: " + item.getServiceCode() + " - " + item.getServiceName())
+        //);
+
+        model.addAttribute("serviceItems", activeItems);
         return "admin/service-items";
     }
 
