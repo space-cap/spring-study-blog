@@ -61,6 +61,9 @@ public class AdminController {
     @GetMapping("/service-items/edit/{id}")
     public String showEditServiceItemForm(@PathVariable Integer id, Model model) {
         ServiceItem item = serviceItemService.findById(id).orElseThrow();
+
+        System.out.println(item);
+
         model.addAttribute("serviceItem", item);
         return "admin/service-item-form";
     }

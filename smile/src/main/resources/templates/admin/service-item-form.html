@@ -40,24 +40,24 @@
                     <div class="col-md-4 mb-3">
                         <label class="form-label">보험 적용 여부</label>
                         <div class="form-check">
-                            <!-- [수정] th:field 대신 name과 th:checked 사용 -->
-                            <input class="form-check-input" type="radio" name="isInsuranceCovered" id="insY" value="Y" th:checked="*{isInsuranceCovered == 'Y'}">
+                            <!-- [수정] th:checked 대신 th:field를 사용하여 데이터 바인딩 -->
+                            <input class="form-check-input" type="radio" th:field="*{isInsuranceCovered}" id="insY" value="Y">
                             <label class="form-check-label" for="insY">적용</label>
                         </div>
                         <div class="form-check">
-                            <input class="form-check-input" type="radio" name="isInsuranceCovered" id="insN" value="N" th:checked="*{isInsuranceCovered == 'N'}">
+                            <input class="form-check-input" type="radio" th:field="*{isInsuranceCovered}" id="insN" value="N">
                             <label class="form-check-label" for="insN">비적용</label>
                         </div>
                     </div>
                     <div class="col-md-4 mb-3">
                         <label class="form-label">활성화 상태</label>
                         <div class="form-check">
-                            <!-- [수정] th:field 대신 name과 th:checked 사용 -->
-                            <input class="form-check-input" type="radio" name="isActive" id="activeY" value="Y" th:checked="*{isActive == 'Y'}">
+                            <!-- [수정] th:checked 대신 th:field를 사용하여 데이터 바인딩 -->
+                            <input class="form-check-input" type="radio" th:field="*{isActive}" id="activeY" value="Y">
                             <label class="form-check-label" for="activeY">활성</label>
                         </div>
                         <div class="form-check">
-                            <input class="form-check-input" type="radio" name="isActive" id="activeN" value="N" th:checked="*{isActive == 'N'}">
+                            <input class="form-check-input" type="radio" th:field="*{isActive}" id="activeN" value="N">
                             <label class="form-check-label" for="activeN">비활성</label>
                         </div>
                     </div>
