@@ -14,6 +14,7 @@ public class AppointmentService {
     private final DoctorRepository doctorRepository;
     private final CustomerRepository customerRepository;
     private final UserAccountRepository userAccountRepository;
+    private final AppointmentChangeLogRepository appointmentChangeLogRepository;
 
     @Transactional
     public void createAppointment(AppointmentDto dto, String loginId) {
@@ -25,11 +26,16 @@ public class AppointmentService {
         Appointment appointment = new Appointment();
         appointment.setCustomer(customer);
         appointment.setDoctor(doctor);
-        // [수정] 의사 정보에서 clinic 정보를 가져와 설정
         appointment.setClinic(doctor.getClinic());
         appointment.setAppointmentDatetime(LocalDateTime.of(dto.getAppointmentDate(), dto.getAppointmentTime()));
         appointment.setDescription(dto.getDescription());
-        appointmentRepository.save(appointment);
+        appointment.setCreatedBy(user.getUser_account_id());
+        appointment.setUpdatedBy(user.getUser_account_id());
+
+        Appointment savedAppointment = appointmentRepository.save(appointment);
+
+        // [수정] 예약 생성 로그 기록
+        logChange(savedAppointment, "status", null, savedAppointment.getStatus(), user);
     }
 
     public List<Appointment> findAppointmentsByLoginId(String loginId) {
@@ -46,7 +52,26 @@ public class AppointmentService {
         if (!appointment.getCustomer().getCustomer_id().equals(customer.getCustomer_id())) {
             throw new SecurityException("You are not authorized to cancel this appointment.");
         }
-        appointment.setStatus("예약취소");
+
+        String previousStatus = appointment.getStatus();
+        String newStatus = "예약취소";
+
+        appointment.setStatus(newStatus);
+        appointment.setUpdatedBy(user.getUser_account_id());
         appointmentRepository.save(appointment);
+
+        // [수정] 예약 취소 로그 기록
+        logChange(appointment, "status", previousStatus, newStatus, user);
+    }
+
+    // [수정] 로그 기록을 위한 private 메소드
+    private void logChange(Appointment appointment, String fieldName, String previousValue, String newValue, UserAccount changedBy) {
+        AppointmentChangeLog log = new AppointmentChangeLog();
+        log.setAppointment(appointment);
+        log.setFieldName(fieldName);
+        log.setPreviousValue(previousValue);
+        log.setNewValue(newValue);
+        log.setChangedBy(changedBy);
+        appointmentChangeLogRepository.save(log);
     }
 }

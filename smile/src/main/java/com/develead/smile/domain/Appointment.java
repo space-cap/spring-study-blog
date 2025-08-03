@@ -12,4 +12,7 @@ public class Appointment {
     private String description;
     @Column(nullable = false) private String status = "예약완료";
     @Column(nullable = false) private LocalDateTime creationDate = LocalDateTime.now();
+    // [수정] createdBy, updatedBy 필드 추가
+    private Integer createdBy;
+    private Integer updatedBy;
 }
