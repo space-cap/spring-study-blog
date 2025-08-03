@@ -5,8 +5,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import java.lang.reflect.Field;
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
@@ -21,30 +19,43 @@ public class ServiceItemService {
     public Optional<ServiceItem> findById(Integer id) { return serviceItemRepository.findById(id); }
 
     @Transactional
-    public ServiceItem save(ServiceItem serviceItem) {
+    public ServiceItem create(ServiceItem serviceItem) {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         UserAccount currentUser = userAccountRepository.findByLoginId(username).orElse(null);
 
-        if (serviceItem.getService_item_id() == null) { // 새로 생성
-            ServiceItem savedItem = serviceItemRepository.save(serviceItem);
-            logChange(savedItem, "ALL", null, "Created", ServiceItemChangeLog.ChangeType.INSERT, currentUser);
-            return savedItem;
-        } else { // 수정
-            ServiceItem existingItem = serviceItemRepository.findById(serviceItem.getService_item_id()).orElseThrow();
-
-            // 변경 감지 및 로그 기록
-            checkAndLogChange(existingItem, serviceItem, currentUser);
-
-            serviceItem.setUpdatedAt(LocalDateTime.now());
-            return serviceItemRepository.save(serviceItem);
-        }
+        ServiceItem savedItem = serviceItemRepository.save(serviceItem);
+        logChange(savedItem, "ALL", null, "Created", ServiceItemChangeLog.ChangeType.INSERT, currentUser);
+        return savedItem;
     }
 
-    private void checkAndLogChange(ServiceItem oldItem, ServiceItem newItem, UserAccount user) {
-        // BigDecimal, String, Integer, char 타입의 주요 필드 변경을 감지합니다.
-        compareAndLog(oldItem.getDefaultCost(), newItem.getDefaultCost(), "defaultCost", oldItem, user);
+    @Transactional
+    public ServiceItem update(ServiceItem updatedItem) {
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        UserAccount currentUser = userAccountRepository.findByLoginId(username).orElse(null);
+
+        ServiceItem existingItem = serviceItemRepository.findById(updatedItem.getService_item_id()).orElseThrow();
+
+        // 변경 감지 및 로그 기록
+        checkAndLogChanges(existingItem, updatedItem, currentUser);
+
+        // 기존 엔티티에 변경된 값만 업데이트
+        existingItem.setServiceCode(updatedItem.getServiceCode());
+        existingItem.setServiceName(updatedItem.getServiceName());
+        existingItem.setCategory(updatedItem.getCategory());
+        existingItem.setDefaultCost(updatedItem.getDefaultCost());
+        existingItem.setDescription(updatedItem.getDescription());
+        existingItem.setIsInsuranceCovered(updatedItem.getIsInsuranceCovered());
+        existingItem.setIsActive(updatedItem.getIsActive());
+        existingItem.setUpdatedAt(LocalDateTime.now());
+
+        return serviceItemRepository.save(existingItem);
+    }
+
+    private void checkAndLogChanges(ServiceItem oldItem, ServiceItem newItem, UserAccount user) {
+        compareAndLog(oldItem.getServiceCode(), newItem.getServiceCode(), "serviceCode", oldItem, user);
         compareAndLog(oldItem.getServiceName(), newItem.getServiceName(), "serviceName", oldItem, user);
         compareAndLog(oldItem.getCategory(), newItem.getCategory(), "category", oldItem, user);
+        compareAndLog(oldItem.getDefaultCost(), newItem.getDefaultCost(), "defaultCost", oldItem, user);
         compareAndLog(oldItem.getIsInsuranceCovered(), newItem.getIsInsuranceCovered(), "isInsuranceCovered", oldItem, user);
         compareAndLog(oldItem.getIsActive(), newItem.getIsActive(), "isActive", oldItem, user);
     }

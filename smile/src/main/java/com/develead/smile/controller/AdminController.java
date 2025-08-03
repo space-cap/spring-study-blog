@@ -11,6 +11,8 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.util.List;
+
 @Controller @RequestMapping("/admin") @RequiredArgsConstructor
 public class AdminController {
     private final CustomerService customerService;
@@ -19,17 +21,14 @@ public class AdminController {
     @GetMapping public String adminHome() { return "admin/dashboard"; }
 
     // Customer CRUD
-    @GetMapping("/customers")
-    public String listCustomers(Model model) {
-        model.addAttribute("customers", customerService.findAllCustomers());
-        return "admin/customers";
-    }
     // ... (고객 CRUD 로직은 이전과 동일)
 
-    // Service Item CRUD (신규 추가)
+    // Service Item CRUD
     @GetMapping("/service-items")
     public String listServiceItems(Model model) {
-        model.addAttribute("serviceItems", serviceItemService.findAll());
+        List<ServiceItem> row = serviceItemService.findAll();
+        System.out.println(row);
+        model.addAttribute("serviceItems", row);
         return "admin/service-items";
     }
 
@@ -44,7 +43,7 @@ public class AdminController {
         if (result.hasErrors()) {
             return "admin/service-item-form";
         }
-        serviceItemService.save(serviceItem);
+        serviceItemService.create(serviceItem);
         attrs.addFlashAttribute("successMessage", "진료 항목이 성공적으로 등록되었습니다.");
         return "redirect:/admin/service-items";
     }
@@ -59,10 +58,12 @@ public class AdminController {
     @PostMapping("/service-items/{id}")
     public String updateServiceItem(@PathVariable Integer id, @Valid @ModelAttribute ServiceItem serviceItem, BindingResult result, RedirectAttributes attrs) {
         if (result.hasErrors()) {
+            // id를 모델에 다시 추가해야 폼 액션이 올바르게 생성됩니다.
+            serviceItem.setService_item_id(id);
             return "admin/service-item-form";
         }
         serviceItem.setService_item_id(id);
-        serviceItemService.save(serviceItem);
+        serviceItemService.update(serviceItem);
         attrs.addFlashAttribute("successMessage", "진료 항목이 성공적으로 수정되었습니다.");
         return "redirect:/admin/service-items";
     }
