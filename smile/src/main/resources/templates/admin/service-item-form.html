@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/default}">
+<head>
+    <title th:text="${serviceItem.service_item_id == null} ? '신규 진료 항목 등록' : '진료 항목 수정'"></title>
+</head>
+<body>
+<section layout:fragment="content" class="container my-4">
+    <h1 th:text="${serviceItem.service_item_id == null} ? '신규 진료 항목 등록' : '진료 항목 수정'"></h1>
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <form th:action="${serviceItem.service_item_id == null} ? @{/admin/service-items} : @{/admin/service-items/{id}(id=${serviceItem.service_item_id})}"
+                  th:object="${serviceItem}" method="post">
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="serviceCode" class="form-label">항목 코드</label>
+                        <input type="text" id="serviceCode" th:field="*{serviceCode}" class="form-control" required>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="serviceName" class="form-label">항목명</label>
+                        <input type="text" id="serviceName" th:field="*{serviceName}" class="form-control" required>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="category" class="form-label">진료 분야</label>
+                        <input type="text" id="category" th:field="*{category}" class="form-control" required>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="defaultCost" class="form-label">기본 비용</label>
+                        <input type="number" id="defaultCost" th:field="*{defaultCost}" class="form-control" required>
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label for="description" class="form-label">설명</label>
+                    <textarea id="description" th:field="*{description}" class="form-control" rows="3"></textarea>
+                </div>
+                <div class="row">
+                    <div class="col-md-4 mb-3">
+                        <label class="form-label">보험 적용 여부</label>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" th:field="*{isInsuranceCovered}" id="insY" value="Y">
+                            <label class="form-check-label" for="insY">적용</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" th:field="*{isInsuranceCovered}" id="insN" value="N">
+                            <label class="form-check-label" for="insN">비적용</label>
+                        </div>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label class="form-label">활성화 상태</label>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" th:field="*{isActive}" id="activeY" value="Y">
+                            <label class="form-check-label" for="activeY">활성</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" th:field="*{isActive}" id="activeN" value="N">
+                            <label class="form-check-label" for="activeN">비활성</label>
+                        </div>
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary">저장</button>
+                <a th:href="@{/admin/service-items}" class="btn btn-secondary">취소</a>
+            </form>
+        </div>
+    </div>
+</section>
+</body>
+</html>
