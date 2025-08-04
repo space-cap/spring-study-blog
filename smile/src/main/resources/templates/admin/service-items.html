@@ -39,8 +39,13 @@
                     <td th:text="${item.serviceName}"></td>
                     <td th:text="${item.category}"></td>
                     <td th:text="${#numbers.formatDecimal(item.defaultCost, 0, 'COMMA', 0, 'POINT')} + '원'"></td>
-                    <td><span class="badge" th:classappend="${item.isInsuranceCovered == 'Y'} ? 'bg-success' : 'bg-secondary'" th:text="${item.isInsuranceCovered == 'Y' ? '적용' : '비적용'}"></span></td>
-                    <td><span class="badge" th:classappend="${item.isActive == 'Y'} ? 'bg-info' : 'bg-warning'" th:text="${item.isActive == 'Y' ? '활성' : '비활성'}"></span></td>
+                        <td>
+                            <span class="badge"
+                                  th:classappend="${item.isInsuranceCovered != null and item.isInsuranceCovered.toString() == 'Y'} ? 'bg-success' : 'bg-secondary'"
+                                  th:text="${item.isInsuranceCovered != null and item.isInsuranceCovered.toString() == 'Y' ? '적용' : '비적용'}">
+                            </span>
+                        </td>
+                    <td><span class="badge" th:classappend="${item.isActive.toString() == 'Y'} ? 'bg-info' : 'bg-warning'" th:text="${item.isActive.toString() == 'Y' ? '활성' : '비활성'}"></span></td>
                     <td>
                         <a th:href="@{/admin/service-items/edit/{id}(id=${item.service_item_id})}" class="btn btn-sm btn-outline-secondary">수정</a>
                     </td>

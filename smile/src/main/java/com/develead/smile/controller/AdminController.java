@@ -1,7 +1,9 @@
 package com.develead.smile.controller;
 import com.develead.smile.domain.Customer;
+import com.develead.smile.domain.InventoryItem;
 import com.develead.smile.domain.ServiceItem;
 import com.develead.smile.service.CustomerService;
+import com.develead.smile.service.InventoryService;
 import com.develead.smile.service.ServiceItemService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -18,11 +20,49 @@ import java.util.stream.Collectors;
 public class AdminController {
     private final CustomerService customerService;
     private final ServiceItemService serviceItemService;
+    private final InventoryService inventoryService; // 추가
 
     @GetMapping public String adminHome() { return "admin/dashboard"; }
 
     // Customer CRUD
-    // ... (고객 CRUD 로직은 이전과 동일)
+    @GetMapping("/customers")
+    public String listCustomers(Model model) {
+        model.addAttribute("customers", customerService.findAllCustomers());
+        return "admin/customers";
+    }
+
+    @GetMapping("/customers/new")
+    public String showCreateForm(Model model) {
+        model.addAttribute("customer", new Customer());
+        return "admin/customer-form";
+    }
+
+    @PostMapping("/customers")
+    public String createCustomer(@ModelAttribute Customer customer) {
+        customerService.saveCustomer(customer);
+        return "redirect:/admin/customers";
+    }
+
+    @GetMapping("/customers/edit/{id}")
+    public String showEditForm(@PathVariable Integer id, Model model) {
+        Customer customer = customerService.findCustomerById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid customer Id:" + id));
+        model.addAttribute("customer", customer);
+        return "admin/customer-form";
+    }
+
+    @PostMapping("/customers/{id}")
+    public String updateCustomer(@PathVariable Integer id, @ModelAttribute Customer customer) {
+        customer.setCustomer_id(id);
+        customerService.saveCustomer(customer);
+        return "redirect:/admin/customers";
+    }
+
+    @GetMapping("/customers/delete/{id}")
+    public String deleteCustomer(@PathVariable Integer id) {
+        customerService.deleteCustomer(id);
+        return "redirect:/admin/customers";
+    }
 
     // Service Item CRUD
     @GetMapping("/service-items")
@@ -79,5 +119,47 @@ public class AdminController {
         serviceItemService.update(serviceItem);
         attrs.addFlashAttribute("successMessage", "진료 항목이 성공적으로 수정되었습니다.");
         return "redirect:/admin/service-items";
+    }
+
+    // Inventory Item CRUD (신규 추가)
+    @GetMapping("/inventory-items")
+    public String listInventoryItems(Model model) {
+        model.addAttribute("inventoryItems", inventoryService.findAll());
+        return "admin/inventory-items";
+    }
+
+    @GetMapping("/inventory-items/new")
+    public String showNewInventoryItemForm(Model model) {
+        model.addAttribute("inventoryItem", new InventoryItem());
+        return "admin/inventory-item-form";
+    }
+
+    @PostMapping("/inventory-items")
+    public String createInventoryItem(@Valid @ModelAttribute InventoryItem inventoryItem, BindingResult result, RedirectAttributes attrs) {
+        if (result.hasErrors()) {
+            return "admin/inventory-item-form";
+        }
+        inventoryService.save(inventoryItem);
+        attrs.addFlashAttribute("successMessage", "재고 항목이 성공적으로 등록되었습니다.");
+        return "redirect:/admin/inventory-items";
+    }
+
+    @GetMapping("/inventory-items/edit/{id}")
+    public String showEditInventoryItemForm(@PathVariable Integer id, Model model) {
+        InventoryItem item = inventoryService.findById(id).orElseThrow();
+        model.addAttribute("inventoryItem", item);
+        return "admin/inventory-item-form";
+    }
+
+    @PostMapping("/inventory-items/{id}")
+    public String updateInventoryItem(@PathVariable Integer id, @Valid @ModelAttribute InventoryItem inventoryItem, BindingResult result, RedirectAttributes attrs) {
+        if (result.hasErrors()) {
+            inventoryItem.setItem_id(id);
+            return "admin/inventory-item-form";
+        }
+        inventoryItem.setItem_id(id);
+        inventoryService.save(inventoryItem);
+        attrs.addFlashAttribute("successMessage", "재고 항목이 성공적으로 수정되었습니다.");
+        return "redirect:/admin/inventory-items";
     }
 }

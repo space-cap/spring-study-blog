@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/default}">
+<head>
+    <title>재고 관리</title>
+</head>
+<body>
+<section layout:fragment="content" class="container my-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>재고 목록</h1>
+        <a th:href="@{/admin/inventory-items/new}" class="btn btn-primary">
+            <i class="bi bi-plus-circle"></i> 신규 재고 등록
+        </a>
+    </div>
+    <div th:if="${successMessage}" class="alert alert-success" th:text="${successMessage}"></div>
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <table class="table table-hover align-middle">
+                <thead class="table-light">
+                <tr>
+                    <th>코드</th>
+                    <th>자재명</th>
+                    <th>현재 수량</th>
+                    <th>안전 재고</th>
+                    <th>단위</th>
+                    <th>관리</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="item : ${inventoryItems}">
+                    <td th:text="${item.itemCode}"></td>
+                    <td th:text="${item.itemName}"></td>
+                    <td>
+                        <span th:text="${item.quantity}" th:classappend="${item.quantity < item.safeStockLevel} ? 'text-danger fw-bold'"></span>
+                    </td>
+                    <td th:text="${item.safeStockLevel}"></td>
+                    <td th:text="${item.unit}"></td>
+                    <td>
+                        <a th:href="@{/admin/inventory-items/edit/{id}(id=${item.item_id})}" class="btn btn-sm btn-outline-secondary">수정</a>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</section>
+</body>
+</html>

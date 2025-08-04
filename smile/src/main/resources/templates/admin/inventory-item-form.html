@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/default}">
+<head>
+    <title th:text="${inventoryItem.item_id == null} ? '신규 재고 등록' : '재고 정보 수정'"></title>
+</head>
+<body>
+<section layout:fragment="content" class="container my-4">
+    <h1 th:text="${inventoryItem.item_id == null} ? '신규 재고 등록' : '재고 정보 수정'"></h1>
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <form th:action="${inventoryItem.item_id == null} ? @{/admin/inventory-items} : @{/admin/inventory-items/{id}(id=${inventoryItem.item_id})}"
+                  th:object="${inventoryItem}" method="post">
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="itemCode" class="form-label">자재 코드</label>
+                        <input type="text" id="itemCode" th:field="*{itemCode}" class="form-control" required>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="itemName" class="form-label">자재명</label>
+                        <input type="text" id="itemName" th:field="*{itemName}" class="form-control" required>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-4 mb-3">
+                        <label for="quantity" class="form-label">현재 수량</label>
+                        <input type="number" id="quantity" th:field="*{quantity}" class="form-control" required>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label for="safeStockLevel" class="form-label">안전 재고</label>
+                        <input type="number" id="safeStockLevel" th:field="*{safeStockLevel}" class="form-control" required>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label for="unit" class="form-label">단위</label>
+                        <input type="text" id="unit" th:field="*{unit}" class="form-control" required>
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary">저장</button>
+                <a th:href="@{/admin/inventory-items}" class="btn btn-secondary">취소</a>
+            </form>
+        </div>
+    </div>
+</section>
+</body>
+</html>
