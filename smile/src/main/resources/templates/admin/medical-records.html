@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/default}">
+<head>
+    <title>진료 기록 관리</title>
+</head>
+<body>
+<section layout:fragment="content" class="container my-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>진료 기록 목록</h1>
+        <a th:href="@{/admin/medical-records/new}" class="btn btn-primary">
+            <i class="bi bi-plus-circle"></i> 신규 진료 기록 등록
+        </a>
+    </div>
+    <div th:if="${successMessage}" class="alert alert-success" th:text="${successMessage}"></div>
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <table class="table table-hover align-middle">
+                <thead class="table-light">
+                <tr>
+                    <th>진료일</th>
+                    <th>고객명</th>
+                    <th>담당의</th>
+                    <th>총 비용</th>
+                    <th>관리</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="record : ${medicalRecords}">
+                    <td th:text="${#temporals.format(record.treatmentDate, 'yyyy-MM-dd')}"></td>
+                    <td th:text="${record.customer.name}"></td>
+                    <td th:text="${record.doctor.name}"></td>
+                    <td th:text="${#numbers.formatDecimal(record.totalCost, 0, 'COMMA', 0, 'POINT')} + '원'"></td>
+                    <td>
+                        <a th:href="@{/admin/medical-records/edit/{id}(id=${record.record_id})}" class="btn btn-sm btn-outline-secondary">상세/수정</a>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</section>
+</body>
+</html>

@@ -1,9 +1,15 @@
 package com.develead.smile.controller;
 import com.develead.smile.domain.Customer;
 import com.develead.smile.domain.InventoryItem;
+import com.develead.smile.domain.MedicalRecord;
 import com.develead.smile.domain.ServiceItem;
+import com.develead.smile.dto.MedicalRecordDto;
+import com.develead.smile.repository.CustomerRepository;
+import com.develead.smile.repository.DoctorRepository;
+import com.develead.smile.repository.ServiceItemRepository;
 import com.develead.smile.service.CustomerService;
 import com.develead.smile.service.InventoryService;
+import com.develead.smile.service.MedicalRecordService;
 import com.develead.smile.service.ServiceItemService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -20,7 +26,11 @@ import java.util.stream.Collectors;
 public class AdminController {
     private final CustomerService customerService;
     private final ServiceItemService serviceItemService;
-    private final InventoryService inventoryService; // 추가
+    private final InventoryService inventoryService;
+    private final MedicalRecordService medicalRecordService;
+    private final CustomerRepository customerRepository; // DTO 채우기용
+    private final DoctorRepository doctorRepository; // DTO 채우기용
+    private final ServiceItemRepository serviceItemRepository;
 
     @GetMapping public String adminHome() { return "admin/dashboard"; }
 
@@ -161,5 +171,55 @@ public class AdminController {
         inventoryService.save(inventoryItem);
         attrs.addFlashAttribute("successMessage", "재고 항목이 성공적으로 수정되었습니다.");
         return "redirect:/admin/inventory-items";
+    }
+
+    // Medical Record CRUD (신규 추가)
+    @GetMapping("/medical-records")
+    public String listMedicalRecords(Model model) {
+        model.addAttribute("medicalRecords", medicalRecordService.findAll());
+        return "admin/medical-records";
+    }
+
+    @GetMapping("/medical-records/new")
+    public String showNewMedicalRecordForm(Model model) {
+        model.addAttribute("medicalRecordDto", new MedicalRecordDto());
+        model.addAttribute("customers", customerRepository.findAll());
+        model.addAttribute("doctors", doctorRepository.findAll());
+        model.addAttribute("serviceItems", serviceItemRepository.findAll());
+        return "admin/medical-record-form";
+    }
+
+    @PostMapping("/medical-records")
+    public String createMedicalRecord(@ModelAttribute MedicalRecordDto dto, RedirectAttributes attrs) {
+        medicalRecordService.save(dto);
+        attrs.addFlashAttribute("successMessage", "진료 기록이 성공적으로 등록되었습니다.");
+        return "redirect:/admin/medical-records";
+    }
+
+    @GetMapping("/medical-records/edit/{id}")
+    public String showEditMedicalRecordForm(@PathVariable Integer id, Model model) {
+        MedicalRecord record = medicalRecordService.findById(id).orElseThrow();
+        // Entity to DTO 변환 로직 추가 필요 (간소화를 위해 컨트롤러에서 처리)
+        MedicalRecordDto dto = new MedicalRecordDto();
+        dto.setRecord_id(record.getRecord_id());
+        dto.setAppointmentId(record.getAppointment().getAppointment_id());
+        dto.setCustomerId(record.getCustomer().getCustomer_id());
+        dto.setDoctorId(record.getDoctor().getDoctor_id());
+        dto.setTreatmentDate(record.getTreatmentDate());
+        dto.setSymptoms(record.getSymptoms());
+
+        model.addAttribute("medicalRecordDto", dto);
+        model.addAttribute("customers", customerRepository.findAll());
+        model.addAttribute("doctors", doctorRepository.findAll());
+        model.addAttribute("serviceItems", serviceItemRepository.findAll());
+        return "admin/medical-record-form";
+    }
+
+    @PostMapping("/medical-records/{id}")
+    public String updateMedicalRecord(@PathVariable Integer id, @ModelAttribute MedicalRecordDto dto, RedirectAttributes attrs) {
+        dto.setRecord_id(id);
+        medicalRecordService.save(dto);
+        attrs.addFlashAttribute("successMessage", "진료 기록이 성공적으로 수정되었습니다.");
+        return "redirect:/admin/medical-records";
     }
 }

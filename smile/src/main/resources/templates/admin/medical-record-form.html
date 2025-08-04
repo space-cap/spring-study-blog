@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/default}">
+<head>
+    <title th:text="${medicalRecordDto.record_id == null} ? '신규 진료 기록 등록' : '진료 기록 수정'"></title>
+</head>
+<body>
+<section layout:fragment="content" class="container my-4">
+    <h1 th:text="${medicalRecordDto.record_id == null} ? '신규 진료 기록 등록' : '진료 기록 수정'"></h1>
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <form th:action="${medicalRecordDto.record_id == null} ? @{/admin/medical-records} : @{/admin/medical-records/{id}(id=${medicalRecordDto.record_id})}"
+                  th:object="${medicalRecordDto}" method="post">
+
+                <!-- [수정] appointmentId를 위한 hidden input 추가 -->
+                <input type="hidden" th:field="*{appointmentId}" />
+
+                <div class="row">
+                    <div class="col-md-4 mb-3">
+                        <label for="customerId" class="form-label">고객</label>
+                        <select id="customerId" th:field="*{customerId}" class="form-select" required>
+                            <option th:each="c : ${customers}" th:value="${c.customer_id}" th:text="${c.name}"></option>
+                        </select>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label for="doctorId" class="form-label">담당의</label>
+                        <select id="doctorId" th:field="*{doctorId}" class="form-select" required>
+                            <option th:each="d : ${doctors}" th:value="${d.doctor_id}" th:text="${d.name}"></option>
+                        </select>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label for="treatmentDate" class="form-label">진료일</label>
+                        <input type="date" id="treatmentDate" th:field="*{treatmentDate}" class="form-control" required>
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label for="symptoms" class="form-label">주요 증상 및 메모</label>
+                    <textarea id="symptoms" th:field="*{symptoms}" class="form-control" rows="3"></textarea>
+                </div>
+
+                <hr class="my-4">
+
+                <h5>진료 항목 추가</h5>
+                <div class="row align-items-end">
+                    <div class="col-md-6">
+                        <label for="serviceItemSelect" class="form-label">항목 선택</label>
+                        <select id="serviceItemSelect" class="form-select">
+                            <option value="">-- 추가할 진료 항목 선택 --</option>
+                            <option th:each="item : ${serviceItems}" th:value="${item.service_item_id}" th:text="${item.serviceName} + ' (' + ${#numbers.formatDecimal(item.defaultCost, 0, 'COMMA', 0, 'POINT')} + '원)'"></option>
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <button type="button" id="addServiceItemBtn" class="btn btn-outline-primary w-100">추가</button>
+                    </div>
+                </div>
+
+                <table class="table mt-3">
+                    <thead>
+                    <tr><th>항목명</th><th>수량</th><th>금액</th><th></th></tr>
+                    </thead>
+                    <tbody id="serviceItemsTbody">
+                    <!-- 선택된 항목이 여기에 추가됩니다. -->
+                    </tbody>
+                </table>
+
+                <button type="submit" class="btn btn-primary mt-3">저장</button>
+                <a th:href="@{/admin/medical-records}" class="btn btn-secondary mt-3">취소</a>
+            </form>
+        </div>
+    </div>
+</section>
+
+<th:block layout:fragment="script">
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const addBtn = document.getElementById('addServiceItemBtn');
+            const selectEl = document.getElementById('serviceItemSelect');
+            const tbodyEl = document.getElementById('serviceItemsTbody');
+            let serviceIndex = 0;
+
+            addBtn.addEventListener('click', function() {
+                const selectedOption = selectEl.options[selectEl.selectedIndex];
+                if (!selectedOption.value) return;
+
+                const itemId = selectedOption.value;
+                const itemName = selectedOption.text.split(' (')[0];
+                const itemCost = selectedOption.text.match(/\((.*?)원\)/)[1].replace(/,/g, '');
+
+                const newRow = `
+            <tr>
+                <td>
+                    <input type="hidden" name="services[${serviceIndex}].serviceItemId" value="${itemId}">
+                    ${itemName}
+                </td>
+                <td>
+                    <input type="number" class="form-control form-control-sm" name="services[${serviceIndex}].quantity" value="1" min="1">
+                </td>
+                <td>${itemCost}원</td>
+                <td>
+                    <button type="button" class="btn btn-sm btn-outline-danger" onclick="this.closest('tr').remove()">삭제</button>
+                </td>
+            </tr>
+        `;
+                tbodyEl.insertAdjacentHTML('beforeend', newRow);
+                serviceIndex++;
+                selectEl.selectedIndex = 0;
+            });
+        });
+    </script>
+</th:block>
+
+</body>
+</html>
