@@ -17,6 +17,7 @@ public class MedicalRecord {
     @Column(nullable = false) private BigDecimal totalCost = BigDecimal.ZERO;
     private Integer createdBy;
     private Integer updatedBy;
+    
     @OneToMany(mappedBy = "medicalRecord", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<MedicalRecordService> services = new ArrayList<>();
 }

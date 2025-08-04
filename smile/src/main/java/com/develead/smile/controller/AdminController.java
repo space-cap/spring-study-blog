@@ -4,6 +4,7 @@ import com.develead.smile.domain.InventoryItem;
 import com.develead.smile.domain.MedicalRecord;
 import com.develead.smile.domain.ServiceItem;
 import com.develead.smile.dto.MedicalRecordDto;
+import com.develead.smile.dto.MedicalRecordServiceDto;
 import com.develead.smile.repository.CustomerRepository;
 import com.develead.smile.repository.DoctorRepository;
 import com.develead.smile.repository.ServiceItemRepository;
@@ -199,7 +200,8 @@ public class AdminController {
     @GetMapping("/medical-records/edit/{id}")
     public String showEditMedicalRecordForm(@PathVariable Integer id, Model model) {
         MedicalRecord record = medicalRecordService.findById(id).orElseThrow();
-        // Entity to DTO 변환 로직 추가 필요 (간소화를 위해 컨트롤러에서 처리)
+
+        // [수정] Entity to DTO 변환 로직 보강
         MedicalRecordDto dto = new MedicalRecordDto();
         dto.setRecord_id(record.getRecord_id());
         dto.setAppointmentId(record.getAppointment().getAppointment_id());
@@ -207,6 +209,17 @@ public class AdminController {
         dto.setDoctorId(record.getDoctor().getDoctor_id());
         dto.setTreatmentDate(record.getTreatmentDate());
         dto.setSymptoms(record.getSymptoms());
+
+        List<MedicalRecordServiceDto> serviceDtos = record.getServices().stream()
+                .map(service -> {
+                    MedicalRecordServiceDto serviceDto = new MedicalRecordServiceDto();
+                    serviceDto.setServiceItemId(service.getServiceItem().getService_item_id());
+                    serviceDto.setServiceName(service.getServiceItem().getServiceName());
+                    serviceDto.setQuantity(service.getQuantity());
+                    serviceDto.setCostAtService(service.getCostAtService());
+                    return serviceDto;
+                }).collect(Collectors.toList());
+        dto.setServices(serviceDtos);
 
         model.addAttribute("medicalRecordDto", dto);
         model.addAttribute("customers", customerRepository.findAll());
