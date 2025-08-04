@@ -10,11 +10,10 @@ import java.util.List;
 @Getter @Setter
 public class MedicalRecordDto {
     private Integer record_id;
-    @NotNull private Integer appointmentId;
+    private Integer appointmentId; // 신규 등록 시에는 null일 수 있음
     @NotNull private Integer customerId;
     @NotNull private Integer doctorId;
-    @NotNull
-    private LocalDate treatmentDate;
+    @NotNull private LocalDate treatmentDate;
     private String symptoms;
     private BigDecimal totalCost = BigDecimal.ZERO;
     private List<MedicalRecordServiceDto> services = new ArrayList<>();
