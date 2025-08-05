@@ -240,7 +240,7 @@ public class AdminController {
     }
 
 
-    // Billing CRUD (신규 추가)
+    // Billing CRUD
     @GetMapping("/billings")
     public String listBillings(Model model) {
         model.addAttribute("billings", billingService.findAll());
@@ -250,26 +250,32 @@ public class AdminController {
     @GetMapping("/billings/edit/{id}")
     public String showEditBillingForm(@PathVariable Integer id, Model model) {
         Billing billing = billingService.findById(id).orElseThrow();
-        // Entity to DTO
+
         BillingDto dto = new BillingDto();
         dto.setBilling_id(billing.getBilling_id());
         dto.setMedicalRecordId(billing.getMedicalRecord().getRecord_id());
         dto.setCustomerName(billing.getMedicalRecord().getCustomer().getName());
         dto.setTotalAmount(billing.getTotalAmount());
-        dto.setAmountPaid(billing.getAmountPaid());
-        dto.setPaymentMethod(billing.getPaymentMethod());
-        dto.setPaymentStatus(billing.getPaymentStatus());
+        dto.setTotalPaid(billing.getTotalPaid());
+        dto.setBalance(billing.getBalance());
+        dto.setBillingStatus(billing.getBillingStatus());
+        dto.setTransactions(billing.getTransactions());
 
         model.addAttribute("billingDto", dto);
         return "admin/billing-form";
     }
 
-    @PostMapping("/billings/{id}")
-    public String updateBilling(@PathVariable Integer id, @ModelAttribute BillingDto dto, RedirectAttributes attrs) {
-        dto.setBilling_id(id);
-        billingService.updateBilling(dto);
-        attrs.addFlashAttribute("successMessage", "수납 정보가 성공적으로 수정되었습니다.");
-        return "redirect:/admin/billings";
+    @PostMapping("/billings/add-payment/{id}")
+    public String addPayment(@PathVariable Integer id, @Valid @ModelAttribute("billingDto") BillingDto dto, BindingResult result, RedirectAttributes attrs, Model model) {
+        if (result.hasErrors()) {
+            Billing billing = billingService.findById(id).orElseThrow();
+            dto.setTransactions(billing.getTransactions());
+            model.addAttribute("billingDto", dto);
+            return "admin/billing-form";
+        }
+        billingService.addPayment(id, dto.getNewTransaction());
+        attrs.addFlashAttribute("successMessage", "수납 처리가 완료되었습니다.");
+        return "redirect:/admin/billings/edit/" + id;
     }
 
 }

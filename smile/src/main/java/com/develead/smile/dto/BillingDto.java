@@ -1,8 +1,9 @@
 package com.develead.smile.dto;
+import com.develead.smile.domain.PaymentTransaction;
 import lombok.Getter;
 import lombok.Setter;
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
+import java.util.List;
 
 @Getter @Setter
 public class BillingDto {
@@ -10,8 +11,9 @@ public class BillingDto {
     private Integer medicalRecordId;
     private String customerName;
     private BigDecimal totalAmount;
-    private BigDecimal amountPaid;
-    private String paymentMethod;
-    private String paymentStatus;
-    private LocalDateTime paymentDate;
+    private BigDecimal totalPaid;
+    private BigDecimal balance;
+    private String billingStatus;
+    private List<PaymentTransaction> transactions;
+    private PaymentTransactionDto newTransaction = new PaymentTransactionDto();
 }

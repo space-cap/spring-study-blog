@@ -3,46 +3,82 @@
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{layouts/default}">
 <head>
-    <title>수납 정보 수정</title>
+    <title>수납 처리</title>
 </head>
 <body>
 <section layout:fragment="content" class="container my-4">
-    <h1>수납 정보 수정</h1>
-    <div class="card shadow-sm">
-        <div class="card-body">
-            <form th:action="@{/admin/billings/{id}(id=${billingDto.billing_id})}"
-                  th:object="${billingDto}" method="post">
-                <div class="mb-3">
-                    <label class="form-label">고객명</label>
-                    <input type="text" class="form-control" th:value="*{customerName}" readonly>
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>수납 처리</h1>
+        <a th:href="@{/admin/billings}" class="btn btn-secondary">목록으로 돌아가기</a>
+    </div>
+    <div th:if="${successMessage}" class="alert alert-success" th:text="${successMessage}"></div>
+
+    <div class="row g-4">
+        <!-- 청구서 요약 정보 -->
+        <div class="col-lg-4">
+            <div class="card shadow-sm">
+                <div class="card-header fw-bold">청구서 요약</div>
+                <div class="card-body">
+                    <p><strong>고객명:</strong> <span th:text="${billingDto.customerName}"></span></p>
+                    <p><strong>총 진료비:</strong> <span th:text="${#numbers.formatDecimal(billingDto.totalAmount, 0, 'COMMA', 0, 'POINT')} + '원'"></span></p>
+                    <p><strong>총 수납액:</strong> <span th:text="${#numbers.formatDecimal(billingDto.totalPaid, 0, 'COMMA', 0, 'POINT')} + '원'"></span></p>
+                    <h5 class="mt-3"><strong>잔액:</strong> <span class="text-danger" th:text="${#numbers.formatDecimal(billingDto.balance, 0, 'COMMA', 0, 'POINT')} + '원'"></span></h5>
+                    <p><strong>상태:</strong> <span class="badge" th:classappend="${billingDto.billingStatus == 'PAID'} ? 'bg-success' : (${billingDto.billingStatus == 'PARTIAL'} ? 'bg-primary' : 'bg-warning')" th:text="${billingDto.billingStatus}"></span></p>
                 </div>
-                <div class="mb-3">
-                    <label class="form-label">총 진료비</label>
-                    <input type="text" class="form-control" th:value="*{#numbers.formatDecimal(totalAmount, 0, 'COMMA', 0, 'POINT')} + '원'" readonly>
+            </div>
+        </div>
+
+        <!-- 결제 처리 및 내역 -->
+        <div class="col-lg-8">
+            <!-- 신규 결제 폼 -->
+            <div class="card shadow-sm mb-4" th:if="${billingDto.balance > 0}">
+                <div class="card-header fw-bold">신규 결제 추가</div>
+                <div class="card-body">
+                    <form th:action="@{/admin/billings/add-payment/{id}(id=${billingDto.billing_id})}"
+                          th:object="${billingDto}" method="post">
+                        <div class="row">
+                            <div class="col-md-5 mb-3">
+                                <label for="amount" class="form-label">결제 금액</label>
+                                <input type="number" id="amount" th:field="*{newTransaction.amount}" class="form-control" required>
+                                <div class="text-danger" th:if="${#fields.hasErrors('newTransaction.amount')}" th:errors="*{newTransaction.amount}"></div>
+                            </div>
+                            <div class="col-md-5 mb-3">
+                                <label for="paymentMethod" class="form-label">결제 수단</label>
+                                <select id="paymentMethod" th:field="*{newTransaction.paymentMethod}" class="form-select">
+                                    <option value="CARD">카드</option>
+                                    <option value="CASH">현금</option>
+                                    <option value="TRANSFER">계좌이체</option>
+                                </select>
+                            </div>
+                            <div class="col-md-2 d-flex align-items-end mb-3">
+                                <button type="submit" class="btn btn-primary w-100">추가</button>
+                            </div>
+                        </div>
+                    </form>
                 </div>
-                <div class="mb-3">
-                    <label for="amountPaid" class="form-label">수납액</label>
-                    <input type="number" id="amountPaid" th:field="*{amountPaid}" class="form-control" required>
+            </div>
+
+            <!-- 결제 내역 목록 -->
+            <div class="card shadow-sm">
+                <div class="card-header fw-bold">결제 내역</div>
+                <div class="card-body">
+                    <table class="table">
+                        <thead>
+                        <tr><th>결제일시</th><th>결제 수단</th><th>결제 금액</th></tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="tx : ${billingDto.transactions}">
+                            <td th:text="${#temporals.format(tx.transactionDate, 'yyyy-MM-dd HH:mm')}"></td>
+                            <td th:text="${tx.paymentMethod}"></td>
+                            <td th:text="${#numbers.formatDecimal(tx.amount, 0, 'COMMA', 0, 'POINT')} + '원'"></td>
+                        </tr>
+                        <tr th:if="${#lists.isEmpty(billingDto.transactions)}">
+                            <td colspan="3" class="text-center text-muted">결제 내역이 없습니다.</td>
+                        </tr>
+                        </tbody>
+                    </table>
                 </div>
-                <div class="mb-3">
-                    <label for="paymentMethod" class="form-label">결제 수단</label>
-                    <select id="paymentMethod" th:field="*{paymentMethod}" class="form-select">
-                        <option value="CARD">카드</option>
-                        <option value="CASH">현금</option>
-                        <option value="TRANSFER">계좌이체</option>
-                    </select>
-                </div>
-                <div class="mb-3">
-                    <label for="paymentStatus" class="form-label">수납 상태</label>
-                    <select id="paymentStatus" th:field="*{paymentStatus}" class="form-select">
-                        <option value="UNPAID">미수납</option>
-                        <option value="PARTIAL">부분수납</option>
-                        <option value="PAID">완납</option>
-                    </select>
-                </div>
-                <button type="submit" class="btn btn-primary">저장</button>
-                <a th:href="@{/admin/billings}" class="btn btn-secondary">취소</a>
-            </form>
+            </div>
         </div>
     </div>
 </section>

@@ -85,9 +85,11 @@ public class MedicalRecordService {
 
         if (isNewRecord) {
             logChange(savedRecord, "ALL", null, "Created", currentUser);
-
-            // [수정] 신규 진료 기록 생성 시, 수납 정보도 함께 생성
+            // [수정] 신규 진료 기록 생성 시, 청구서 정보도 함께 생성
             createBillingForNewRecord(savedRecord, currentUser);
+        } else {
+            // [수정] 기존 진료 기록의 비용이 변경되면 청구서도 업데이트
+            updateBillingForExistingRecord(savedRecord, currentUser);
         }
 
         return savedRecord;
@@ -97,9 +99,30 @@ public class MedicalRecordService {
         Billing billing = new Billing();
         billing.setMedicalRecord(record);
         billing.setTotalAmount(record.getTotalCost());
-        billing.setCustomerPayment(record.getTotalCost()); // 간단하게 본인부담금=총액으로 설정
+        billing.setBalance(record.getTotalCost());
         billing.setCreatedBy(user.getUser_account_id());
         billing.setUpdatedBy(user.getUser_account_id());
+        billingRepository.save(billing);
+    }
+
+    private void updateBillingForExistingRecord(MedicalRecord record, UserAccount user) {
+        Billing billing = billingRepository.findByMedicalRecordId(record.getRecord_id()).orElseGet(() -> {
+            Billing newBilling = new Billing();
+            newBilling.setMedicalRecord(record);
+            newBilling.setCreatedBy(user.getUser_account_id());
+            return newBilling;
+        });
+        billing.setTotalAmount(record.getTotalCost());
+        billing.setBalance(record.getTotalCost().subtract(billing.getTotalPaid()));
+        billing.setUpdatedBy(user.getUser_account_id());
+
+        if(billing.getBalance().compareTo(BigDecimal.ZERO) == 0) {
+            billing.setBillingStatus("PAID");
+        } else if (billing.getTotalPaid().compareTo(BigDecimal.ZERO) > 0) {
+            billing.setBillingStatus("PARTIAL");
+        } else {
+            billing.setBillingStatus("UNPAID");
+        }
         billingRepository.save(billing);
     }
 
