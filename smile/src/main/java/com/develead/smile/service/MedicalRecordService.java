@@ -24,6 +24,7 @@ public class MedicalRecordService {
     private final ServiceItemRepository serviceItemRepository;
     private final UserAccountRepository userAccountRepository;
     private final MedicalRecordChangeLogRepository logRepository;
+    private final BillingRepository billingRepository; // 추가
 
     public List<MedicalRecord> findAll() {
         return medicalRecordRepository.findAll();
@@ -84,9 +85,22 @@ public class MedicalRecordService {
 
         if (isNewRecord) {
             logChange(savedRecord, "ALL", null, "Created", currentUser);
+
+            // [수정] 신규 진료 기록 생성 시, 수납 정보도 함께 생성
+            createBillingForNewRecord(savedRecord, currentUser);
         }
 
         return savedRecord;
+    }
+
+    private void createBillingForNewRecord(MedicalRecord record, UserAccount user) {
+        Billing billing = new Billing();
+        billing.setMedicalRecord(record);
+        billing.setTotalAmount(record.getTotalCost());
+        billing.setCustomerPayment(record.getTotalCost()); // 간단하게 본인부담금=총액으로 설정
+        billing.setCreatedBy(user.getUser_account_id());
+        billing.setUpdatedBy(user.getUser_account_id());
+        billingRepository.save(billing);
     }
 
     private void updateServices(MedicalRecord record, List<MedicalRecordServiceDto> serviceDtos, UserAccount user) {

@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/default}">
+<head>
+    <title>수납 관리</title>
+</head>
+<body>
+<section layout:fragment="content" class="container my-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>수납 관리 목록</h1>
+    </div>
+    <div th:if="${successMessage}" class="alert alert-success" th:text="${successMessage}"></div>
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <table class="table table-hover align-middle">
+                <thead class="table-light">
+                <tr>
+                    <th>진료일</th>
+                    <th>고객명</th>
+                    <th>총 진료비</th>
+                    <th>수납액</th>
+                    <th>수납상태</th>
+                    <th>관리</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="billing : ${billings}">
+                    <td th:text="${#temporals.format(billing.medicalRecord.treatmentDate, 'yyyy-MM-dd')}"></td>
+                    <td th:text="${billing.medicalRecord.customer.name}"></td>
+                    <td th:text="${#numbers.formatDecimal(billing.totalAmount, 0, 'COMMA', 0, 'POINT')} + '원'"></td>
+                    <td th:text="${#numbers.formatDecimal(billing.amountPaid, 0, 'COMMA', 0, 'POINT')} + '원'"></td>
+                    <td><span class="badge" th:classappend="${billing.paymentStatus == 'PAID'} ? 'bg-success' : 'bg-warning'" th:text="${billing.paymentStatus}"></span></td>
+                    <td>
+                        <a th:href="@{/admin/billings/edit/{id}(id=${billing.billing_id})}" class="btn btn-sm btn-outline-secondary">수납처리</a>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</section>
+</body>
+</html>

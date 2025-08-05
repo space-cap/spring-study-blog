@@ -1,17 +1,13 @@
 package com.develead.smile.controller;
-import com.develead.smile.domain.Customer;
-import com.develead.smile.domain.InventoryItem;
-import com.develead.smile.domain.MedicalRecord;
-import com.develead.smile.domain.ServiceItem;
+import com.develead.smile.domain.*;
+import com.develead.smile.dto.BillingDto;
 import com.develead.smile.dto.MedicalRecordDto;
 import com.develead.smile.dto.MedicalRecordServiceDto;
 import com.develead.smile.repository.CustomerRepository;
 import com.develead.smile.repository.DoctorRepository;
 import com.develead.smile.repository.ServiceItemRepository;
-import com.develead.smile.service.CustomerService;
-import com.develead.smile.service.InventoryService;
+import com.develead.smile.service.*;
 import com.develead.smile.service.MedicalRecordService;
-import com.develead.smile.service.ServiceItemService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
@@ -29,6 +25,7 @@ public class AdminController {
     private final ServiceItemService serviceItemService;
     private final InventoryService inventoryService;
     private final MedicalRecordService medicalRecordService;
+    private final BillingService billingService; // 추가
     private final CustomerRepository customerRepository; // DTO 채우기용
     private final DoctorRepository doctorRepository; // DTO 채우기용
     private final ServiceItemRepository serviceItemRepository;
@@ -241,4 +238,38 @@ public class AdminController {
         attrs.addFlashAttribute("successMessage", "진료 기록이 성공적으로 수정되었습니다.");
         return "redirect:/admin/medical-records";
     }
+
+
+    // Billing CRUD (신규 추가)
+    @GetMapping("/billings")
+    public String listBillings(Model model) {
+        model.addAttribute("billings", billingService.findAll());
+        return "admin/billings";
+    }
+
+    @GetMapping("/billings/edit/{id}")
+    public String showEditBillingForm(@PathVariable Integer id, Model model) {
+        Billing billing = billingService.findById(id).orElseThrow();
+        // Entity to DTO
+        BillingDto dto = new BillingDto();
+        dto.setBilling_id(billing.getBilling_id());
+        dto.setMedicalRecordId(billing.getMedicalRecord().getRecord_id());
+        dto.setCustomerName(billing.getMedicalRecord().getCustomer().getName());
+        dto.setTotalAmount(billing.getTotalAmount());
+        dto.setAmountPaid(billing.getAmountPaid());
+        dto.setPaymentMethod(billing.getPaymentMethod());
+        dto.setPaymentStatus(billing.getPaymentStatus());
+
+        model.addAttribute("billingDto", dto);
+        return "admin/billing-form";
+    }
+
+    @PostMapping("/billings/{id}")
+    public String updateBilling(@PathVariable Integer id, @ModelAttribute BillingDto dto, RedirectAttributes attrs) {
+        dto.setBilling_id(id);
+        billingService.updateBilling(dto);
+        attrs.addFlashAttribute("successMessage", "수납 정보가 성공적으로 수정되었습니다.");
+        return "redirect:/admin/billings";
+    }
+
 }
