@@ -357,6 +357,20 @@ public class AdminController {
         model.addAttribute("sortDir", sortDir);
         model.addAttribute("reverseSortDir", sortDir.equals("asc") ? "desc" : "asc");
 
+        // [수정] 스마트 페이지네이션을 위한 시작/끝 페이지 계산
+        int totalPages = appointmentPage.getTotalPages();
+        int currentPage = appointmentPage.getNumber();
+        int startPage = Math.max(0, currentPage - 2);
+        int endPage = Math.min(totalPages - 1, currentPage + 2);
+
+        if (totalPages > 0) {
+            if (endPage == totalPages - 1) startPage = Math.max(0, totalPages - 5);
+            if (startPage == 0) endPage = Math.min(4, totalPages - 1);
+        }
+
+        model.addAttribute("startPage", startPage);
+        model.addAttribute("endPage", endPage);
+
         return "admin/appointments";
     }
 

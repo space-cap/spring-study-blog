@@ -91,19 +91,35 @@
                 </tbody>
             </table>
 
+            <!-- [수정] 스마트 페이지네이션 바 -->
             <nav th:if="${appointmentPage.totalPages > 1}" aria-label="Page navigation">
                 <ul class="pagination justify-content-center">
+                    <!-- 처음으로 -->
+                    <li class="page-item" th:classappend="${appointmentPage.first} ? 'disabled'">
+                        <a class="page-link" th:href="@{/admin/appointments(page=0, status=${status}, customerName=${customerName}, startDate=${startDate}, endDate=${endDate}, sortField=${sortField}, sortDir=${sortDir})}">
+                            <span>&laquo;&laquo;</span>
+                        </a>
+                    </li>
+                    <!-- 이전 페이지 -->
                     <li class="page-item" th:classappend="${appointmentPage.first} ? 'disabled'">
                         <a class="page-link" th:href="@{/admin/appointments(page=${appointmentPage.number - 1}, status=${status}, customerName=${customerName}, startDate=${startDate}, endDate=${endDate}, sortField=${sortField}, sortDir=${sortDir})}">
                             <span>&laquo;</span>
                         </a>
                     </li>
-                    <li class="page-item" th:each="pageNumber : ${#numbers.sequence(0, appointmentPage.totalPages - 1)}" th:classappend="${pageNumber == appointmentPage.number} ? 'active'">
+                    <!-- 페이지 번호들 -->
+                    <li class="page-item" th:each="pageNumber : ${#numbers.sequence(startPage, endPage)}" th:classappend="${pageNumber == appointmentPage.number} ? 'active'">
                         <a class="page-link" th:href="@{/admin/appointments(page=${pageNumber}, status=${status}, customerName=${customerName}, startDate=${startDate}, endDate=${endDate}, sortField=${sortField}, sortDir=${sortDir})}" th:text="${pageNumber + 1}"></a>
                     </li>
+                    <!-- 다음 페이지 -->
                     <li class="page-item" th:classappend="${appointmentPage.last} ? 'disabled'">
                         <a class="page-link" th:href="@{/admin/appointments(page=${appointmentPage.number + 1}, status=${status}, customerName=${customerName}, startDate=${startDate}, endDate=${endDate}, sortField=${sortField}, sortDir=${sortDir})}">
                             <span>&raquo;</span>
+                        </a>
+                    </li>
+                    <!-- 마지막으로 -->
+                    <li class="page-item" th:classappend="${appointmentPage.last} ? 'disabled'">
+                        <a class="page-link" th:href="@{/admin/appointments(page=${appointmentPage.totalPages - 1}, status=${status}, customerName=${customerName}, startDate=${startDate}, endDate=${endDate}, sortField=${sortField}, sortDir=${sortDir})}">
+                            <span>&raquo;&raquo;</span>
                         </a>
                     </li>
                 </ul>
