@@ -3,6 +3,8 @@ import com.develead.smile.domain.*;
 import com.develead.smile.dto.AdminAppointmentDto;
 import com.develead.smile.repository.*;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,11 +29,11 @@ public class AdminAppointmentService {
         return appointmentRepository.findAllByOrderByAppointmentDatetimeDesc();
     }
 
-    // [수정] customerName 파라미터 추가
-    public List<Appointment> findByFilters(String status, String customerName, LocalDate startDate, LocalDate endDate) {
+    // [수정] Pageable을 지원하도록 변경
+    public Page<Appointment> findByFilters(String status, String customerName, LocalDate startDate, LocalDate endDate, Pageable pageable) {
         LocalDateTime startDateTime = (startDate != null) ? startDate.atStartOfDay() : null;
         LocalDateTime endDateTime = (endDate != null) ? endDate.atTime(LocalTime.MAX) : null;
-        return appointmentRepository.findByFilters(status, customerName, startDateTime, endDateTime);
+        return appointmentRepository.findByFilters(status, customerName, startDateTime, endDateTime, pageable);
     }
 
     public Optional<Appointment> findById(Integer id) {

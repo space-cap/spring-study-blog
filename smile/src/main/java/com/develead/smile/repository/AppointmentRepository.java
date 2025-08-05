@@ -1,6 +1,8 @@
 package com.develead.smile.repository;
 
 import com.develead.smile.domain.Appointment;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -22,17 +24,22 @@ public interface AppointmentRepository extends JpaRepository<Appointment, Intege
     // [수정] 관리자 페이지용 정렬 쿼리 추가
     List<Appointment> findAllByOrderByAppointmentDatetimeDesc();
 
-    // [수정] 고객 이름 검색 조건을 쿼리에 추가
-    @Query("SELECT a FROM Appointment a WHERE " +
+    // [수정] Pageable을 지원하도록 변경
+    @Query(value = "SELECT a FROM Appointment a JOIN FETCH a.customer JOIN FETCH a.doctor WHERE " +
             "(:status IS NULL OR :status = '' OR a.status = :status) AND " +
             "(:customerName IS NULL OR :customerName = '' OR a.customer.name LIKE %:customerName%) AND " +
             "(:startDate IS NULL OR a.appointmentDatetime >= :startDate) AND " +
-            "(:endDate IS NULL OR a.appointmentDatetime <= :endDate) " +
-            "ORDER BY a.appointmentDatetime DESC")
-    List<Appointment> findByFilters(
+            "(:endDate IS NULL OR a.appointmentDatetime <= :endDate)",
+            countQuery = "SELECT count(a) FROM Appointment a WHERE " +
+                    "(:status IS NULL OR :status = '' OR a.status = :status) AND " +
+                    "(:customerName IS NULL OR :customerName = '' OR a.customer.name LIKE %:customerName%) AND " +
+                    "(:startDate IS NULL OR a.appointmentDatetime >= :startDate) AND " +
+                    "(:endDate IS NULL OR a.appointmentDatetime <= :endDate)")
+    Page<Appointment> findByFilters(
             @Param("status") String status,
             @Param("customerName") String customerName,
             @Param("startDate") LocalDateTime startDate,
-            @Param("endDate") LocalDateTime endDate);
+            @Param("endDate") LocalDateTime endDate,
+            Pageable pageable);
 
 }
