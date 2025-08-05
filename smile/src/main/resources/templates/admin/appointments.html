@@ -43,7 +43,6 @@
                     <button type="submit" class="btn btn-success w-100">검색</button>
                 </div>
             </form>
-            <!-- 기간 설정 버튼 추가 -->
             <div class="mt-3">
                 <button type="button" class="btn btn-sm btn-outline-secondary date-btn" data-period="today">오늘</button>
                 <button type="button" class="btn btn-sm btn-outline-secondary date-btn" data-period="week">1주일</button>
@@ -67,7 +66,8 @@
                 </tr>
                 </thead>
                 <tbody>
-                <tr th:each="app : ${appointments}">
+                <!-- [수정] appointments -> appointmentPage.content 로 변경 -->
+                <tr th:each="app : ${appointmentPage.content}">
                     <td th:text="${#temporals.format(app.appointmentDatetime, 'yyyy-MM-dd HH:mm')}"></td>
                     <td th:text="${app.customer.name}"></td>
                     <td th:text="${app.doctor.name}"></td>
@@ -76,10 +76,14 @@
                         <a th:href="@{/admin/appointments/edit/{id}(id=${app.appointment_id})}" class="btn btn-sm btn-outline-secondary">수정</a>
                     </td>
                 </tr>
+                <!-- [수정] 검색 결과가 없을 때 메시지 표시 -->
+                <tr th:if="${appointmentPage.isEmpty()}">
+                    <td colspan="5" class="text-center text-muted py-4">검색 결과가 없습니다.</td>
+                </tr>
                 </tbody>
             </table>
 
-            <!-- 페이지네이션 바 -->
+            <!-- [수정] 페이지네이션 바가 appointmentPage 객체를 참조하도록 수정 -->
             <nav th:if="${appointmentPage.totalPages > 1}" aria-label="Page navigation">
                 <ul class="pagination justify-content-center">
                     <li class="page-item" th:classappend="${appointmentPage.first} ? 'disabled'">
@@ -97,7 +101,7 @@
                     </li>
                 </ul>
             </nav>
-            
+
         </div>
     </div>
 </section>
