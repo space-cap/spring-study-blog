@@ -60,6 +60,20 @@
                     <tr><th>항목명</th><th>수량</th><th>금액</th><th></th></tr>
                     </thead>
                     <tbody id="serviceItemsTbody">
+                    <!-- [수정] 수정 시 기존 진료 항목을 표시하는 부분 추가 -->
+                    <tr th:each="service, iterStat : *{services}">
+                        <td>
+                            <input type="hidden" th:name="|services[${iterStat.index}].serviceItemId|" th:value="${service.serviceItemId}">
+                            <span th:text="${service.serviceName}"></span>
+                        </td>
+                        <td>
+                            <input type="number" class="form-control form-control-sm" th:name="|services[${iterStat.index}].quantity|" th:value="${service.quantity}" min="1">
+                        </td>
+                        <td th:text="${#numbers.formatDecimal(service.costAtService, 0, 'COMMA', 0, 'POINT')} + '원'"></td>
+                        <td>
+                            <button type="button" class="btn btn-sm btn-outline-danger" onclick="this.closest('tr').remove()">삭제</button>
+                        </td>
+                    </tr>
                     <!-- 선택된 항목이 여기에 추가됩니다. -->
                     </tbody>
                 </table>

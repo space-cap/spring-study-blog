@@ -219,6 +219,9 @@ public class AdminController {
                     serviceDto.setCostAtService(service.getCostAtService());
                     return serviceDto;
                 }).collect(Collectors.toList());
+
+        System.out.println("serviceDtos: " + serviceDtos.toArray().length);
+
         dto.setServices(serviceDtos);
 
         model.addAttribute("medicalRecordDto", dto);
