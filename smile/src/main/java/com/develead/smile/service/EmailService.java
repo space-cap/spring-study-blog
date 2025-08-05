@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class EmailService {
     private final JavaMailSender mailSender;
+    private final SystemSettingService settingService;
 
     @Value("${spring.mail.username}")
     private String fromEmail;
@@ -22,9 +23,18 @@ public class EmailService {
             MimeMessage message = mailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
 
+            String recipients = settingService.getSettingValue("report_recipient_email");
+            if (recipients == null || recipients.isBlank()) {
+                System.err.println("보고서 수신자 이메일이 설정되지 않았습니다.");
+                return;
+            }
+
+            // [수정] 콤마로 구분된 이메일 주소 문자열을 배열로 변환하여 설정
+            String[] tos = recipients.split(",");
+
             // [수정] 보내는 사람 이름("스마일 치과")과 이메일 주소를 함께 설정합니다.
             helper.setFrom(fromEmail, "스마일 치과");
-            helper.setTo(to);
+            helper.setTo(tos);
             helper.setSubject(subject);
             helper.setText(text, true); // true: HTML 형식으로 발송
             helper.addAttachment(attachmentFilename, new ByteArrayResource(attachment));

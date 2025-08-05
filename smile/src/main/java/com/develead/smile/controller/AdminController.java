@@ -9,6 +9,7 @@ import com.develead.smile.repository.DoctorRepository;
 import com.develead.smile.repository.ServiceItemRepository;
 import com.develead.smile.service.*;
 import com.develead.smile.service.MedicalRecordService;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -30,6 +31,7 @@ import java.time.format.DateTimeFormatter;
 import java.time.temporal.WeekFields;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Controller @RequestMapping("/admin") @RequiredArgsConstructor
@@ -44,6 +46,7 @@ public class AdminController {
     private final AdminAppointmentService adminAppointmentService; // 추가
     private final ReportService reportService;
     private final EmailService emailService;
+    private final SystemSettingService settingService; // 추가
     private final CustomerRepository customerRepository; // DTO 채우기용
     private final DoctorRepository doctorRepository; // DTO 채우기용
     private final ServiceItemRepository serviceItemRepository;
@@ -511,6 +514,25 @@ public class AdminController {
             attrs.addFlashAttribute("errorMessage", "보고서 생성 또는 이메일 발송 중 오류가 발생했습니다: " + e.getMessage());
         }
         return "redirect:/admin/reports";
+    }
+
+
+
+    // System Settings (신규 추가)
+    @GetMapping("/settings")
+    public String showSettingsPage(Model model) {
+        model.addAttribute("settings", settingService.getAllSettings());
+        return "admin/system-settings";
+    }
+
+    @PostMapping("/settings")
+    public String saveSettings(HttpServletRequest request, RedirectAttributes attrs) {
+        Map<String, String> settings = request.getParameterMap().entrySet().stream()
+                .collect(Collectors.toMap(Map.Entry::getKey, e -> e.getValue()[0]));
+
+        settingService.saveSettings(settings);
+        attrs.addFlashAttribute("successMessage", "설정이 성공적으로 저장되었습니다.");
+        return "redirect:/admin/settings";
     }
 
 
