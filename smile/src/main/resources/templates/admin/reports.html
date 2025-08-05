@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/default}">
+<head>
+    <title>보고서 관리</title>
+</head>
+<body>
+<section layout:fragment="content" class="container my-4">
+    <h1 class="mb-4">보고서 생성</h1>
+    <div th:if="${successMessage}" class="alert alert-success" th:text="${successMessage}"></div>
+    <div th:if="${errorMessage}" class="alert alert-danger" th:text="${errorMessage}"></div>
+
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <h5 class="card-title">일일 매출 보고서</h5>
+            <p class="card-text">선택한 날짜의 매출 내역을 PDF로 생성하여 관리자 이메일로 발송합니다.</p>
+            <form th:action="@{/admin/reports/daily-sales}" method="post">
+                <div class="row align-items-end">
+                    <div class="col-md-4">
+                        <label for="reportDate" class="form-label">보고서 날짜</label>
+                        <input type="date" id="reportDate" name="reportDate" class="form-control" required>
+                    </div>
+                    <div class="col-md-4">
+                        <button type="submit" class="btn btn-primary">생성 및 이메일 발송</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</section>
+</body>
+</html>

@@ -22,6 +22,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.io.IOException;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -36,6 +37,8 @@ public class AdminController {
     private final DashboardService dashboardService; // 추가
     private final NotificationTemplateService notificationTemplateService; // 추가
     private final AdminAppointmentService adminAppointmentService; // 추가
+    private final ReportService reportService;
+    private final EmailService emailService;
     private final CustomerRepository customerRepository; // DTO 채우기용
     private final DoctorRepository doctorRepository; // DTO 채우기용
     private final ServiceItemRepository serviceItemRepository;
@@ -425,6 +428,39 @@ public class AdminController {
         return "redirect:/admin/appointments";
     }
 
+
+
+    // Report Generation (신규 추가)
+    @GetMapping("/reports")
+    public String showReportPage() {
+        return "admin/reports";
+    }
+
+    @PostMapping("/reports/daily-sales")
+    public String generateAndEmailDailySalesReport(
+            @RequestParam("reportDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate reportDate,
+            RedirectAttributes attrs) {
+        try {
+            byte[] pdf = reportService.generateDailySalesReport(reportDate);
+
+            // 실제 운영 시에는 관리자 이메일을 DB에서 가져오거나 설정 파일에서 읽어옵니다.
+            String adminEmail = "timing.itv@gmail.com";
+            String subject = reportDate.toString() + " 일일 매출 보고서";
+            String text = "안녕하세요, " + reportDate.toString() + "의 일일 매출 보고서를 첨부합니다.";
+            String filename = "daily-sales-report-" + reportDate.toString() + ".pdf";
+
+            emailService.sendEmailWithAttachment(adminEmail, subject, text, pdf, filename);
+
+            attrs.addFlashAttribute("successMessage", reportDate.toString() + "의 보고서가 성공적으로 생성되어 " + adminEmail + "로 발송되었습니다.");
+
+        } catch (IOException e) {
+            attrs.addFlashAttribute("errorMessage", "PDF 보고서 생성 중 오류가 발생했습니다.");
+        } catch (Exception e) {
+            attrs.addFlashAttribute("errorMessage", "이메일 발송 중 오류가 발생했습니다. application.properties의 이메일 설정을 확인해주세요.");
+        }
+
+        return "redirect:/admin/reports";
+    }
 
 
 }
