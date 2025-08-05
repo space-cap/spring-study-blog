@@ -18,6 +18,7 @@ public class MedicalRecord {
     private Integer createdBy;
     private Integer updatedBy;
 
-    @OneToMany(mappedBy = "medicalRecord", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+    // [수정] FetchType.EAGER를 제거하고 기본값(LAZY)으로 되돌림 (성능상 이점)
+    @OneToMany(mappedBy = "medicalRecord", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<MedicalRecordService> services = new ArrayList<>();
 }

@@ -234,6 +234,9 @@ public class AdminController {
     @PostMapping("/medical-records/{id}")
     public String updateMedicalRecord(@PathVariable Integer id, @ModelAttribute MedicalRecordDto dto, RedirectAttributes attrs) {
         dto.setRecord_id(id);
+
+        System.out.println("dto: " + dto);
+
         medicalRecordService.save(dto);
         attrs.addFlashAttribute("successMessage", "진료 기록이 성공적으로 수정되었습니다.");
         return "redirect:/admin/medical-records";
