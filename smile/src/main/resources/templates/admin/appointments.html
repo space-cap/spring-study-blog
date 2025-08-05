@@ -58,15 +58,24 @@
             <table class="table table-hover align-middle">
                 <thead class="table-light">
                 <tr>
-                    <th>예약일시</th>
-                    <th>고객명</th>
+                    <th>
+                        <a th:href="@{/admin/appointments(sortField='appointmentDatetime', sortDir=${sortField == 'appointmentDatetime' ? reverseSortDir : 'asc'}, status=${status}, customerName=${customerName}, startDate=${startDate}, endDate=${endDate})}">
+                            예약일시
+                            <i th:if="${sortField == 'appointmentDatetime'}" th:class="${sortDir == 'asc' ? 'bi bi-arrow-up' : 'bi bi-arrow-down'}"></i>
+                        </a>
+                    </th>
+                    <th>
+                        <a th:href="@{/admin/appointments(sortField='customer.name', sortDir=${sortField == 'customer.name' ? reverseSortDir : 'asc'}, status=${status}, customerName=${customerName}, startDate=${startDate}, endDate=${endDate})}">
+                            고객명
+                            <i th:if="${sortField == 'customer.name'}" th:class="${sortDir == 'asc' ? 'bi bi-arrow-up' : 'bi bi-arrow-down'}"></i>
+                        </a>
+                    </th>
                     <th>담당의</th>
                     <th>상태</th>
                     <th>관리</th>
                 </tr>
                 </thead>
                 <tbody>
-                <!-- [수정] appointments -> appointmentPage.content 로 변경 -->
                 <tr th:each="app : ${appointmentPage.content}">
                     <td th:text="${#temporals.format(app.appointmentDatetime, 'yyyy-MM-dd HH:mm')}"></td>
                     <td th:text="${app.customer.name}"></td>
@@ -76,26 +85,24 @@
                         <a th:href="@{/admin/appointments/edit/{id}(id=${app.appointment_id})}" class="btn btn-sm btn-outline-secondary">수정</a>
                     </td>
                 </tr>
-                <!-- [수정] 검색 결과가 없을 때 메시지 표시 -->
                 <tr th:if="${appointmentPage.isEmpty()}">
                     <td colspan="5" class="text-center text-muted py-4">검색 결과가 없습니다.</td>
                 </tr>
                 </tbody>
             </table>
 
-            <!-- [수정] 페이지네이션 바가 appointmentPage 객체를 참조하도록 수정 -->
             <nav th:if="${appointmentPage.totalPages > 1}" aria-label="Page navigation">
                 <ul class="pagination justify-content-center">
                     <li class="page-item" th:classappend="${appointmentPage.first} ? 'disabled'">
-                        <a class="page-link" th:href="@{/admin/appointments(page=${appointmentPage.number - 1}, status=${status}, customerName=${customerName}, startDate=${startDate}, endDate=${endDate})}">
+                        <a class="page-link" th:href="@{/admin/appointments(page=${appointmentPage.number - 1}, status=${status}, customerName=${customerName}, startDate=${startDate}, endDate=${endDate}, sortField=${sortField}, sortDir=${sortDir})}">
                             <span>&laquo;</span>
                         </a>
                     </li>
                     <li class="page-item" th:each="pageNumber : ${#numbers.sequence(0, appointmentPage.totalPages - 1)}" th:classappend="${pageNumber == appointmentPage.number} ? 'active'">
-                        <a class="page-link" th:href="@{/admin/appointments(page=${pageNumber}, status=${status}, customerName=${customerName}, startDate=${startDate}, endDate=${endDate})}" th:text="${pageNumber + 1}"></a>
+                        <a class="page-link" th:href="@{/admin/appointments(page=${pageNumber}, status=${status}, customerName=${customerName}, startDate=${startDate}, endDate=${endDate}, sortField=${sortField}, sortDir=${sortDir})}" th:text="${pageNumber + 1}"></a>
                     </li>
                     <li class="page-item" th:classappend="${appointmentPage.last} ? 'disabled'">
-                        <a class="page-link" th:href="@{/admin/appointments(page=${appointmentPage.number + 1}, status=${status}, customerName=${customerName}, startDate=${startDate}, endDate=${endDate})}">
+                        <a class="page-link" th:href="@{/admin/appointments(page=${appointmentPage.number + 1}, status=${status}, customerName=${customerName}, startDate=${startDate}, endDate=${endDate}, sortField=${sortField}, sortDir=${sortDir})}">
                             <span>&raquo;</span>
                         </a>
                     </li>

@@ -24,7 +24,7 @@ public interface AppointmentRepository extends JpaRepository<Appointment, Intege
     // [수정] 관리자 페이지용 정렬 쿼리 추가
     List<Appointment> findAllByOrderByAppointmentDatetimeDesc();
 
-    // [수정] Pageable을 지원하도록 변경
+    // [수정] Pageable에서 동적 정렬을 처리하므로, JPQL의 ORDER BY 구문 제거
     @Query(value = "SELECT a FROM Appointment a JOIN FETCH a.customer JOIN FETCH a.doctor WHERE " +
             "(:status IS NULL OR :status = '' OR a.status = :status) AND " +
             "(:customerName IS NULL OR :customerName = '' OR a.customer.name LIKE %:customerName%) AND " +
