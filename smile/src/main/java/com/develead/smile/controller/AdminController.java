@@ -27,6 +27,7 @@ public class AdminController {
     private final MedicalRecordService medicalRecordService;
     private final BillingService billingService; // 추가
     private final DashboardService dashboardService; // 추가
+    private final NotificationTemplateService notificationTemplateService; // 추가
     private final CustomerRepository customerRepository; // DTO 채우기용
     private final DoctorRepository doctorRepository; // DTO 채우기용
     private final ServiceItemRepository serviceItemRepository;
@@ -281,6 +282,41 @@ public class AdminController {
         billingService.addPayment(id, dto.getNewTransaction());
         attrs.addFlashAttribute("successMessage", "수납 처리가 완료되었습니다.");
         return "redirect:/admin/billings/edit/" + id;
+    }
+
+
+    // Notification Template CRUD (신규 추가)
+    @GetMapping("/notification-templates")
+    public String listNotificationTemplates(Model model) {
+        model.addAttribute("templates", notificationTemplateService.findAll());
+        return "admin/notification-templates";
+    }
+
+    @GetMapping("/notification-templates/new")
+    public String showNewTemplateForm(Model model) {
+        model.addAttribute("template", new NotificationTemplate());
+        return "admin/notification-template-form";
+    }
+
+    @PostMapping("/notification-templates")
+    public String createTemplate(@ModelAttribute NotificationTemplate template, RedirectAttributes attrs) {
+        notificationTemplateService.save(template);
+        attrs.addFlashAttribute("successMessage", "알림 템플릿이 성공적으로 등록되었습니다.");
+        return "redirect:/admin/notification-templates";
+    }
+
+    @GetMapping("/notification-templates/edit/{id}")
+    public String showEditTemplateForm(@PathVariable Integer id, Model model) {
+        model.addAttribute("template", notificationTemplateService.findById(id).orElseThrow());
+        return "admin/notification-template-form";
+    }
+
+    @PostMapping("/notification-templates/{id}")
+    public String updateTemplate(@PathVariable Integer id, @ModelAttribute NotificationTemplate template, RedirectAttributes attrs) {
+        template.setTemplate_id(id);
+        notificationTemplateService.save(template);
+        attrs.addFlashAttribute("successMessage", "알림 템플릿이 성공적으로 수정되었습니다.");
+        return "redirect:/admin/notification-templates";
     }
 
 }

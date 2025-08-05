@@ -7,7 +7,10 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Map;
+
 @Service @RequiredArgsConstructor
 public class AppointmentService {
     private final AppointmentRepository appointmentRepository;
@@ -15,6 +18,7 @@ public class AppointmentService {
     private final CustomerRepository customerRepository;
     private final UserAccountRepository userAccountRepository;
     private final AppointmentChangeLogRepository appointmentChangeLogRepository;
+    private final NotificationService notificationService; // 추가
 
     @Transactional
     public void createAppointment(AppointmentDto dto, String loginId) {
@@ -36,6 +40,17 @@ public class AppointmentService {
 
         // [수정] 예약 생성 로그 기록
         logChange(savedAppointment, "status", null, savedAppointment.getStatus(), user);
+
+        // [수정] 예약 확정 알림 발송
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy년 MM월 dd일 HH:mm");
+        notificationService.sendNotification(
+                customer,
+                "APPOINTMENT_CONFIRMATION",
+                Map.of(
+                        "고객명", customer.getName(),
+                        "예약일시", savedAppointment.getAppointmentDatetime().format(formatter)
+                )
+        );
     }
 
     public List<Appointment> findAppointmentsByLoginId(String loginId) {

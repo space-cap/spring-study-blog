@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/default}">
+<head>
+    <title th:text="${template.template_id == null} ? '신규 템플릿 등록' : '템플릿 수정'"></title>
+</head>
+<body>
+<section layout:fragment="content" class="container my-4">
+    <h1 th:text="${template.template_id == null} ? '신규 템플릿 등록' : '템플릿 수정'"></h1>
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <form th:action="${template.template_id == null} ? @{/admin/notification-templates} : @{/admin/notification-templates/{id}(id=${template.template_id})}"
+                  th:object="${template}" method="post">
+                <div class="mb-3">
+                    <label for="templateKey" class="form-label">템플릿 키</label>
+                    <input type="text" id="templateKey" th:field="*{templateKey}" class="form-control" required>
+                    <small class="form-text text-muted">시스템에서 사용할 고유한 영문 키를 입력하세요. (예: APPOINTMENT_REMINDER)</small>
+                </div>
+                <div class="mb-3">
+                    <label for="description" class="form-label">설명</label>
+                    <input type="text" id="description" th:field="*{description}" class="form-control" required>
+                </div>
+                <div class="mb-3">
+                    <label for="channel" class="form-label">채널</label>
+                    <select id="channel" th:field="*{channel}" class="form-select">
+                        <option value="SMS">SMS</option>
+                        <option value="EMAIL">Email</option>
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label for="subject" class="form-label">제목 (이메일용)</label>
+                    <input type="text" id="subject" th:field="*{subject}" class="form-control">
+                </div>
+                <div class="mb-3">
+                    <label for="body" class="form-label">내용</label>
+                    <textarea id="body" th:field="*{body}" class="form-control" rows="5" required></textarea>
+                    <small class="form-text text-muted">사용 가능한 변수: {고객명}, {병원명}, {예약일시} 등</small>
+                </div>
+                <button type="submit" class="btn btn-primary">저장</button>
+                <a th:href="@{/admin/notification-templates}" class="btn btn-secondary">취소</a>
+            </form>
+        </div>
+    </div>
+</section>
+</body>
+</html>
+
