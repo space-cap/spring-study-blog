@@ -3,14 +3,14 @@
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{layouts/default}">
 <head>
-    <title th:text="${appointmentDto.appointment_id == null} ? '신규 예약 등록' : '예약 정보 수정'"></title>
+    <title th:text="${appointmentDto.appointmentId == null} ? '신규 예약 등록' : '예약 정보 수정'"></title>
 </head>
 <body>
 <section layout:fragment="content" class="container my-4">
-    <h1 th:text="${appointmentDto.appointment_id == null} ? '신규 예약 등록' : '예약 정보 수정'"></h1>
+    <h1 th:text="${appointmentDto.appointmentId == null} ? '신규 예약 등록' : '예약 정보 수정'"></h1>
     <div class="card shadow-sm">
         <div class="card-body">
-            <form th:action="${appointmentDto.appointment_id == null} ? @{/admin/appointments} : @{/admin/appointments/{id}(id=${appointmentDto.appointment_id})}"
+            <form th:action="${appointmentDto.appointmentId == null} ? @{/admin/appointments} : @{/admin/appointments/{id}(id=${appointmentDto.appointmentId})}"
                   th:object="${appointmentDto}" method="post">
                 <div class="row">
                     <div class="col-md-6 mb-3">
