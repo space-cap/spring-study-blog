@@ -30,8 +30,9 @@ public class MedicalRecordService {
         return medicalRecordRepository.findAll();
     }
 
+    // [수정] JOIN FETCH를 사용하는 새로운 메소드 호출
     public Optional<MedicalRecord> findById(Integer id) {
-        return medicalRecordRepository.findById(id);
+        return medicalRecordRepository.findByIdWithDetails(id);
     }
 
     @Transactional
