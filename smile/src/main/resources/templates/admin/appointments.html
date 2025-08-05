@@ -19,6 +19,10 @@
         <div class="card-body">
             <form th:action="@{/admin/appointments}" method="get" class="row g-3 align-items-end">
                 <div class="col-md-3">
+                    <label for="customerName" class="form-label">고객 이름</label>
+                    <input type="text" id="customerName" name="customerName" th:value="${customerName}" class="form-control">
+                </div>
+                <div class="col-md-2">
                     <label for="status" class="form-label">예약 상태</label>
                     <select id="status" name="status" class="form-select">
                         <option value="">전체</option>
@@ -35,7 +39,7 @@
                     <label for="endDate" class="form-label">종료일</label>
                     <input type="date" id="endDate" name="endDate" th:value="${endDate}" class="form-control">
                 </div>
-                <div class="col-md-3">
+                <div class="col-md-1">
                     <button type="submit" class="btn btn-success w-100">검색</button>
                 </div>
             </form>

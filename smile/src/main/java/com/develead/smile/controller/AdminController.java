@@ -329,13 +329,15 @@ public class AdminController {
     @GetMapping("/appointments")
     public String listAppointments(
             @RequestParam(required = false) String status,
+            @RequestParam(required = false) String customerName,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,
             Model model) {
 
-        List<Appointment> appointments = adminAppointmentService.findByFilters(status, startDate, endDate);
+        List<Appointment> appointments = adminAppointmentService.findByFilters(status, customerName, startDate, endDate);
         model.addAttribute("appointments", appointments);
         model.addAttribute("status", status);
+        model.addAttribute("customerName", customerName);
         model.addAttribute("startDate", startDate);
         model.addAttribute("endDate", endDate);
 

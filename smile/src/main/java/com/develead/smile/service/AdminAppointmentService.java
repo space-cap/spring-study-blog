@@ -27,11 +27,11 @@ public class AdminAppointmentService {
         return appointmentRepository.findAllByOrderByAppointmentDatetimeDesc();
     }
 
-    // [수정] 필터링 조회 메소드 추가
-    public List<Appointment> findByFilters(String status, LocalDate startDate, LocalDate endDate) {
+    // [수정] customerName 파라미터 추가
+    public List<Appointment> findByFilters(String status, String customerName, LocalDate startDate, LocalDate endDate) {
         LocalDateTime startDateTime = (startDate != null) ? startDate.atStartOfDay() : null;
         LocalDateTime endDateTime = (endDate != null) ? endDate.atTime(LocalTime.MAX) : null;
-        return appointmentRepository.findByFilters(status, startDateTime, endDateTime);
+        return appointmentRepository.findByFilters(status, customerName, startDateTime, endDateTime);
     }
 
     public Optional<Appointment> findById(Integer id) {
