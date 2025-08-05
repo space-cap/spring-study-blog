@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import org.thymeleaf.context.Context;
 import org.thymeleaf.spring6.SpringTemplateEngine;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -52,6 +53,15 @@ public class ReportService {
             builder.useFastMode();
             // 한글 폰트 지원을 위해 폰트 파일이 필요합니다. (프로젝트에 폰트 파일 추가 필요)
             // 예: builder.useFont(new File("src/main/resources/fonts/NanumGothic.ttf"), "NanumGothic");
+            // [수정] 한글 폰트 파일을 로드하여 PDF 생성 시 사용하도록 설정합니다.
+            // 프로젝트의 src/main/resources/fonts/ 폴더에 NanumGothic.ttf 파일이 있어야 합니다.
+            File fontFile = new File("src/main/resources/fonts/NanumGothic-Regular.ttf");
+            if (fontFile.exists()) {
+                builder.useFont(fontFile, "NanumGothic");
+            } else {
+                System.err.println("Font file not found at: " + fontFile.getAbsolutePath());
+            }
+
             builder.withHtmlContent(html, null);
             builder.toStream(os);
             builder.run();
