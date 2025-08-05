@@ -9,12 +9,12 @@
 <section layout:fragment="content" class="container my-4">
     <h1 class="mb-4">관리자 대시보드</h1>
     <div class="row">
-        <div class="col-md-4 mb-4">
+        <div class="col-md-3 mb-4">
             <div class="card text-center h-100">
-                <div class="card-body">
+                <div class="card-body d-flex flex-column">
                     <h5 class="card-title"><i class="bi bi-people-fill"></i> 고객 관리</h5>
                     <p class="card-text">고객 정보 등록, 수정, 조회</p>
-                    <a th:href="@{/admin/customers}" class="btn btn-primary">바로가기</a>
+                    <a th:href="@{/admin/customers}" class="btn btn-primary mt-auto">바로가기</a>
                 </div>
             </div>
         </div>
@@ -27,25 +27,24 @@
                 </div>
             </div>
         </div>
-        <div class="col-md-4 mb-4">
+        <div class="col-md-3 mb-4">
             <div class="card text-center h-100">
-                <div class="card-body">
+                <div class="card-body d-flex flex-column">
                     <h5 class="card-title"><i class="bi bi-clipboard2-pulse-fill"></i> 진료 항목 관리</h5>
                     <p class="card-text">진료 항목 및 비용 정보 관리</p>
-                    <a th:href="@{/admin/service-items}" class="btn btn-primary">바로가기</a>
+                    <a th:href="@{/admin/service-items}" class="btn btn-primary mt-auto">바로가기</a>
                 </div>
             </div>
         </div>
-        <div class="col-md-4 mb-4">
+        <div class="col-md-3 mb-4">
             <div class="card text-center h-100">
                 <div class="card-body d-flex flex-column">
                     <h5 class="card-title"><i class="bi bi-box-seam-fill"></i> 재고 관리</h5>
                     <p class="card-text">의료 자재 및 약품 재고 관리</p>
-                    <a th:href="@{/admin/inventory-items}" class="btn btn-primary">바로가기</a>
+                    <a th:href="@{/admin/inventory-items}" class="btn btn-primary mt-auto">바로가기</a>
                 </div>
             </div>
         </div>
-        <!-- 다른 관리 메뉴 추가 공간 -->
     </div>
 </section>
 </body>

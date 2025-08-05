@@ -8,7 +8,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -24,7 +23,7 @@ public class MedicalRecordService {
     private final DoctorRepository doctorRepository;
     private final ServiceItemRepository serviceItemRepository;
     private final UserAccountRepository userAccountRepository;
-    private final MedicalRecordChangeLogRepository logRepository; // 추가
+    private final MedicalRecordChangeLogRepository logRepository;
 
     public List<MedicalRecord> findAll() {
         return medicalRecordRepository.findAll();
@@ -41,16 +40,11 @@ public class MedicalRecordService {
         Doctor doctor = doctorRepository.findById(dto.getDoctorId()).orElseThrow();
 
         MedicalRecord record;
-        Appointment appointment;
+        boolean isNewRecord = (dto.getRecord_id() == null);
 
-        if (dto.getRecord_id() != null) {
-            record = medicalRecordRepository.findById(dto.getRecord_id()).orElseThrow();
-            appointment = record.getAppointment();
-            // 변경 감지
-            logIfChanged(record, "symptoms", record.getSymptoms(), dto.getSymptoms(), currentUser);
-        } else {
+        if (isNewRecord) {
             record = new MedicalRecord();
-            appointment = new Appointment();
+            Appointment appointment = new Appointment();
             appointment.setCustomer(customer);
             appointment.setDoctor(doctor);
             appointment.setClinic(doctor.getClinic());
@@ -58,15 +52,24 @@ public class MedicalRecordService {
             appointment.setStatus("진료완료");
             appointment.setCreatedBy(currentUser.getUser_account_id());
             appointment = appointmentRepository.save(appointment);
+
+            record.setAppointment(appointment);
             record.setCreatedBy(currentUser.getUser_account_id());
+        } else {
+            record = medicalRecordRepository.findById(dto.getRecord_id()).orElseThrow();
+            logIfChanged(record, "symptoms", record.getSymptoms(), dto.getSymptoms(), currentUser);
         }
 
-        record.setAppointment(appointment);
         record.setCustomer(customer);
         record.setDoctor(doctor);
         record.setTreatmentDate(dto.getTreatmentDate());
         record.setSymptoms(dto.getSymptoms());
         record.setUpdatedBy(currentUser.getUser_account_id());
+
+        // [수정] 신규 레코드일 경우, 로그 기록 전에 먼저 저장하여 ID를 생성합니다.
+        if (isNewRecord) {
+            medicalRecordRepository.saveAndFlush(record);
+        }
 
         updateServices(record, dto.getServices(), currentUser);
 
@@ -78,9 +81,11 @@ public class MedicalRecordService {
         record.setTotalCost(totalCost);
 
         MedicalRecord savedRecord = medicalRecordRepository.save(record);
-        if (dto.getRecord_id() == null) {
+
+        if (isNewRecord) {
             logChange(savedRecord, "ALL", null, "Created", currentUser);
         }
+
         return savedRecord;
     }
 
@@ -92,11 +97,13 @@ public class MedicalRecordService {
         Map<Integer, com.develead.smile.domain.MedicalRecordService> existingServiceMap = record.getServices().stream()
                 .collect(Collectors.toMap(service -> service.getServiceItem().getService_item_id(), Function.identity()));
 
-        // 삭제된 항목 로그
-        record.getServices().stream()
-                .filter(service -> !dtoMap.containsKey(service.getServiceItem().getService_item_id()))
-                .forEach(service -> logChange(record, "serviceItem", service.getServiceItem().getServiceName(), "Removed", user));
-        record.getServices().removeIf(service -> !dtoMap.containsKey(service.getServiceItem().getService_item_id()));
+        record.getServices().removeIf(service -> {
+            boolean shouldRemove = !dtoMap.containsKey(service.getServiceItem().getService_item_id());
+            if (shouldRemove) {
+                logChange(record, "serviceItem", service.getServiceItem().getServiceName(), "Removed", user);
+            }
+            return shouldRemove;
+        });
 
         dtoMap.forEach((itemId, dto) -> {
             ServiceItem serviceItem = serviceItemRepository.findById(itemId).orElseThrow();
