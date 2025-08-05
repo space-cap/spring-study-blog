@@ -17,7 +17,8 @@ public class MedicalRecord {
     @Column(nullable = false) private BigDecimal totalCost = BigDecimal.ZERO;
     private Integer createdBy;
     private Integer updatedBy;
-    
-    @OneToMany(mappedBy = "medicalRecord", cascade = CascadeType.ALL, orphanRemoval = true)
+
+    // [수정] FetchType을 EAGER로 변경하여 LazyInitializationException 해결
+    @OneToMany(mappedBy = "medicalRecord", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     private List<MedicalRecordService> services = new ArrayList<>();
 }

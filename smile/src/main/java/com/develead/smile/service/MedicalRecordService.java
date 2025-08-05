@@ -26,7 +26,7 @@ public class MedicalRecordService {
     }
 
     public Optional<MedicalRecord> findById(Integer id) {
-        return medicalRecordRepository.findById(id);
+        return medicalRecordRepository.findByIdWithDetails(id);
     }
 
     @Transactional
