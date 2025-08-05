@@ -1,5 +1,6 @@
 package com.develead.smile.controller;
 import com.develead.smile.domain.*;
+import com.develead.smile.dto.AdminAppointmentDto;
 import com.develead.smile.dto.BillingDto;
 import com.develead.smile.dto.MedicalRecordDto;
 import com.develead.smile.dto.MedicalRecordServiceDto;
@@ -28,6 +29,7 @@ public class AdminController {
     private final BillingService billingService; // 추가
     private final DashboardService dashboardService; // 추가
     private final NotificationTemplateService notificationTemplateService; // 추가
+    private final AdminAppointmentService adminAppointmentService; // 추가
     private final CustomerRepository customerRepository; // DTO 채우기용
     private final DoctorRepository doctorRepository; // DTO 채우기용
     private final ServiceItemRepository serviceItemRepository;
@@ -318,5 +320,66 @@ public class AdminController {
         attrs.addFlashAttribute("successMessage", "알림 템플릿이 성공적으로 수정되었습니다.");
         return "redirect:/admin/notification-templates";
     }
+
+
+    // Appointment CRUD (신규 추가)
+    @GetMapping("/appointments")
+    public String listAppointments(Model model) {
+        model.addAttribute("appointments", adminAppointmentService.findAll());
+        return "admin/appointments";
+    }
+
+    @GetMapping("/appointments/new")
+    public String showNewAppointmentForm(Model model) {
+        model.addAttribute("appointmentDto", new AdminAppointmentDto());
+        model.addAttribute("customers", customerRepository.findAll());
+        model.addAttribute("doctors", doctorRepository.findAll());
+        return "admin/appointment-form";
+    }
+
+    @PostMapping("/appointments")
+    public String createAppointment(@Valid @ModelAttribute("appointmentDto") AdminAppointmentDto dto, BindingResult result, RedirectAttributes attrs, Model model) {
+        if (result.hasErrors()) {
+            model.addAttribute("customers", customerRepository.findAll());
+            model.addAttribute("doctors", doctorRepository.findAll());
+            return "admin/appointment-form";
+        }
+        adminAppointmentService.save(dto);
+        attrs.addFlashAttribute("successMessage", "예약이 성공적으로 등록되었습니다.");
+        return "redirect:/admin/appointments";
+    }
+
+    @GetMapping("/appointments/edit/{id}")
+    public String showEditAppointmentForm(@PathVariable Integer id, Model model) {
+        Appointment app = adminAppointmentService.findById(id).orElseThrow();
+
+        AdminAppointmentDto dto = new AdminAppointmentDto();
+        dto.setAppointmentId(app.getAppointment_id());
+        dto.setCustomerId(app.getCustomer().getCustomer_id());
+        dto.setDoctorId(app.getDoctor().getDoctor_id());
+        dto.setAppointmentDatetime(app.getAppointmentDatetime());
+        dto.setDescription(app.getDescription());
+        dto.setStatus(app.getStatus());
+
+        model.addAttribute("appointmentDto", dto);
+        model.addAttribute("customers", customerRepository.findAll());
+        model.addAttribute("doctors", doctorRepository.findAll());
+        return "admin/appointment-form";
+    }
+
+    @PostMapping("/appointments/{id}")
+    public String updateAppointment(@PathVariable Integer id, @Valid @ModelAttribute("appointmentDto") AdminAppointmentDto dto, BindingResult result, RedirectAttributes attrs, Model model) {
+        if (result.hasErrors()) {
+            model.addAttribute("customers", customerRepository.findAll());
+            model.addAttribute("doctors", doctorRepository.findAll());
+            return "admin/appointment-form";
+        }
+        dto.setAppointmentId(id);
+        adminAppointmentService.save(dto);
+        attrs.addFlashAttribute("successMessage", "예약이 성공적으로 수정되었습니다.");
+        return "redirect:/admin/appointments";
+    }
+
+
 
 }

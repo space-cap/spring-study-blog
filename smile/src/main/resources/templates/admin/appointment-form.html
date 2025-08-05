@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/default}">
+<head>
+    <title th:text="${appointmentDto.appointment_id == null} ? '신규 예약 등록' : '예약 정보 수정'"></title>
+</head>
+<body>
+<section layout:fragment="content" class="container my-4">
+    <h1 th:text="${appointmentDto.appointment_id == null} ? '신규 예약 등록' : '예약 정보 수정'"></h1>
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <form th:action="${appointmentDto.appointment_id == null} ? @{/admin/appointments} : @{/admin/appointments/{id}(id=${appointmentDto.appointment_id})}"
+                  th:object="${appointmentDto}" method="post">
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="customerId" class="form-label">고객 선택</label>
+                        <select id="customerId" th:field="*{customerId}" class="form-select" required>
+                            <option th:each="c : ${customers}" th:value="${c.customer_id}" th:text="${c.name} + ' (' + ${c.phoneNumber} + ')'"></option>
+                        </select>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="doctorId" class="form-label">의사 선택</label>
+                        <select id="doctorId" th:field="*{doctorId}" class="form-select" required>
+                            <option th:each="d : ${doctors}" th:value="${d.doctor_id}" th:text="${d.name} + ' 원장'"></option>
+                        </select>
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label for="appointmentDatetime" class="form-label">예약 일시</label>
+                    <input type="datetime-local" id="appointmentDatetime" th:field="*{appointmentDatetime}" class="form-control" required>
+                </div>
+                <div class="mb-3">
+                    <label for="status" class="form-label">예약 상태</label>
+                    <select id="status" th:field="*{status}" class="form-select">
+                        <option value="예약완료">예약완료</option>
+                        <option value="진료완료">진료완료</option>
+                        <option value="예약취소">예약취소</option>
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label for="description" class="form-label">증상 및 메모</label>
+                    <textarea id="description" th:field="*{description}" class="form-control" rows="3"></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary">저장</button>
+                <a th:href="@{/admin/appointments}" class="btn btn-secondary">취소</a>
+            </form>
+        </div>
+    </div>
+</section>
+</body>
+</html>

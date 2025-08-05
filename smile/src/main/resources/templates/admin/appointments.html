@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/default}">
+<head>
+    <title>예약 관리</title>
+</head>
+<body>
+<section layout:fragment="content" class="container my-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>예약 관리 목록</h1>
+        <a th:href="@{/admin/appointments/new}" class="btn btn-primary">
+            <i class="bi bi-plus-circle"></i> 신규 예약 등록
+        </a>
+    </div>
+    <div th:if="${successMessage}" class="alert alert-success" th:text="${successMessage}"></div>
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <table class="table table-hover align-middle">
+                <thead class="table-light">
+                <tr>
+                    <th>예약일시</th>
+                    <th>고객명</th>
+                    <th>담당의</th>
+                    <th>상태</th>
+                    <th>관리</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="app : ${appointments}">
+                    <td th:text="${#temporals.format(app.appointmentDatetime, 'yyyy-MM-dd HH:mm')}"></td>
+                    <td th:text="${app.customer.name}"></td>
+                    <td th:text="${app.doctor.name}"></td>
+                    <td><span class="badge" th:classappend="${app.status == '예약완료'} ? 'bg-success' : (${app.status == '진료완료'} ? 'bg-secondary' : 'bg-danger')" th:text="${app.status}"></span></td>
+                    <td>
+                        <a th:href="@{/admin/appointments/edit/{id}(id=${app.appointment_id})}" class="btn btn-sm btn-outline-secondary">수정</a>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</section>
+</body>
+</html>
