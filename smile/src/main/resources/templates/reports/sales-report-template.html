@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <!-- [수정] meta 태그를 self-closing으로 변경 -->
     <meta charset="UTF-8" />
     <style>
         body { font-family: "NanumGothic", sans-serif; }
@@ -19,8 +18,8 @@
 <body>
 <div class="container">
     <div class="header">
-        <h1>일일 매출 보고서</h1>
-        <p th:text="${reportDate}"></p>
+        <h1 th:text="${reportTitle}">일일 매출 보고서</h1>
+        <p th:text="${reportDateRange}"></p>
     </div>
 
     <div class="content">
@@ -36,13 +35,13 @@
             </thead>
             <tbody>
             <tr th:each="tx : ${transactions}">
-                <td th:text="${#temporals.format(tx.transactionDate, 'HH:mm:ss')}"></td>
+                <td th:text="${#temporals.format(tx.transactionDate, 'yyyy-MM-dd HH:mm')}"></td>
                 <td th:text="${tx.billing.medicalRecord.customer.name}"></td>
                 <td th:text="${tx.paymentMethod}"></td>
                 <td th:text="${#numbers.formatDecimal(tx.amount, 0, 'COMMA', 0, 'POINT')} + '원'"></td>
             </tr>
             <tr th:if="${#lists.isEmpty(transactions)}">
-                <td colspan="4" style="text-align: center;">해당 날짜의 거래 내역이 없습니다.</td>
+                <td colspan="4" style="text-align: center;">해당 기간의 거래 내역이 없습니다.</td>
             </tr>
             </tbody>
         </table>

@@ -23,8 +23,13 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.IOException;
+import java.time.DayOfWeek;
 import java.time.LocalDate;
+import java.time.YearMonth;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.WeekFields;
 import java.util.List;
+import java.util.Locale;
 import java.util.stream.Collectors;
 
 @Controller @RequestMapping("/admin") @RequiredArgsConstructor
@@ -443,22 +448,68 @@ public class AdminController {
         try {
             byte[] pdf = reportService.generateDailySalesReport(reportDate);
 
-            // 실제 운영 시에는 관리자 이메일을 DB에서 가져오거나 설정 파일에서 읽어옵니다.
             String adminEmail = "timing.itv@gmail.com";
             String subject = reportDate.toString() + " 일일 매출 보고서";
             String text = "안녕하세요, " + reportDate.toString() + "의 일일 매출 보고서를 첨부합니다.";
             String filename = "daily-sales-report-" + reportDate.toString() + ".pdf";
 
             emailService.sendEmailWithAttachment(adminEmail, subject, text, pdf, filename);
-
             attrs.addFlashAttribute("successMessage", reportDate.toString() + "의 보고서가 성공적으로 생성되어 " + adminEmail + "로 발송되었습니다.");
 
-        } catch (IOException e) {
-            attrs.addFlashAttribute("errorMessage", "PDF 보고서 생성 중 오류가 발생했습니다.");
         } catch (Exception e) {
-            attrs.addFlashAttribute("errorMessage", "이메일 발송 중 오류가 발생했습니다. application.properties의 이메일 설정을 확인해주세요.");
+            attrs.addFlashAttribute("errorMessage", "보고서 생성 또는 이메일 발송 중 오류가 발생했습니다: " + e.getMessage());
         }
+        return "redirect:/admin/reports";
+    }
 
+    @PostMapping("/reports/weekly-sales")
+    public String generateAndEmailWeeklySalesReport(
+            @RequestParam("week") String weekValue, // [수정] String으로 받음
+            RedirectAttributes attrs) {
+        try {
+            // [수정] "2025-W32" 형식의 문자열을 LocalDate로 파싱
+            String[] parts = weekValue.split("-W");
+            int year = Integer.parseInt(parts[0]);
+            int weekOfYear = Integer.parseInt(parts[1]);
+            LocalDate weekDate = LocalDate.now()
+                    .withYear(year)
+                    .with(WeekFields.of(Locale.KOREA).weekOfYear(), weekOfYear)
+                    .with(DayOfWeek.MONDAY);
+
+            byte[] pdf = reportService.generateWeeklySalesReport(weekDate);
+
+            String adminEmail = "timing.itv@gmail.com";
+            String subject = year + "년 " + weekOfYear + "주차 주간 매출 보고서";
+            String text = "안녕하세요, " + subject + "를 첨부합니다.";
+            String filename = "weekly-sales-report-" + weekValue + ".pdf";
+
+            emailService.sendEmailWithAttachment(adminEmail, subject, text, pdf, filename);
+            attrs.addFlashAttribute("successMessage", subject + "가 성공적으로 생성되어 " + adminEmail + "로 발송되었습니다.");
+
+        } catch (Exception e) {
+            attrs.addFlashAttribute("errorMessage", "보고서 생성 또는 이메일 발송 중 오류가 발생했습니다: " + e.getMessage());
+        }
+        return "redirect:/admin/reports";
+    }
+
+    @PostMapping("/reports/monthly-sales")
+    public String generateAndEmailMonthlySalesReport(
+            @RequestParam("month") @DateTimeFormat(pattern = "yyyy-MM") YearMonth yearMonth,
+            RedirectAttributes attrs) {
+        try {
+            byte[] pdf = reportService.generateMonthlySalesReport(yearMonth);
+
+            String adminEmail = "timing.itv@gmail.com";
+            String subject = yearMonth.format(DateTimeFormatter.ofPattern("yyyy년 MM월")) + " 월간 매출 보고서";
+            String text = "안녕하세요, " + subject + "를 첨부합니다.";
+            String filename = "monthly-sales-report-" + yearMonth.toString() + ".pdf";
+
+            emailService.sendEmailWithAttachment(adminEmail, subject, text, pdf, filename);
+            attrs.addFlashAttribute("successMessage", subject + "가 성공적으로 생성되어 " + adminEmail + "로 발송되었습니다.");
+
+        } catch (Exception e) {
+            attrs.addFlashAttribute("errorMessage", "보고서 생성 또는 이메일 발송 중 오류가 발생했습니다: " + e.getMessage());
+        }
         return "redirect:/admin/reports";
     }
 
