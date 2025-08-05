@@ -21,4 +21,16 @@ public interface AppointmentRepository extends JpaRepository<Appointment, Intege
 
     // [수정] 관리자 페이지용 정렬 쿼리 추가
     List<Appointment> findAllByOrderByAppointmentDatetimeDesc();
+
+    // [수정] 관리자 페이지 필터링을 위한 쿼리 추가
+    @Query("SELECT a FROM Appointment a WHERE " +
+            "(:status IS NULL OR :status = '' OR a.status = :status) AND " +
+            "(:startDate IS NULL OR a.appointmentDatetime >= :startDate) AND " +
+            "(:endDate IS NULL OR a.appointmentDatetime <= :endDate) " +
+            "ORDER BY a.appointmentDatetime DESC")
+    List<Appointment> findByFilters(
+            @Param("status") String status,
+            @Param("startDate") LocalDateTime startDate,
+            @Param("endDate") LocalDateTime endDate);
+
 }

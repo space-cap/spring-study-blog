@@ -11,12 +11,14 @@ import com.develead.smile.service.*;
 import com.develead.smile.service.MedicalRecordService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -323,9 +325,20 @@ public class AdminController {
 
 
     // Appointment CRUD (신규 추가)
+    // Appointment CRUD (수정됨)
     @GetMapping("/appointments")
-    public String listAppointments(Model model) {
-        model.addAttribute("appointments", adminAppointmentService.findAll());
+    public String listAppointments(
+            @RequestParam(required = false) String status,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,
+            Model model) {
+
+        List<Appointment> appointments = adminAppointmentService.findByFilters(status, startDate, endDate);
+        model.addAttribute("appointments", appointments);
+        model.addAttribute("status", status);
+        model.addAttribute("startDate", startDate);
+        model.addAttribute("endDate", endDate);
+
         return "admin/appointments";
     }
 
