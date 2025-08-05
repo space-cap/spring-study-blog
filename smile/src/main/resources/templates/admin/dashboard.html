@@ -8,13 +8,54 @@
 <body>
 <section layout:fragment="content" class="container my-4">
     <h1 class="mb-4">관리자 대시보드</h1>
+
+    <!-- 통계 카드 섹션 -->
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="card text-white bg-primary">
+                <div class="card-body">
+                    <h5 class="card-title"><i class="bi bi-calendar-check"></i> 오늘 예약</h5>
+                    <p class="card-text fs-4 fw-bold" th:text="${stats.todayAppointments} + '건'"></p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-white bg-success">
+                <div class="card-body">
+                    <h5 class="card-title"><i class="bi bi-cash-coin"></i> 이달 매출</h5>
+                    <p class="card-text fs-4 fw-bold" th:text="${#numbers.formatDecimal(stats.monthlyRevenue, 0, 'COMMA', 0, 'POINT')} + '원'"></p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-white bg-danger">
+                <div class="card-body">
+                    <h5 class="card-title"><i class="bi bi-exclamation-triangle"></i> 재고 부족</h5>
+                    <p class="card-text fs-4 fw-bold" th:text="${stats.lowStockItems} + '개'"></p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-white bg-info">
+                <div class="card-body">
+                    <h5 class="card-title"><i class="bi bi-person-plus"></i> 총 고객</h5>
+                    <p class="card-text fs-4 fw-bold" th:text="${stats.totalCustomers} + '명'"></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <hr class="my-4">
+
+    <!-- 메뉴 바로가기 섹션 -->
+    <h2 class="h4 mb-3">바로가기</h2>
     <div class="row">
         <div class="col-md-3 mb-4">
             <div class="card text-center h-100">
                 <div class="card-body d-flex flex-column">
                     <h5 class="card-title"><i class="bi bi-people-fill"></i> 고객 관리</h5>
                     <p class="card-text">고객 정보 등록, 수정, 조회</p>
-                    <a th:href="@{/admin/customers}" class="btn btn-primary mt-auto">바로가기</a>
+                    <a th:href="@{/admin/customers}" class="btn btn-outline-primary mt-auto">바로가기</a>
                 </div>
             </div>
         </div>
@@ -23,7 +64,7 @@
                 <div class="card-body d-flex flex-column">
                     <h5 class="card-title"><i class="bi bi-card-list"></i> 진료 기록 관리</h5>
                     <p class="card-text">고객 진료 내역 관리</p>
-                    <a th:href="@{/admin/medical-records}" class="btn btn-primary mt-auto">바로가기</a>
+                    <a th:href="@{/admin/medical-records}" class="btn btn-outline-primary mt-auto">바로가기</a>
                 </div>
             </div>
         </div>
@@ -32,7 +73,7 @@
                 <div class="card-body d-flex flex-column">
                     <h5 class="card-title"><i class="bi bi-clipboard2-pulse-fill"></i> 진료 항목 관리</h5>
                     <p class="card-text">진료 항목 및 비용 정보 관리</p>
-                    <a th:href="@{/admin/service-items}" class="btn btn-primary mt-auto">바로가기</a>
+                    <a th:href="@{/admin/service-items}" class="btn btn-outline-primary mt-auto">바로가기</a>
                 </div>
             </div>
         </div>
@@ -41,7 +82,7 @@
                 <div class="card-body d-flex flex-column">
                     <h5 class="card-title"><i class="bi bi-box-seam-fill"></i> 재고 관리</h5>
                     <p class="card-text">의료 자재 및 약품 재고 관리</p>
-                    <a th:href="@{/admin/inventory-items}" class="btn btn-primary mt-auto">바로가기</a>
+                    <a th:href="@{/admin/inventory-items}" class="btn btn-outline-primary mt-auto">바로가기</a>
                 </div>
             </div>
         </div>
@@ -50,7 +91,7 @@
                 <div class="card-body d-flex flex-column">
                     <h5 class="card-title"><i class="bi bi-credit-card-fill"></i> 수납 관리</h5>
                     <p class="card-text">진료비 수납 내역 관리</p>
-                    <a th:href="@{/admin/billings}" class="btn btn-primary mt-auto">바로가기</a>
+                    <a th:href="@{/admin/billings}" class="btn btn-outline-primary mt-auto">바로가기</a>
                 </div>
             </div>
         </div>

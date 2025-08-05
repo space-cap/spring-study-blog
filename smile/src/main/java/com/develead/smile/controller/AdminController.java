@@ -26,11 +26,16 @@ public class AdminController {
     private final InventoryService inventoryService;
     private final MedicalRecordService medicalRecordService;
     private final BillingService billingService; // 추가
+    private final DashboardService dashboardService; // 추가
     private final CustomerRepository customerRepository; // DTO 채우기용
     private final DoctorRepository doctorRepository; // DTO 채우기용
     private final ServiceItemRepository serviceItemRepository;
 
-    @GetMapping public String adminHome() { return "admin/dashboard"; }
+    @GetMapping
+    public String adminHome(Model model) {
+        model.addAttribute("stats", dashboardService.getDashboardStatistics());
+        return "admin/dashboard";
+    }
 
     // Customer CRUD
     @GetMapping("/customers")
