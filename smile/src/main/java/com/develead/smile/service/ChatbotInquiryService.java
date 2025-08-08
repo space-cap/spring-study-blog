@@ -9,6 +9,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -19,8 +20,9 @@ public class ChatbotInquiryService {
     private final ChatbotInquiryRepository inquiryRepository;
     private final UserAccountRepository userAccountRepository;
 
-    public List<ChatbotInquiry> findAll() {
-        return inquiryRepository.findAllByOrderByReceivedAtDesc();
+    // [수정] 필터링 조회 메소드 추가
+    public List<ChatbotInquiry> findByFilters(String status, LocalDate date) {
+        return inquiryRepository.findByFilters(status, date);
     }
 
     public Optional<ChatbotInquiry> findById(Integer id) {
@@ -35,7 +37,6 @@ public class ChatbotInquiryService {
         inquiry.setInquiryStatus(dto.getInquiryStatus());
         inquiry.setConsultationNotes(dto.getConsultationNotes());
 
-        // 상태가 '대기중'에서 다른 것으로 변경되면, 상담 직원과 시간을 기록
         if (!"대기중".equals(inquiry.getInquiryStatus()) && inquiry.getConsultant() == null) {
             inquiry.setConsultant(currentUser);
             inquiry.setConsultationDatetime(LocalDateTime.now());

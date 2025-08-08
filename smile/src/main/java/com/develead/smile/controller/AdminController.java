@@ -534,11 +534,19 @@ public class AdminController {
     }
 
 
-    // Chatbot Inquiry List (신규 추가)
     // Chatbot Inquiry
     @GetMapping("/chatbot-inquiries")
-    public String listChatbotInquiries(Model model) {
-        model.addAttribute("inquiries", chatbotInquiryService.findAll());
+    public String listChatbotInquiries(
+            @RequestParam(required = false, defaultValue = "") String status,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date,
+            Model model) {
+
+        LocalDate filterDate = (date == null) ? LocalDate.now() : date;
+
+        model.addAttribute("inquiries", chatbotInquiryService.findByFilters(status, filterDate));
+        model.addAttribute("status", status);
+        model.addAttribute("date", filterDate);
+
         return "admin/chatbot-inquiries";
     }
 
