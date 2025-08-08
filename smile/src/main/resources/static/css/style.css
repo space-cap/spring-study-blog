@@ -35,7 +35,7 @@ main.container {
     padding-bottom: 2rem;
 }
 
-/* 레이아웃이 없는 페이지(index.html)의 main 컨텐츠 패딩 제거 (오류 수정) */
+/* 레이아웃이 없는 페이지(index.html)의 main 컨텐츠 패딩 제거 */
 main > div[layout\:fragment="content"] {
     padding: 0;
 }
@@ -43,9 +43,8 @@ main.container > div[layout\:fragment="content"] {
     padding: 2rem 0;
 }
 
-
 /* ===================================================================
-// 챗봇 UI 스타일 (신규 추가)
+// 챗봇 UI 스타일
 // =================================================================== */
 .chatbot-toggler {
     position: fixed;
@@ -121,8 +120,7 @@ main.container > div[layout\:fragment="content"] {
     flex-shrink: 0;
 }
 
-
-/* [신규 추가] 로딩 스피너 스타일 */
+/* 로딩 스피너 스타일 */
 .spinner {
     margin: 0 auto;
     width: 60px;
@@ -164,13 +162,43 @@ main.container > div[layout\:fragment="content"] {
       }
 }
 
-/* [신규 추가] 관리자 페이지 - 챗봇 문의 내역 스타일 */
+/* [수정] 관리자 페이지 - 챗봇 문의 내역 스타일 (카카오톡 테마) */
 .chat-history-panel {
-    height: 500px; /* 고정 높이 설정 */
-    overflow-y: auto; /* 내용이 넘치면 스크롤 생성 */
+    height: 500px;
+    overflow-y: auto;
+    background-color: #A9C4DA; /* 카카오톡 배경색과 유사하게 변경 */
+    padding: 1rem;
     display: flex;
     flex-direction: column;
-    gap: 10px;
-    background-color: #f8f9fa;
-    padding: 1rem;
+    gap: 12px;
+}
+
+.chat-history-panel .chat-message {
+    padding: 8px 12px;
+    border-radius: 12px;
+    max-width: 75%;
+    word-wrap: break-word;
+    box-shadow: 0 1px 1px rgba(0,0,0,0.1);
+}
+
+.chat-history-panel .chat-message-user {
+    background-color: #FFEB33; /* 카카오톡 노란색 */
+    color: #3C1E1E;
+    align-self: flex-end;
+    border-bottom-right-radius: 2px;
+}
+
+.chat-history-panel .chat-message-bot {
+    background-color: #FFFFFF;
+    color: #333;
+    align-self: flex-start;
+    border-bottom-left-radius: 2px;
+}
+
+.chat-history-panel .chat-message strong {
+    display: block;
+    font-size: 0.85rem;
+    margin-bottom: 4px;
+    color: #555;
+    font-weight: bold;
 }
