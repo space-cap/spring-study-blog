@@ -8,39 +8,62 @@
 <body>
 <section layout:fragment="content" class="container my-4">
     <h1 class="mb-4">챗봇 상담 처리</h1>
-    <div class="card shadow-sm">
-        <div class="card-header">
-            <strong>고객 정보</strong>
-        </div>
-        <div class="card-body">
-            <p><strong>고객명:</strong> <span th:text="${inquiryDto.customerName}"></span></p>
-            <p><strong>연락처:</strong> <span th:text="${inquiryDto.phoneNumber}"></span></p>
-            <p><strong>최초 문의:</strong> <span th:text="${inquiryDto.inquiryReason}"></span></p>
-        </div>
-    </div>
+    <div class="row g-4">
+        <!-- 좌측: 고객 정보 및 상담 내역 입력 -->
+        <div class="col-lg-7">
+            <div class="card shadow-sm">
+                <div class="card-header"><strong>고객 정보</strong></div>
+                <div class="card-body">
+                    <p><strong>고객명:</strong> <span th:text="${inquiryDto.customerName}"></span></p>
+                    <p><strong>연락처:</strong> <span th:text="${inquiryDto.phoneNumber}"></span></p>
+                    <p><strong>최초 문의:</strong> <span th:text="${inquiryDto.inquiryReason}"></span></p>
+                </div>
+            </div>
 
-    <div class="card shadow-sm mt-4">
-        <div class="card-header">
-            <strong>상담 내역 입력</strong>
+            <div class="card shadow-sm mt-4">
+                <div class="card-header"><strong>상담 내역 입력</strong></div>
+                <div class="card-body">
+                    <form th:action="@{/admin/chatbot-inquiries/{id}(id=${inquiryDto.inquiry_id})}"
+                          th:object="${inquiryDto}" method="post">
+                        <div class="mb-3">
+                            <label for="inquiryStatus" class="form-label">상담 상태</label>
+                            <select id="inquiryStatus" th:field="*{inquiryStatus}" class="form-select">
+                                <option value="대기중">대기중</option>
+                                <option value="완료">완료</option>
+                                <option value="부재중">부재중</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="consultationNotes" class="form-label">상담 내용 메모</label>
+                            <textarea id="consultationNotes" th:field="*{consultationNotes}" class="form-control" rows="5"></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary">저장</button>
+                        <a th:href="@{/admin/chatbot-inquiries}" class="btn btn-secondary">취소</a>
+                    </form>
+                </div>
+            </div>
         </div>
-        <div class="card-body">
-            <form th:action="@{/admin/chatbot-inquiries/{id}(id=${inquiryDto.inquiry_id})}"
-                  th:object="${inquiryDto}" method="post">
-                <div class="mb-3">
-                    <label for="inquiryStatus" class="form-label">상담 상태</label>
-                    <select id="inquiryStatus" th:field="*{inquiryStatus}" class="form-select">
-                        <option value="대기중">대기중</option>
-                        <option value="완료">완료</option>
-                        <option value="부재중">부재중</option>
-                    </select>
+
+        <!-- 우측: 챗봇 대화 기록 -->
+        <div class="col-lg-5">
+            <div class="card shadow-sm">
+                <div class="card-header"><strong>챗봇 대화 기록</strong></div>
+                <div class="card-body chat-history-panel">
+                    <div th:if="${inquiryDto.chatLogs == null or #lists.isEmpty(inquiryDto.chatLogs)}" class="text-center text-muted p-3">
+                        대화 기록이 없습니다.
+                    </div>
+                    <div th:each="log : ${inquiryDto.chatLogs}" class="chat-log-message">
+                        <div class="chat-message chat-message-user" th:if="${log.userMessage != null}">
+                            <strong class="d-block">고객</strong>
+                            <span th:text="${log.userMessage}"></span>
+                        </div>
+                        <div class="chat-message chat-message-bot" th:if="${log.botResponse != null}">
+                            <strong class="d-block">챗봇</strong>
+                            <span th:text="${log.botResponse}"></span>
+                        </div>
+                    </div>
                 </div>
-                <div class="mb-3">
-                    <label for="consultationNotes" class="form-label">상담 내용 메모</label>
-                    <textarea id="consultationNotes" th:field="*{consultationNotes}" class="form-control" rows="5"></textarea>
-                </div>
-                <button type="submit" class="btn btn-primary">저장</button>
-                <a th:href="@{/admin/chatbot-inquiries}" class="btn btn-secondary">취소</a>
-            </form>
+            </div>
         </div>
     </div>
 </section>
