@@ -1,6 +1,9 @@
 package com.develead.smile.dto;
+import com.develead.smile.domain.ChatbotLog;
 import lombok.Getter;
 import lombok.Setter;
+
+import java.util.List;
 
 @Getter @Setter
 public class ChatbotInquiryDto {
@@ -10,4 +13,5 @@ public class ChatbotInquiryDto {
     private String inquiryReason;
     private String inquiryStatus;
     private String consultationNotes;
+    private List<ChatbotLog> chatLogs; // [수정] 누락되었던 필드 추가
 }

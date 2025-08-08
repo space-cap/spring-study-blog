@@ -6,6 +6,7 @@ import java.time.LocalDateTime;
 @Entity @Table(name = "chatbot_inquiry") @Getter @Setter
 public class ChatbotInquiry {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY) private Integer inquiry_id;
+    private String sessionId;
     @Column(nullable = false) private String customerName;
     @Column(nullable = false) private String phoneNumber;
     @Lob private String inquiryReason;

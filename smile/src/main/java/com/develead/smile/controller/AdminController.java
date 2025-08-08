@@ -1,6 +1,7 @@
 package com.develead.smile.controller;
 import com.develead.smile.domain.*;
 import com.develead.smile.dto.*;
+import com.develead.smile.repository.ChatbotLogRepository;
 import com.develead.smile.repository.CustomerRepository;
 import com.develead.smile.repository.DoctorRepository;
 import com.develead.smile.repository.ServiceItemRepository;
@@ -45,6 +46,7 @@ public class AdminController {
     private final EmailService emailService;
     private final SystemSettingService settingService; // 추가
     private final ChatbotInquiryService chatbotInquiryService; // 추가
+    private final ChatbotLogRepository chatbotLogRepository;
     private final CustomerRepository customerRepository; // DTO 채우기용
     private final DoctorRepository doctorRepository; // DTO 채우기용
     private final ServiceItemRepository serviceItemRepository;
@@ -535,6 +537,7 @@ public class AdminController {
 
 
     // Chatbot Inquiry
+    // Chatbot Inquiry
     @GetMapping("/chatbot-inquiries")
     public String listChatbotInquiries(
             @RequestParam(required = false, defaultValue = "") String status,
@@ -562,6 +565,11 @@ public class AdminController {
         dto.setInquiryStatus(inquiry.getInquiryStatus());
         dto.setConsultationNotes(inquiry.getConsultationNotes());
 
+        if (inquiry.getSessionId() != null && !inquiry.getSessionId().isBlank()) {
+            List<ChatbotLog> chatLogs = chatbotLogRepository.findBySessionIdOrderByTimestampAsc(inquiry.getSessionId());
+            dto.setChatLogs(chatLogs);
+        }
+
         model.addAttribute("inquiryDto", dto);
         return "admin/chatbot-inquiry-form";
     }
@@ -575,6 +583,5 @@ public class AdminController {
         attrs.addFlashAttribute("successMessage", "상담 내역이 성공적으로 저장되었습니다.");
         return "redirect:/admin/chatbot-inquiries";
     }
-
 
 }
