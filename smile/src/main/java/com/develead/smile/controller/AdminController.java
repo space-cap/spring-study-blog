@@ -1,9 +1,6 @@
 package com.develead.smile.controller;
 import com.develead.smile.domain.*;
-import com.develead.smile.dto.AdminAppointmentDto;
-import com.develead.smile.dto.BillingDto;
-import com.develead.smile.dto.MedicalRecordDto;
-import com.develead.smile.dto.MedicalRecordServiceDto;
+import com.develead.smile.dto.*;
 import com.develead.smile.repository.CustomerRepository;
 import com.develead.smile.repository.DoctorRepository;
 import com.develead.smile.repository.ServiceItemRepository;
@@ -538,10 +535,37 @@ public class AdminController {
 
 
     // Chatbot Inquiry List (신규 추가)
+    // Chatbot Inquiry
     @GetMapping("/chatbot-inquiries")
     public String listChatbotInquiries(Model model) {
         model.addAttribute("inquiries", chatbotInquiryService.findAll());
         return "admin/chatbot-inquiries";
+    }
+
+    @GetMapping("/chatbot-inquiries/edit/{id}")
+    public String showInquiryForm(@PathVariable Integer id, Model model) {
+        ChatbotInquiry inquiry = chatbotInquiryService.findById(id).orElseThrow();
+
+        ChatbotInquiryDto dto = new ChatbotInquiryDto();
+        dto.setInquiry_id(inquiry.getInquiry_id());
+        dto.setCustomerName(inquiry.getCustomerName());
+        dto.setPhoneNumber(inquiry.getPhoneNumber());
+        dto.setInquiryReason(inquiry.getInquiryReason());
+        dto.setInquiryStatus(inquiry.getInquiryStatus());
+        dto.setConsultationNotes(inquiry.getConsultationNotes());
+
+        model.addAttribute("inquiryDto", dto);
+        return "admin/chatbot-inquiry-form";
+    }
+
+    @PostMapping("/chatbot-inquiries/{id}")
+    public String updateInquiry(@PathVariable Integer id,
+                                @ModelAttribute("inquiryDto") ChatbotInquiryDto dto,
+                                RedirectAttributes attrs) {
+        dto.setInquiry_id(id);
+        chatbotInquiryService.updateInquiry(dto);
+        attrs.addFlashAttribute("successMessage", "상담 내역이 성공적으로 저장되었습니다.");
+        return "redirect:/admin/chatbot-inquiries";
     }
 
 

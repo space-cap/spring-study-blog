@@ -10,6 +10,7 @@
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h1>챗봇 문의 목록</h1>
     </div>
+    <div th:if="${successMessage}" class="alert alert-success" th:text="${successMessage}"></div>
     <div class="card shadow-sm">
         <div class="card-body">
             <table class="table table-hover align-middle">
@@ -29,9 +30,9 @@
                     <td th:text="${inquiry.customerName}"></td>
                     <td th:text="${inquiry.phoneNumber}"></td>
                     <td th:text="${inquiry.inquiryReason}"></td>
-                    <td><span class="badge" th:classappend="${inquiry.inquiryStatus == '대기중'} ? 'bg-warning' : 'bg-success'" th:text="${inquiry.inquiryStatus}"></span></td>
+                    <td><span class="badge" th:classappend="${inquiry.inquiryStatus == '대기중'} ? 'bg-warning' : (${inquiry.inquiryStatus == '완료'} ? 'bg-success' : 'bg-secondary')" th:text="${inquiry.inquiryStatus}"></span></td>
                     <td>
-                        <a href="#" class="btn btn-sm btn-outline-secondary">상담처리</a>
+                        <a th:href="@{/admin/chatbot-inquiries/edit/{id}(id=${inquiry.inquiry_id})}" class="btn btn-sm btn-outline-secondary">상담처리</a>
                     </td>
                 </tr>
                 <tr th:if="${#lists.isEmpty(inquiries)}">
