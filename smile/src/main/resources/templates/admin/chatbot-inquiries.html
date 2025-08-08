@@ -10,6 +10,31 @@
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h1>챗봇 문의 목록</h1>
     </div>
+
+    <!-- 검색 필터 폼 -->
+    <div class="card shadow-sm mb-4">
+        <div class="card-body">
+            <form th:action="@{/admin/chatbot-inquiries}" method="get" class="row g-3 align-items-end">
+                <div class="col-md-4">
+                    <label for="date" class="form-label">접수일</label>
+                    <input type="date" id="date" name="date" th:value="${date}" class="form-control">
+                </div>
+                <div class="col-md-4">
+                    <label for="status" class="form-label">상담 상태</label>
+                    <select id="status" name="status" class="form-select">
+                        <option value="">전체</option>
+                        <option value="대기중" th:selected="${status == '대기중'}">대기중</option>
+                        <option value="완료" th:selected="${status == '완료'}">완료</option>
+                        <option value="부재중" th:selected="${status == '부재중'}">부재중</option>
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <button type="submit" class="btn btn-success w-100">검색</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <div th:if="${successMessage}" class="alert alert-success" th:text="${successMessage}"></div>
     <div class="card shadow-sm">
         <div class="card-body">
@@ -36,7 +61,7 @@
                     </td>
                 </tr>
                 <tr th:if="${#lists.isEmpty(inquiries)}">
-                    <td colspan="6" class="text-center text-muted py-4">접수된 문의가 없습니다.</td>
+                    <td colspan="6" class="text-center text-muted py-4">해당 조건의 문의가 없습니다.</td>
                 </tr>
                 </tbody>
             </table>
