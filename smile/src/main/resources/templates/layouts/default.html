@@ -26,6 +26,9 @@
     </div>
 </main>
 
+<!-- [신규 추가] 챗봇 UI가 여기에 포함됩니다. -->
+<div th:replace="~{fragments/chatbot :: chatbotFragment}"></div>
+
 <!-- Footer -->
 <footer th:replace="~{fragments/footer :: footerFragment}"></footer>
 
@@ -33,6 +36,8 @@
 <!-- Flatpickr JS for Datepicker -->
 <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 <script src="https://npmcdn.com/flatpickr/dist/l10n/ko.js"></script>
+<!-- [신규 추가] 챗봇을 위한 메인 JavaScript 파일 -->
+<script th:src="@{/js/main.js}"></script>
 <script layout:fragment="script"></script>
 </body>
 </html>

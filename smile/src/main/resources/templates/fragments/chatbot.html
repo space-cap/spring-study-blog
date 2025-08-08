@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<body>
+<div th:fragment="chatbotFragment">
+    <!-- 챗봇 팝업창 -->
+    <div class="chatbot-popup shadow" id="chatbotPopup">
+        <div class="chat-header bg-primary text-white p-3 d-flex justify-content-between align-items-center">
+            <h5 class="mb-0">스마일 치과 상담 챗봇</h5>
+            <button type="button" class="btn-close btn-close-white" id="closeChatbotBtn"></button>
+        </div>
+        <div class="chat-messages p-3" id="chatMessages">
+            <!-- 메시지가 여기에 동적으로 추가됩니다. -->
+        </div>
+        <div class="chat-input-form p-3 border-top">
+            <form id="chatForm" class="d-flex">
+                <input type="text" id="chatInput" class="form-control" placeholder="메시지를 입력하세요..." autocomplete="off">
+                <button type="submit" class="btn btn-primary ms-2"><i class="bi bi-send-fill"></i></button>
+            </form>
+        </div>
+    </div>
+
+    <!-- 챗봇 열기 버튼 -->
+    <button class="chatbot-toggler btn btn-primary btn-lg rounded-circle shadow" id="chatbotToggler">
+        <i class="bi bi-chat-dots-fill"></i>
+    </button>
+</div>
+</body>
+</html>

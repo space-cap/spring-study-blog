@@ -42,3 +42,81 @@ main > div[layout\:fragment="content"] {
 main.container > div[layout\:fragment="content"] {
     padding: 2rem 0;
 }
+
+
+/* ===================================================================
+// 챗봇 UI 스타일 (신규 추가)
+// =================================================================== */
+.chatbot-toggler {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    width: 60px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+
+.chatbot-popup {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    width: 350px;
+    max-width: 90%;
+    height: 500px;
+    background-color: white;
+    border-radius: 15px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.3s, transform 0.3s;
+    visibility: hidden;
+    z-index: 1001;
+}
+
+.chatbot-popup.show {
+    opacity: 1;
+    transform: translateY(0);
+    visibility: visible;
+}
+
+.chat-header {
+    flex-shrink: 0;
+}
+
+.chat-messages {
+    flex-grow: 1;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.chat-message {
+    padding: 10px 15px;
+    border-radius: 20px;
+    max-width: 80%;
+    word-wrap: break-word;
+}
+
+.chat-message-user {
+    background-color: #0d6efd;
+    color: white;
+    align-self: flex-end;
+    border-bottom-right-radius: 5px;
+}
+
+.chat-message-bot {
+    background-color: #e9ecef;
+    color: #333;
+    align-self: flex-start;
+    border-bottom-left-radius: 5px;
+}
+
+.chat-input-form {
+    flex-shrink: 0;
+}
