@@ -47,6 +47,7 @@ public class AdminController {
     private final ReportService reportService;
     private final EmailService emailService;
     private final SystemSettingService settingService; // 추가
+    private final ChatbotInquiryService chatbotInquiryService; // 추가
     private final CustomerRepository customerRepository; // DTO 채우기용
     private final DoctorRepository doctorRepository; // DTO 채우기용
     private final ServiceItemRepository serviceItemRepository;
@@ -533,6 +534,14 @@ public class AdminController {
         settingService.saveSettings(settings);
         attrs.addFlashAttribute("successMessage", "설정이 성공적으로 저장되었습니다.");
         return "redirect:/admin/settings";
+    }
+
+
+    // Chatbot Inquiry List (신규 추가)
+    @GetMapping("/chatbot-inquiries")
+    public String listChatbotInquiries(Model model) {
+        model.addAttribute("inquiries", chatbotInquiryService.findAll());
+        return "admin/chatbot-inquiries";
     }
 
 
