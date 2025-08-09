@@ -52,13 +52,17 @@
                     <div th:if="${inquiryDto.chatLogs == null or #lists.isEmpty(inquiryDto.chatLogs)}" class="text-center text-muted p-3">
                         대화 기록이 없습니다.
                     </div>
-                    <!-- [수정] 대화 기록을 말풍선 형태로 표시 -->
+                    <!-- [수정] 대화 기록을 말풍선 형태로 표시하기 위한 구조 변경 -->
                     <div th:each="log : ${inquiryDto.chatLogs}">
-                        <div class="chat-message chat-message-user" th:if="${log.userMessage != null and log.userMessage != '고객 정보 제공 완료'}">
-                            <span th:text="${log.userMessage}"></span>
+                        <div class="chat-row user" th:if="${log.userMessage != null and log.userMessage != '고객 정보 제공 완료'}">
+                            <div class="chat-bubble user">
+                                <span th:text="${log.userMessage}"></span>
+                            </div>
                         </div>
-                        <div class="chat-message chat-message-bot" th:if="${log.botResponse != null}">
-                            <span th:text="${log.botResponse}"></span>
+                        <div class="chat-row bot" th:if="${log.botResponse != null}">
+                            <div class="chat-bubble bot">
+                                <span th:text="${log.botResponse}"></span>
+                            </div>
                         </div>
                     </div>
                 </div>
