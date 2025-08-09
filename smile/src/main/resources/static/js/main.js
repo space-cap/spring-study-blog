@@ -7,7 +7,6 @@ document.addEventListener('DOMContentLoaded', function() {
     const chatForm = document.getElementById('chatForm');
     const chatInput = document.getElementById('chatInput');
     const chatMessages = document.getElementById('chatMessages');
-    const loadingSpinner = document.getElementById('loadingSpinner');
 
     // API 서버 주소
     const API_ENDPOINT = 'http://127.0.0.1:8000/chat';
@@ -18,11 +17,8 @@ document.addEventListener('DOMContentLoaded', function() {
         chatbotToggler.classList.toggle('d-none');
     };
 
-    // 챗봇 열기 버튼 이벤트 할당
     if (chatbotToggler) chatbotToggler.addEventListener('click', toggleChatbot);
     if (heroChatbotBtn) heroChatbotBtn.addEventListener('click', toggleChatbot);
-
-    // 챗봇 닫기 버튼 이벤트 할당
     if (closeChatbotBtn) closeChatbotBtn.addEventListener('click', toggleChatbot);
 
     /**
@@ -35,30 +31,35 @@ document.addEventListener('DOMContentLoaded', function() {
         messageElement.classList.add('chat-message', `chat-message-${sender}`);
         messageElement.textContent = message;
         chatMessages.appendChild(messageElement);
-        // 항상 마지막 메시지가 보이도록 스크롤을 아래로 이동
         chatMessages.scrollTop = chatMessages.scrollHeight;
     };
 
     // 폼 제출(메시지 전송) 이벤트 처리
     if (chatForm) {
         chatForm.addEventListener('submit', async function(e) {
-            e.preventDefault(); // 폼의 기본 제출 동작 방지
+            e.preventDefault();
             const userMessage = chatInput.value.trim();
-            if (!userMessage) return; // 빈 메시지는 보내지 않음
+            if (!userMessage) return;
 
-            // 1. 사용자 메시지를 화면에 표시
             addMessage(userMessage, 'user');
             chatInput.value = '';
 
-            // 2. 로딩 스피너 표시
-            loadingSpinner.classList.remove('d-none');
+            // [수정] 로딩 스피너를 동적으로 생성하고 표시
+            const spinnerElement = document.createElement('div');
+            spinnerElement.classList.add('chat-message', 'chat-message-bot', 'loading-spinner');
+            spinnerElement.innerHTML = `
+                <div class="spinner">
+                    <div class="bounce1"></div>
+                    <div class="bounce2"></div>
+                    <div class="bounce3"></div>
+                </div>
+            `;
+            chatMessages.appendChild(spinnerElement);
             chatMessages.scrollTop = chatMessages.scrollHeight;
 
-            // 3. 현재 세션 ID 가져오기
             const sessionId = sessionStorage.getItem('chatbot_session_id');
 
             try {
-                // 4. FastAPI 서버로 메시지 전송
                 const response = await fetch(API_ENDPOINT, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -74,11 +75,12 @@ document.addEventListener('DOMContentLoaded', function() {
 
                 const data = await response.json();
 
-                // 5. 응답 받은 후, 세션 ID 저장 및 챗봇 응답 표시
+                // [수정] 응답이 오면 로딩 스피너를 제거하고 메시지 표시
+                spinnerElement.remove();
+
                 sessionStorage.setItem('chatbot_session_id', data.session_id);
                 addMessage(data.response, 'bot');
 
-                // 6. 정보 수집이 완료되면 입력창 비활성화
                 if (data.is_complete) {
                     chatInput.disabled = true;
                     chatInput.placeholder = '상담 접수가 완료되었습니다.';
@@ -86,14 +88,12 @@ document.addEventListener('DOMContentLoaded', function() {
 
             } catch (error) {
                 console.error('Error:', error);
+                // [수정] 에러 발생 시에도 로딩 스피너를 제거하고 에러 메시지 표시
+                spinnerElement.remove();
                 addMessage('죄송합니다. 서버와 통신 중 오류가 발생했습니다.', 'bot');
-            } finally {
-                // 7. 응답이 오면 로딩 스피너 숨기기
-                loadingSpinner.classList.add('d-none');
             }
         });
     }
 
-    // 챗봇 창이 처음 열릴 때 초기 메시지 표시
     addMessage('안녕하세요! 스마일 치과 챗봇입니다. 무엇을 도와드릴까요?', 'bot');
 });

@@ -121,15 +121,24 @@ main.container > div[layout\:fragment="content"] {
 }
 
 /* 로딩 스피너 스타일 */
+/* [수정] 동적으로 생성되는 로딩 스피너를 위한 스타일 */
+.loading-spinner {
+    align-self: flex-start;
+    background-color: #e9ecef;
+    padding: 10px 15px;
+    border-radius: 20px;
+    border-bottom-left-radius: 5px;
+}
+
 .spinner {
     margin: 0 auto;
-    width: 60px;
+    width: 40px; /* 크기 조정 */
     text-align: center;
 }
 
 .spinner > div {
-    width: 10px;
-    height: 10px;
+    width: 8px; /* 크기 조정 */
+    height: 8px; /* 크기 조정 */
     background-color: #0d6efd;
     border-radius: 100%;
     display: inline-block;
@@ -174,6 +183,7 @@ main.container > div[layout\:fragment="content"] {
     display: flex;
     margin-bottom: 10px;
     width: 100%;
+    align-items: flex-end; /* [추가] 시간과 말풍선을 아래 정렬 */
 }
 
 .chat-row.user {
@@ -187,7 +197,7 @@ main.container > div[layout\:fragment="content"] {
 .chat-bubble {
     padding: 8px 12px;
     border-radius: 12px;
-    max-width: 80%;
+    max-width: 70%; /* [수정] 시간 표시를 위해 너비 조정 */
     word-wrap: break-word;
     box-shadow: 0 1px 1px rgba(0,0,0,0.1);
 }
@@ -195,9 +205,28 @@ main.container > div[layout\:fragment="content"] {
 .chat-bubble.user {
     background-color: #FFEB33; /* 카카오톡 노란색 */
     color: #3C1E1E;
+    order: 2; /* [추가] 시간이 먼저 보이도록 순서 조정 */
 }
 
 .chat-bubble.bot {
     background-color: #FFFFFF;
     color: #333;
+    order: 1; /* [추가] 시간이 나중에 보이도록 순서 조정 */
+}
+
+/* [신규 추가] 메시지 시간 스타일 */
+.chat-timestamp {
+    font-size: 0.75rem;
+    color: #333;
+    margin: 0 8px;
+    flex-shrink: 0; /* 시간이 줄어들지 않도록 설정 */
+    margin-bottom: 2px;
+}
+
+.chat-row.user .chat-timestamp {
+    order: 1; /* 사용자 메시지 왼쪽에 시간 표시 */
+}
+
+.chat-row.bot .chat-timestamp {
+    order: 2; /* 봇 메시지 오른쪽에 시간 표시 */
 }
