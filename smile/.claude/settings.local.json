@@ -3,7 +3,10 @@
     "allow": [
       "Bash(mvnw.cmd test:*)",
       "Bash(./mvnw test:*)",
-      "Bash(./mvnw jacoco:report:*)"
+      "Bash(./mvnw jacoco:report:*)",
+      "Bash(mkdir:*)",
+      "Bash(move:*)",
+      "Bash(mv:*)"
     ],
     "deny": []
   }
