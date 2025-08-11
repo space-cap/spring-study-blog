@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>치과 상담 채팅</title>
+    <link rel="stylesheet" th:href="@{/css/chat.css}">
+    <!-- SockJS와 STOMP 라이브러리 -->
+    <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@stomp/stompjs@7/bundles/stomp.umd.min.js"></script>
+</head>
+<body>
+<div class="chat-container">
+    <header class="chat-header">
+        <h2>🦷 치과 상담실</h2>
+        <div class="connection-status" id="connectionStatus">연결 중...</div>
+    </header>
+
+    <div class="chat-messages" id="messageArea">
+        <!-- 채팅 메시지들이 여기에 표시됩니다 -->
+    </div>
+
+    <div class="chat-input-container">
+        <div class="input-group">
+            <input type="text" id="messageInput" placeholder="메시지를 입력하세요..." maxlength="500">
+            <button id="sendButton" onclick="sendMessage()">전송</button>
+        </div>
+    </div>
+</div>
+
+<script th:src="@{/js/chat.js}"></script>
+</body>
+</html>

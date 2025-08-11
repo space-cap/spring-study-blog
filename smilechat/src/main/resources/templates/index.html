@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>치과 병원 - 온라인 상담</title>
+    <link rel="stylesheet" th:href="@{/css/chat.css}">
+</head>
+<body>
+<div class="container">
+    <header>
+        <h1>🦷 스마일 치과병원</h1>
+        <p>전문의와 실시간 상담이 가능합니다</p>
+    </header>
+
+    <main>
+        <div class="welcome-section">
+            <h2>온라인 상담 서비스</h2>
+            <p>궁금한 치과 치료에 대해 실시간으로 상담받으세요</p>
+
+            <div class="user-form">
+                <input type="text" id="username" placeholder="이름을 입력하세요" maxlength="20">
+                <button onclick="enterChat()">상담 시작하기</button>
+            </div>
+        </div>
+
+        <div class="info-section">
+            <h3>상담 가능 시간</h3>
+            <ul>
+                <li>평일: 09:00 - 18:00</li>
+                <li>토요일: 09:00 - 13:00</li>
+                <li>일요일/공휴일: 휴무</li>
+            </ul>
+        </div>
+    </main>
+</div>
+
+<script>
+    // 채팅방 입장 함수
+    function enterChat() {
+        const username = document.getElementById('username').value.trim();
+
+        if (username) {
+            sessionStorage.setItem('username', username);
+            window.location.href = '/chat';
+        } else {
+            alert('이름을 입력해주세요.');
+        }
+    }
+
+    // Enter 키 이벤트 처리
+    document.getElementById('username').addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            enterChat();
+        }
+    });
+</script>
+</body>
+</html>

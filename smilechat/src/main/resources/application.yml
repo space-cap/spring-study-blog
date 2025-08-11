@@ -1,0 +1,32 @@
+# 서버 설정
+server:
+  port: 8080
+  shutdown: graceful
+
+# Spring 설정
+spring:
+  application:
+    name: dental-chat-app
+
+  # Thymeleaf 템플릿 엔진 설정
+  thymeleaf:
+    cache: false  # 개발 환경에서 캐시 비활성화
+    encoding: UTF-8
+
+  # 가상 스레드 활성화 (Java 21 기능)
+  threads:
+    virtual:
+      enabled: true
+
+# 로깅 설정
+logging:
+  level:
+    com.dentalclinic.chat: DEBUG
+    org.springframework.web.socket: DEBUG
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} - %msg%n"
+
+# WebSocket 설정
+websocket:
+  max-sessions: 100  # 최대 동시 연결 수
+  heartbeat-interval: 25000  # 하트비트 간격 (25초)
