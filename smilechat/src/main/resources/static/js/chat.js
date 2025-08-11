@@ -20,6 +20,40 @@ document.addEventListener('DOMContentLoaded', function() {
     setupEventListeners();
 });
 
+
+/**
+ * 개인 메시지 전송
+ */
+function sendPrivateMessage(receiverUsername, content) {
+    if (stompClient && stompClient.connected) {
+        const privateMessage = {
+            content: content,
+            receiverUsername: receiverUsername
+        };
+
+        stompClient.publish({
+            destination: '/app/private.sendMessage',
+            body: JSON.stringify(privateMessage)
+        });
+    }
+}
+
+/**
+ * 상담 요청
+ */
+function requestConsultation(message) {
+    if (stompClient && stompClient.connected) {
+        const consultationRequest = {
+            message: message
+        };
+
+        stompClient.publish({
+            destination: '/app/consultation.request',
+            body: JSON.stringify(consultationRequest)
+        });
+    }
+}
+
 /**
  * WebSocket 연결 설정
  */
@@ -49,6 +83,16 @@ function connect() {
         // 개인 메시지 구독
         stompClient.subscribe('/user/queue/private', function (message) {
             showMessage(JSON.parse(message.body));
+        });
+
+        // 상담 요청 알림 구독 (직원용)
+        stompClient.subscribe('/user/queue/consultation-request', function (message) {
+            showConsultationRequest(JSON.parse(message.body));
+        });
+
+        // 상담 응답 구독 (환자용)
+        stompClient.subscribe('/user/queue/consultation-response', function (message) {
+            showConsultationResponse(JSON.parse(message.body));
         });
 
         // 입장 메시지 전송
@@ -220,4 +264,38 @@ function escapeHtml(text) {
     const div = document.createElement('div');
     div.textContent = text;
     return div.innerHTML;
+}
+
+/**
+ * 개인 메시지 표시
+ */
+function showPrivateMessage(message) {
+    const messageArea = document.getElementById('messageArea');
+    const messageElement = document.createElement('div');
+    messageElement.classList.add('message', 'private-message');
+
+    messageElement.innerHTML = `
+        <div class="private-indicator">🔒 개인 메시지</div>
+        <div class="message-header">
+            <span class="sender">${message.sender}</span>
+            <span class="timestamp">${formatTime(message.timestamp)}</span>
+        </div>
+        <div class="message-content">${escapeHtml(message.content)}</div>
+    `;
+
+    messageArea.appendChild(messageElement);
+    messageArea.scrollTop = messageArea.scrollHeight;
+}
+
+/**
+ * 온라인 직원 목록 조회
+ */
+async function getOnlineStaff() {
+    try {
+        const response = await fetch('/api/online-staff');
+        const staffList = await response.json();
+        updateStaffList(staffList);
+    } catch (error) {
+        console.error('Failed to load staff list:', error);
+    }
 }

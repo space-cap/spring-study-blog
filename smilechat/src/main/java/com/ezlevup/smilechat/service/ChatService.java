@@ -29,14 +29,7 @@ public class ChatService {
         );
     }
 
-    /**
-     * 개인 메시지 처리
-     */
-    public ChatMessage processPrivateMessage(ChatMessage message) {
-        // 개인 메시지 특별 처리 로직
-        logger.info("Private message from " + message.sender() + " to " + message.receiverRoom());
-        return processMessage(message);
-    }
+
 
     /**
      * 메시지 로깅
@@ -54,4 +47,41 @@ public class ChatService {
         // 실제 환경에서는 더 정교한 필터링 시스템 구현 필요
         return content.replaceAll("(?i)(욕설|스팸)", "***");
     }
+
+    /**
+     * 개인 메시지 처리 (기존 코드에 추가)
+     */
+    public ChatMessage processPrivateMessage(ChatMessage message) {
+        // 개인 메시지 특별 처리 로직
+        logger.info("Private message from " + message.sender() + " to " + message.receiverRoom());
+
+        // 메시지 암호화 (민감한 의료 정보 보호)
+        String secureContent = encryptSensitiveContent(message.content());
+
+        return new ChatMessage(
+                secureContent,
+                message.sender(),
+                message.type(),
+                message.timestamp(),
+                message.receiverRoom()
+        );
+    }
+
+    /**
+     * 개인 메시지 로깅
+     */
+    public void logPrivateMessage(ChatMessage message) {
+        logger.info(String.format("Private message logged: [%s] %s → %s: [ENCRYPTED]",
+                message.timestamp(), message.sender(), message.receiverRoom()));
+    }
+
+    /**
+     * 민감한 내용 암호화 (개인정보 보호)
+     */
+    private String encryptSensitiveContent(String content) {
+        // 실제 환경에서는 AES 암호화 등 구현
+        // 여기서는 간단한 예시
+        return content; // 원본 반환 (실제로는 암호화된 내용)
+    }
+
 }
