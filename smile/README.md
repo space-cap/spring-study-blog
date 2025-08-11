@@ -71,7 +71,7 @@ Smile Dental Clinic은 치과 병원의 일상적인 운영을 효율적으로 �
 ## 🚀 설치 및 실행 방법
 
 ### 사전 요구사항
-- Java 17 이상
+- Java 21 이상
 - MySQL 8.0 이상
 - Maven 3.6 이상 (또는 내장 Maven Wrapper 사용)
 
