@@ -1,6 +1,7 @@
 package com.develead.smile.repository;
 
 import com.develead.smile.domain.Appointment;
+import com.develead.smile.domain.Doctor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -41,5 +42,10 @@ public interface AppointmentRepository extends JpaRepository<Appointment, Intege
             @Param("startDate") LocalDateTime startDate,
             @Param("endDate") LocalDateTime endDate,
             Pageable pageable);
+
+    // 테스트용 메서드 추가
+    List<Appointment> findByAppointmentDatetimeBetween(LocalDateTime start, LocalDateTime end);
+    
+    List<Appointment> findByDoctor(Doctor doctor);
 
 }
