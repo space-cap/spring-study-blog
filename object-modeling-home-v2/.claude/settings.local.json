@@ -4,7 +4,10 @@
       "Bash(javac:*)",
       "Bash(java:*)",
       "Bash(git add:*)",
-      "Bash(git push:*)"
+      "Bash(git push:*)",
+      "Bash(mkdir:*)",
+      "Bash(rmdir:*)",
+      "Bash(rm:*)"
     ],
     "deny": [],
     "ask": []
