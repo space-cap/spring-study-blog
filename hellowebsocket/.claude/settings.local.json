@@ -4,7 +4,8 @@
       "Bash(.mvnw.cmd spring-boot:run)",
       "Bash(mvnw.cmd spring-boot:*)",
       "Bash(./mvnw:*)",
-      "Bash(git add:*)"
+      "Bash(git add:*)",
+      "Bash(git push:*)"
     ],
     "deny": [],
     "ask": [],
